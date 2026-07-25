@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Journal — Wood Street Indoor Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Archivo+Narrow:wght@500;600;700&amp;family=Young+Serif&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4EBD9;color:#29231C;font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:#7C2A1D}a:hover{color:#BF3B26}
+:focus-visible{outline:3px solid #BF3B26;outline-offset:2px}
+::selection{background:#DCA528;color:#29231C}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</helmet>
+<dc-import name="Header" active="journal" hint-size="100%,120px"></dc-import>
+<main id="main" data-screen-label="Journal article">
+  <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+    <section style="padding:80px 24px;text-align:center">
+      <p style="font-family:'Young Serif',serif;font-size:34px;margin:0 0 12px">That page has wandered off.</p>
+      <a href="Journal.dc.html" style="display:inline-block;background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:10px;padding:13px 20px;font-weight:700;text-decoration:none;box-shadow:4px 4px 0 #29231C">Back to the Journal</a>
+    </section>
+  </sc-if>
+  <sc-if value="{{ found }}" hint-placeholder-val="{{ true }}">
+    <article>
+      <section style="padding:36px 24px 12px">
+        <div style="max-width:760px;margin:0 auto">
+          <nav aria-label="Breadcrumb" style="font-size:13.5px;margin-bottom:26px">
+            <a href="Home.dc.html">Home</a><span aria-hidden="true" style="opacity:.5;padding:0 6px">/</span>
+            <a href="Journal.dc.html">Journal</a><span aria-hidden="true" style="opacity:.5;padding:0 6px">/</span>
+            <span style="font-weight:700">{{ shortTitle }}</span>
+          </nav>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+            <span style="display:inline-block;background:#FBF5E7;border:1.5px solid #29231C;border-radius:999px;padding:3px 11px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11px;letter-spacing:.07em;text-transform:uppercase">{{ cat }}</span>
+            <span title="Fictional article created for design review" style="border:1.5px dashed #7C2A1D;color:#7C2A1D;border-radius:6px;padding:2px 9px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.12em;transform:rotate(1.5deg)">SAMPLE</span>
+          </div>
+          <h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(30px,4.6vw,48px);line-height:1.1;margin:0 0 14px">{{ title }}</h1>
+          <p style="font-size:14.5px;color:#8A7B5E;font-weight:600;margin:0 0 26px">By {{ author }} · {{ date }}</p>
+          <div style="aspect-ratio:16/9;border:2px solid #29231C;border-radius:14px;overflow:hidden;background:#EFE2C6;position:relative;box-shadow:5px 5px 0 rgba(41,35,28,.85);margin-bottom:34px">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ imgId }}" shape="rect" placeholder="Drop: lead photograph for this story" hint-size="100%,100%" style="position:absolute;left:0;top:0;width:100%;height:100%"></x-import>
+          </div>
+        </div>
+      </section>
+      <section style="padding:0 24px 56px">
+        <div style="max-width:680px;margin:0 auto">
+          <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="5">
+            <div>
+              <sc-if value="{{ b.isP }}" hint-placeholder-val="{{ true }}">
+                <p style="font-size:17px;line-height:1.75;margin:0 0 20px;color:#2F2921">{{ b.text }}</p>
+              </sc-if>
+              <sc-if value="{{ b.isQ }}" hint-placeholder-val="{{ false }}">
+                <blockquote style="margin:30px 0;padding:6px 0 6px 24px;border-left:6px solid #DCA528">
+                  <p style="font-family:'Young Serif',serif;font-size:clamp(20px,2.6vw,26px);line-height:1.35;margin:0;color:#7C2A1D">{{ b.text }}</p>
+                </blockquote>
+              </sc-if>
+            </div>
+          </sc-for>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:34px;border-top:2px dashed rgba(41,35,28,.35);padding-top:24px">
+            <span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#7C2A1D">Featuring</span>
+            <sc-for list="{{ related }}" as="r" hint-placeholder-count="2">
+              <a href="{{ r.href }}" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#29231C;border:1.5px solid #29231C;border-radius:999px;padding:7px 14px;background:#FBF5E7;font-weight:700;font-size:13.5px" style-hover="background:#F1E4C8">{{ r.name }} →</a>
+            </sc-for>
+            <button type="button" onClick="{{ copyLink }}" style="margin-left:auto;background:#F8F1E1;color:#29231C;border:2px solid #29231C;border-radius:10px;padding:9px 15px;font-weight:700;font-size:13.5px;font-family:'Archivo',sans-serif;cursor:pointer;box-shadow:2px 2px 0 #29231C">{{ copyLabel }}</button>
+          </div>
+        </div>
+      </section>
+      <section style="border-top:2px solid #29231C;background:#F8F1E1;padding:48px 24px 64px">
+        <div style="max-width:1080px;margin:0 auto">
+          <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(22px,3vw,30px);margin:0 0 18px">More from the Journal</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px">
+            <sc-for list="{{ more }}" as="a" hint-placeholder-count="3">
+              <a href="{{ a.href }}" style="display:block;text-decoration:none;color:#29231C;border:1.5px solid #29231C;border-radius:10px;background:#FBF5E7;padding:16px 18px" style-hover="background:#F1E4C8">
+                <span style="display:block;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:#8A7B5E">{{ a.cat }}</span>
+                <span style="display:block;font-family:'Young Serif',serif;font-size:18px;line-height:1.25;margin-top:6px">{{ a.title }}</span>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+    </article>
+  </sc-if>
+</main>
+<dc-import name="Footer" hint-size="100%,460px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { slug: '', copied: false, ready: false };
+  componentDidMount() {
+    this.onHash = () => this.setState({ slug: location.hash.slice(1), copied: false });
+    window.addEventListener('hashchange', this.onHash);
+    this.setState({ slug: location.hash.slice(1) });
+    import('./data.js').then((m) => { this.m = m; this.setState({ ready: true }); });
+  }
+  componentWillUnmount() { window.removeEventListener('hashchange', this.onHash); }
+  renderVals() {
+    const m = this.m;
+    const slug = this.state.slug || (m ? m.ARTICLES[0].slug : '');
+    const a = m ? (m.articleBySlug(slug) || null) : null;
+    if (!m || !a) return { found: !m, notFound: !!m && !a, blocks: [], related: [], more: [], title: '', copyLabel: 'Copy link', copyLink: () => {} };
+    return {
+      found: true, notFound: false,
+      title: a.title, shortTitle: a.title.length > 34 ? a.title.slice(0, 32) + '…' : a.title,
+      cat: a.cat, author: a.author, date: a.date,
+      imgId: 'article-' + a.slug,
+      blocks: a.body.map((b) => ({ isP: !!b.p, isQ: !!b.q, text: b.p || b.q })),
+      related: a.related.map((slg) => { const t = m.traderBySlug(slg); return t ? { name: t.name, href: 'Trader.dc.html#' + t.slug } : null; }).filter(Boolean),
+      more: m.ARTICLES.filter((x) => x.slug !== a.slug).slice(0, 3).map((x) => ({ title: x.title, cat: x.cat, href: 'Article.dc.html#' + x.slug })),
+      copyLabel: this.state.copied ? 'Link copied ✓' : 'Copy link',
+      copyLink: () => {
+        const done = () => { this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 2500); };
+        if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(done, done); else done();
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

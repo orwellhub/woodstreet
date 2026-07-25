@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Traders — Wood Street Indoor Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Archivo+Narrow:wght@500;600;700&amp;family=Young+Serif&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4EBD9;color:#29231C;font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:#7C2A1D}a:hover{color:#BF3B26}
+:focus-visible{outline:3px solid #BF3B26;outline-offset:2px}
+::selection{background:#DCA528;color:#29231C}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}}
+</style>
+</helmet>
+<dc-import name="Header" active="traders" hint-size="100%,120px"></dc-import>
+<main id="main" data-screen-label="Traders directory">
+  <section style="padding:48px 24px 24px">
+    <div style="max-width:1180px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:9px"><span aria-hidden="true" style="width:10px;height:10px;background:#DCA528;border:1.5px solid #29231C;display:inline-block"></span><span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D">The directory</span></div>
+      <h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(36px,5vw,56px);line-height:1.05;margin:12px 0 10px">The Traders</h1>
+      <p style="font-size:17px;line-height:1.6;color:#5C5142;max-width:64ch;margin:0">Twenty independents across thirty units, Tuesday to Saturday. Search by what you’re hunting, or browse by trade — and remember the corridor rewards a full loop.</p>
+    </div>
+  </section>
+  <section style="padding:12px 24px 72px">
+    <div style="max-width:1180px;margin:0 auto">
+      <div style="background:#FBF5E7;border:2px solid #29231C;border-radius:12px;padding:18px;box-shadow:4px 4px 0 rgba(41,35,28,.85)">
+        <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+          <label style="flex:1 1 280px;display:block">
+            <span style="display:block;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7C2A1D;margin-bottom:6px">Search the market</span>
+            <input type="search" value="{{ q }}" onChange="{{ setQ }}" placeholder="Try ‘vinyl’, ‘denim’, ‘brooch’, ‘haircut’…" aria-label="Search traders" style="width:100%;box-sizing:border-box;padding:13px 15px;border:2px solid #29231C;border-radius:10px;font-size:16px;font-family:'Archivo',sans-serif;background:#F8F1E1;color:#29231C">
+          </label>
+          <div role="group" aria-label="Layout" style="display:flex;gap:0;border:2px solid #29231C;border-radius:10px;overflow:hidden;flex:0 0 auto;margin-top:20px">
+            <button type="button" onClick="{{ setGrid }}" aria-pressed="{{ gridPressed }}" style="padding:11px 16px;font-weight:700;font-size:14px;font-family:'Archivo',sans-serif;border:none;cursor:pointer;background:{{ gridBg }};color:{{ gridFg }}">Grid</button>
+            <button type="button" onClick="{{ setList }}" aria-pressed="{{ listPressed }}" style="padding:11px 16px;font-weight:700;font-size:14px;font-family:'Archivo',sans-serif;border:none;border-left:2px solid #29231C;cursor:pointer;background:{{ listBg }};color:{{ listFg }}">List</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;align-items:center">
+          <sc-for list="{{ chips }}" as="c" hint-placeholder-count="10">
+            <button type="button" onClick="{{ c.toggle }}" aria-pressed="{{ c.pressedStr }}" style="display:inline-flex;align-items:center;gap:7px;border:1.5px solid #29231C;border-radius:999px;padding:7px 13px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;background:{{ c.bg }};color:{{ c.fg }};transition:background .15s">
+              <span aria-hidden="true" style="width:10px;height:10px;border-radius:99px;background:{{ c.dot }};border:1px solid #29231C"></span>{{ c.label }}
+            </button>
+          </sc-for>
+          <sc-if value="{{ anyFilter }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ clearAll }}" style="border:none;background:none;font-family:'Archivo',sans-serif;font-weight:700;font-size:13.5px;color:#7C2A1D;text-decoration:underline;cursor:pointer;padding:7px 6px">Clear all</button>
+          </sc-if>
+        </div>
+      </div>
+      <p aria-live="polite" style="font-size:14px;color:#8A7B5E;margin:18px 2px 20px;font-weight:600">{{ resultsLabel }}</p>
+      <sc-if value="{{ isGrid }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:18px">
+          <sc-for list="{{ results }}" as="t" hint-placeholder-count="9">
+            <a href="{{ t.href }}" style="position:relative;display:block;text-decoration:none;color:#29231C;border:2px solid #29231C;border-radius:12px;overflow:visible;background:#FBF5E7;box-shadow:4px 4px 0 rgba(41,35,28,.85);transform:rotate({{ t.rot }});transition:transform .15s,box-shadow .15s" style-hover="transform:translate(-2px,-2px) rotate(0deg);box-shadow:6px 6px 0 #29231C">
+              <span aria-hidden="true" style="display:block;height:16px;background:repeating-linear-gradient(90deg,{{ t.color }} 0 18px,#FBF5E7 18px 36px);border-bottom:2px solid #29231C;border-radius:10px 10px 0 0"></span>
+              <sc-if value="{{ t.featured }}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute;top:-12px;right:10px;background:#DCA528;border:2px solid #29231C;border-radius:999px;padding:3px 10px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.09em;transform:rotate(3deg);box-shadow:2px 2px 0 #29231C">DON’T MISS</span>
+              </sc-if>
+              <span style="display:block;padding:16px 17px 18px">
+                <span style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                  <span style="background:#29231C;color:#F4EBD9;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;padding:3px 8px;border-radius:4px">{{ t.unitLab }}</span>
+                  <span style="background:{{ t.tint }};border:1.5px solid #29231C;border-radius:999px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px">{{ t.catLabel }}</span>
+                </span>
+                <span style="display:block;font-family:'Young Serif',serif;font-size:23px;line-height:1.15;margin:13px 0 7px">{{ t.name }}</span>
+                <span style="display:block;font-size:14.5px;line-height:1.55;color:#5C5142">{{ t.short }}</span>
+                <span style="display:block;font-size:12.5px;color:#8A7B5E;margin-top:10px">{{ t.hours }}</span>
+                <span style="display:block;font-weight:700;font-size:14px;color:#7C2A1D;margin-top:10px">Step inside →</span>
+              </span>
+            </a>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;gap:10px">
+          <sc-for list="{{ results }}" as="t" hint-placeholder-count="9">
+            <a href="{{ t.href }}" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;text-decoration:none;color:#29231C;border:2px solid #29231C;border-radius:10px;background:#FBF5E7;padding:14px 18px;box-shadow:3px 3px 0 rgba(41,35,28,.85);transition:transform .15s,box-shadow .15s" style-hover="transform:translate(-2px,-2px);box-shadow:5px 5px 0 #29231C">
+              <span style="background:#29231C;color:#F4EBD9;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;padding:3px 8px;border-radius:4px;flex:0 0 auto">{{ t.unitLab }}</span>
+              <span style="font-family:'Young Serif',serif;font-size:19px;flex:0 0 auto">{{ t.name }}</span>
+              <span style="background:{{ t.tint }};border:1.5px solid #29231C;border-radius:999px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;flex:0 0 auto">{{ t.catLabel }}</span>
+              <span style="font-size:14px;color:#5C5142;flex:1 1 240px">{{ t.short }}</span>
+              <span aria-hidden="true" style="font-weight:700;color:#7C2A1D;flex:0 0 auto">→</span>
+            </a>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+        <div style="border:2px dashed #A98F5F;border-radius:14px;padding:56px 28px;text-align:center;background:#F8F1E1">
+          <p style="font-family:'Young Serif',serif;font-size:30px;margin:0 0 10px">Nothing under that name — yet.</p>
+          <p style="font-size:16px;color:#5C5142;margin:0 0 22px;line-height:1.6">The corridor is full of things that don’t match their labels. Try one of these, or clear the filters and browse the loop.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px">
+            <sc-for list="{{ suggestions }}" as="sg" hint-placeholder-count="4">
+              <button type="button" onClick="{{ sg.go }}" style="border:2px solid #29231C;border-radius:999px;background:#FBF5E7;padding:9px 16px;font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:2px 2px 0 #29231C" style-hover="background:#DCA528">{{ sg.label }}</button>
+            </sc-for>
+            <button type="button" onClick="{{ clearAll }}" style="border:none;background:none;font-family:'Archivo',sans-serif;font-weight:700;font-size:14px;color:#7C2A1D;text-decoration:underline;cursor:pointer">Clear everything</button>
+          </div>
+          <p style="font-size:14px;color:#8A7B5E;margin:0">Reckon the market needs it? <a href="Join.dc.html" style="font-weight:700">Open the stall yourself →</a></p>
+        </div>
+      </sc-if>
+      <p style="font-size:12.5px;color:#8A7B5E;margin:26px 2px 0;font-style:italic">Trader profiles are sample content for design review — real trader details drop in via the CMS.</p>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,460px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { q: '', cat: '', view: 'grid', ready: false };
+  componentDidMount() {
+    this.onHash = () => this.setState(this.parse());
+    window.addEventListener('hashchange', this.onHash);
+    import('./data.js').then((m) => { this.m = m; this.setState({ ready: true, ...this.parse() }); });
+  }
+  componentWillUnmount() { window.removeEventListener('hashchange', this.onHash); clearTimeout(this.qT); }
+  parse() {
+    const out = { q: '', cat: '', view: 'grid' };
+    location.hash.slice(1).split('&').forEach((kv) => {
+      const [k, v] = kv.split('=');
+      if (k === 'q') out.q = decodeURIComponent(v || '');
+      if (k === 'cat') out.cat = v || '';
+      if (k === 'view' && v === 'list') out.view = 'list';
+    });
+    return out;
+  }
+  sync(next) {
+    this.setState(next, () => {
+      const { q, cat, view } = this.state;
+      const parts = [];
+      if (q) parts.push('q=' + encodeURIComponent(q));
+      if (cat) parts.push('cat=' + cat);
+      if (view === 'list') parts.push('view=list');
+      history.replaceState(null, '', parts.length ? '#' + parts.join('&') : location.pathname + location.search);
+    });
+  }
+  renderVals() {
+    const m = this.m, s = this.state;
+    const rot = ['-1deg', '0.8deg', '-0.6deg', '1deg', '-0.8deg', '0.5deg'];
+    let results = [], total = 0;
+    if (m) {
+      const ql = s.q.trim().toLowerCase();
+      total = m.TRADERS.length;
+      results = m.TRADERS
+        .filter((t) => (!s.cat || t.cat === s.cat) && (!ql || (t.name + ' ' + t.short + ' ' + t.specs.join(' ') + ' ' + m.catById(t.cat).label).toLowerCase().includes(ql)))
+        .sort((a, b) => ((b.featured ? 1 : 0) - (a.featured ? 1 : 0)) || (a.units[0] - b.units[0]))
+        .map((t, i) => {
+          const c = m.catById(t.cat);
+          return { slug: t.slug, name: t.name, short: t.short, hours: t.hours, featured: !!t.featured, unitLab: m.unitLabel(t.units).toUpperCase(), catLabel: c.label, tint: c.tint, color: c.color, rot: rot[i % rot.length], href: 'Trader.dc.html#' + t.slug };
+        });
+    }
+    const chips = (m ? m.CATS : []).map((c) => {
+      const pressed = s.cat === c.id;
+      return {
+        label: c.label, dot: c.color, pressedStr: pressed ? 'true' : 'false',
+        bg: pressed ? '#29231C' : '#F8F1E1', fg: pressed ? '#F4EBD9' : '#29231C',
+        toggle: () => { const next = pressed ? '' : c.id; this.sync({ cat: next }); if (this.m) this.m.track('trader_filter', { category: next || 'all' }); },
+      };
+    });
+    const anyFilter = !!(s.q.trim() || s.cat);
+    return {
+      q: s.q, chips, anyFilter,
+      setQ: (e) => {
+        const v = e.target.value;
+        this.sync({ q: v });
+        clearTimeout(this.qT);
+        this.qT = setTimeout(() => { if (v.trim() && this.m) this.m.track('directory_search', { q: v.trim() }); }, 600);
+      },
+      clearAll: () => this.sync({ q: '', cat: '' }),
+      setGrid: () => this.sync({ view: 'grid' }), setList: () => this.sync({ view: 'list' }),
+      gridPressed: s.view === 'grid' ? 'true' : 'false', listPressed: s.view === 'list' ? 'true' : 'false',
+      gridBg: s.view === 'grid' ? '#29231C' : '#F8F1E1', gridFg: s.view === 'grid' ? '#F4EBD9' : '#29231C',
+      listBg: s.view === 'list' ? '#29231C' : '#F8F1E1', listFg: s.view === 'list' ? '#F4EBD9' : '#29231C',
+      results, empty: m ? results.length === 0 : false,
+      isGrid: s.view === 'grid' && results.length > 0, isList: s.view === 'list' && results.length > 0,
+      resultsLabel: !m ? 'Loading the corridor…' : (results.length === total ? 'Showing all ' + total + ' traders, featured first' : 'Showing ' + results.length + ' of ' + total + ' traders'),
+      suggestions: ['vinyl', 'denim', 'plants', 'toys'].map((w) => ({ label: '“' + w + '”', go: () => this.sync({ q: w, cat: '' }) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

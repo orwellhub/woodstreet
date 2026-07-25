@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Policies — Wood Street Indoor Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Archivo+Narrow:wght@500;600;700&amp;family=Young+Serif&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4EBD9;color:#29231C;font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:#7C2A1D}a:hover{color:#BF3B26}
+:focus-visible{outline:3px solid #BF3B26;outline-offset:2px}
+::selection{background:#DCA528;color:#29231C}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</helmet>
+<dc-import name="Header" active="" hint-size="100%,120px"></dc-import>
+<main id="main" data-screen-label="Policies">
+  <section style="padding:48px 24px 80px">
+    <div style="max-width:920px;margin:0 auto">
+      <h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,4.4vw,46px);line-height:1.06;margin:0 0 8px">The small print</h1>
+      <p style="font-size:14.5px;color:#8A7B5E;margin:0 0 26px;font-style:italic">Drafts for review — to be checked by a grown-up with a law degree before launch.</p>
+      <div role="tablist" aria-label="Policies" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px">
+        <a href="#privacy" style="text-decoration:none;border:2px solid #29231C;border-radius:999px;padding:9px 17px;font-weight:700;font-size:14px;background:{{ pBg }};color:{{ pFg }}">Privacy</a>
+        <a href="#cookies" style="text-decoration:none;border:2px solid #29231C;border-radius:999px;padding:9px 17px;font-weight:700;font-size:14px;background:{{ cBg }};color:{{ cFg }}">Cookies</a>
+        <a href="#accessibility" style="text-decoration:none;border:2px solid #29231C;border-radius:999px;padding:9px 17px;font-weight:700;font-size:14px;background:{{ aBg }};color:{{ aFg }}">Accessibility</a>
+      </div>
+      <div style="background:#FBF5E7;border:2px solid #29231C;border-radius:14px;padding:32px;box-shadow:5px 5px 0 rgba(41,35,28,.85)">
+        <sc-if value="{{ isPrivacy }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;gap:16px;font-size:15px;line-height:1.7;color:#2F2921;max-width:66ch">
+            <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:28px;margin:0">Privacy Policy</h2>
+            <p style="margin:0;font-size:13px;color:#8A7B5E">Draft · last updated July 2026</p>
+            <p style="margin:0"><strong>Who we are.</strong> Wood Street Indoor Market, 98 &amp; 102 Wood Street, Walthamstow, London E17 3HX. Questions about this policy: hello@woodstreetindoormarket.co.uk (address to be confirmed).</p>
+            <p style="margin:0"><strong>What we collect.</strong> Only what you give us: your name and email if you join the newsletter; your contact details and business information if you send a message or apply for a unit. We don’t buy data, and we don’t sell it — this is a market, not that kind of market.</p>
+            <p style="margin:0"><strong>Why we use it.</strong> To reply to you, to process trader applications, and — only with your ticked consent — to send the monthly newsletter. Legal bases: consent (newsletter) and legitimate interest / pre-contract steps (enquiries and applications).</p>
+            <p style="margin:0"><strong>Where it lives.</strong> At launch, form submissions go to the market’s email and CMS, and newsletter addresses to our email provider (e.g. Mailchimp or Brevo — provider to be confirmed). This preview site sends and stores nothing.</p>
+            <p style="margin:0"><strong>How long.</strong> Enquiries: up to 12 months. Applications: for the length of the process plus 6 months. Newsletter: until you unsubscribe — one click, no hard feelings.</p>
+            <p style="margin:0"><strong>Your rights.</strong> Ask us what we hold, ask us to correct it, ask us to delete it. Email or write to the office and we’ll sort it. You can also complain to the ICO (ico.org.uk).</p>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isCookies }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;gap:16px;font-size:15px;line-height:1.7;color:#2F2921;max-width:66ch">
+            <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:28px;margin:0">Cookie Policy</h2>
+            <p style="margin:0;font-size:13px;color:#8A7B5E">Draft · last updated July 2026</p>
+            <p style="margin:0"><strong>The short version.</strong> This preview site sets no tracking cookies. None. The only things stored in your browser are essentials — like remembering an image you placed on the page.</p>
+            <p style="margin:0"><strong>At launch.</strong> If the market adds analytics (to count visits, not to follow you round the internet), it will only switch on after you say yes to a consent banner. Decline and the site works exactly the same.</p>
+            <p style="margin:0"><strong>Third parties.</strong> Fonts load from Google Fonts; the directions link opens Google Maps, which has its own policies once you’re there. Instagram content, when connected, loads only on the pages that show it.</p>
+            <p style="margin:0"><strong>Managing cookies.</strong> Your browser settings can block or clear cookies at any time — the site will carry on politely without them.</p>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isAccess }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;gap:16px;font-size:15px;line-height:1.7;color:#2F2921;max-width:66ch">
+            <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:28px;margin:0">Accessibility Statement</h2>
+            <p style="margin:0;font-size:13px;color:#8A7B5E">Draft · last updated July 2026</p>
+            <p style="margin:0"><strong>Our aim.</strong> This website is built to meet WCAG 2.2 AA. Everyone should be able to find a trader, plan a visit and apply for a unit — whatever they browse with.</p>
+            <p style="margin:0"><strong>What that means here.</strong> Full keyboard navigation with visible focus; a skip-to-content link; proper headings and labels; colour contrast checked against AA; touch targets of 44px and up; and every animation switches off when your device asks for reduced motion.</p>
+            <p style="margin:0"><strong>The market map.</strong> The illustrated map is keyboard-operable, and everything it shows is also published as a plain list on the same page — you never need the picture to get the information.</p>
+            <p style="margin:0"><strong>Known limitations.</strong> Some photography is still placeholder while real images are gathered, and PDF downloads (like the trader pack) are still in production; we’ll publish accessible versions.</p>
+            <p style="margin:0"><strong>The building itself.</strong> Physical access details (entrances, thresholds, facilities) are being confirmed and will be published on the Visit page. Meanwhile, ring 020 8521 0410 and we’ll talk it through.</p>
+            <p style="margin:0"><strong>Spotted a problem?</strong> Tell us — hello@woodstreetindoormarket.co.uk. We’d rather know.</p>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,460px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { doc: 'privacy' };
+  componentDidMount() {
+    this.onHash = () => {
+      const h = location.hash.slice(1);
+      this.setState({ doc: ['privacy', 'cookies', 'accessibility'].includes(h) ? h : 'privacy' });
+    };
+    window.addEventListener('hashchange', this.onHash);
+    this.onHash();
+  }
+  componentWillUnmount() { window.removeEventListener('hashchange', this.onHash); }
+  renderVals() {
+    const d = this.state.doc;
+    const on = '#29231C', onFg = '#F4EBD9', off = '#FBF5E7', offFg = '#29231C';
+    return {
+      isPrivacy: d === 'privacy', isCookies: d === 'cookies', isAccess: d === 'accessibility',
+      pBg: d === 'privacy' ? on : off, pFg: d === 'privacy' ? onFg : offFg,
+      cBg: d === 'cookies' ? on : off, cFg: d === 'cookies' ? onFg : offFg,
+      aBg: d === 'accessibility' ? on : off, aFg: d === 'accessibility' ? onFg : offFg,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Available Unit — Wood Street Indoor Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Archivo+Narrow:wght@500;600;700&amp;family=Young+Serif&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4EBD9;color:#29231C;font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:#7C2A1D}a:hover{color:#BF3B26}
+:focus-visible{outline:3px solid #BF3B26;outline-offset:2px}
+::selection{background:#DCA528;color:#29231C}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</helmet>
+<dc-import name="Header" active="join" hint-size="100%,120px"></dc-import>
+<main id="main" data-screen-label="Available unit">
+  <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+    <section style="padding:80px 24px;text-align:center">
+      <p style="font-family:'Young Serif',serif;font-size:34px;margin:0 0 12px">That unit isn’t listed.</p>
+      <p style="font-size:16px;color:#5C5142;margin:0 0 24px">It may have found its keeper. Current openings live on the Join page.</p>
+      <a href="Join.dc.html" style="display:inline-block;background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:10px;padding:13px 20px;font-weight:700;text-decoration:none;box-shadow:4px 4px 0 #29231C">See open units</a>
+    </section>
+  </sc-if>
+  <sc-if value="{{ found }}" hint-placeholder-val="{{ true }}">
+    <section style="background:#F8F1E1;border-bottom:2px solid #29231C;padding:36px 24px 40px">
+      <div style="max-width:1080px;margin:0 auto">
+        <nav aria-label="Breadcrumb" style="font-size:13.5px;margin-bottom:22px">
+          <a href="Home.dc.html">Home</a><span aria-hidden="true" style="opacity:.5;padding:0 6px">/</span>
+          <a href="Join.dc.html">Join the Market</a><span aria-hidden="true" style="opacity:.5;padding:0 6px">/</span>
+          <span style="font-weight:700">Unit {{ unit }}</span>
+        </nav>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+          <span style="background:#29231C;color:#F4EBD9;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.08em;padding:4px 10px;border-radius:4px">UNIT {{ unit }}</span>
+          <span style="border:1.5px solid #29231C;border-radius:999px;padding:4px 11px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;background:#FBF5E7;color:{{ statusColor }}">{{ status }}</span>
+          <span style="border:1.5px dashed #C4684E;color:#A94A32;border-radius:999px;padding:4px 11px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;transform:rotate(-1.5deg)">To let</span>
+        </div>
+        <h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,4.4vw,50px);line-height:1.06;margin:0 0 10px">{{ name }}</h1>
+        <p style="font-size:17px;line-height:1.6;color:#3E362B;max-width:60ch;margin:0">{{ where }}</p>
+      </div>
+    </section>
+    <section style="padding:52px 24px 72px">
+      <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;align-items:start">
+        <div style="display:grid;gap:18px">
+          <div style="background:#FBF5E7;border:2px solid #29231C;border-radius:12px;padding:22px;box-shadow:4px 4px 0 rgba(41,35,28,.85)">
+            <h2 style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D;margin:0 0 14px">The particulars</h2>
+            <div style="display:grid;gap:12px;font-size:15px;line-height:1.6">
+              <div><span style="display:block;font-weight:700;font-size:13px">Size</span>{{ size }} <span style="color:#8A7B5E">({{ sizeNote }})</span></div>
+              <div><span style="display:block;font-weight:700;font-size:13px">Rent</span>Enquire — figures come with the information pack, not a rate card.</div>
+              <div><span style="display:block;font-weight:700;font-size:13px">Market hours</span>Tuesday–Saturday, 10.00–5.30 (your own days are flexible within that).</div>
+            </div>
+          </div>
+          <div style="background:#FBF5E7;border:2px solid #29231C;border-radius:12px;padding:22px;box-shadow:4px 4px 0 rgba(41,35,28,.85)">
+            <h2 style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D;margin:0 0 14px">Would suit</h2>
+            <ul style="list-style:none;margin:0;padding:0;display:grid;gap:9px">
+              <sc-for list="{{ suits }}" as="sIt" hint-placeholder-count="3">
+                <li style="display:flex;gap:10px;align-items:baseline;font-size:15px"><span aria-hidden="true" style="width:9px;height:9px;border-radius:99px;background:#DCA528;border:1px solid #29231C;flex:0 0 auto"></span>{{ sIt.text }}</li>
+              </sc-for>
+            </ul>
+          </div>
+          <div style="background:#FBF5E7;border:2px solid #29231C;border-radius:12px;padding:22px;box-shadow:4px 4px 0 rgba(41,35,28,.85)">
+            <h2 style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D;margin:0 0 14px">What’s included</h2>
+            <ul style="list-style:none;margin:0;padding:0;display:grid;gap:9px">
+              <sc-for list="{{ includes }}" as="inc" hint-placeholder-count="3">
+                <li style="display:flex;gap:10px;align-items:baseline;font-size:15px"><span aria-hidden="true" style="width:9px;height:9px;border-radius:99px;background:#17605B;border:1px solid #29231C;flex:0 0 auto"></span>{{ inc.text }}</li>
+              </sc-for>
+            </ul>
+            <p style="font-size:12.5px;color:#8A7B5E;margin:14px 0 0;line-height:1.55">Items marked “to be confirmed” are checked at viewing — nothing here is a promise yet.</p>
+          </div>
+        </div>
+        <aside style="display:grid;gap:16px;align-content:start">
+          <div style="background:#FBF5E7;border:2px solid #29231C;border-radius:12px;padding:20px;box-shadow:4px 4px 0 rgba(41,35,28,.85)">
+            <h2 style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D;margin:0 0 14px">On the horseshoe</h2>
+            <dc-import name="MiniMap" highlight="{{ unitStr }}" hint-size="100%,300px"></dc-import>
+            <a href="{{ mapHref }}" style="display:inline-block;margin-top:14px;font-weight:700;font-size:14.5px">See it on the full map →</a>
+          </div>
+          <a href="Apply.dc.html" style="display:block;text-align:center;background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:10px;padding:15px 22px;font-weight:700;font-size:16px;text-decoration:none;box-shadow:4px 4px 0 #29231C;transition:transform .15s,box-shadow .15s" style-hover="transform:translate(-2px,-2px);box-shadow:6px 6px 0 #29231C;color:#FBF3E2">Apply for Unit {{ unit }} →</a>
+          <a href="Contact.dc.html" style="display:block;text-align:center;background:#F8F1E1;color:#29231C;border:2px solid #29231C;border-radius:10px;padding:14px 20px;font-weight:700;font-size:15px;text-decoration:none;box-shadow:4px 4px 0 #29231C" style-hover="transform:translate(-1px,-1px);box-shadow:5px 5px 0 #29231C;color:#29231C">Ask a question first</a>
+          <p style="font-size:12.5px;color:#8A7B5E;margin:0;text-align:center;font-style:italic">Sample listing for design review.</p>
+        </aside>
+      </div>
+    </section>
+  </sc-if>
+</main>
+<dc-import name="Footer" hint-size="100%,460px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { id: '', ready: false };
+  componentDidMount() {
+    this.onHash = () => { this.setState({ id: location.hash.slice(1) }); this.tracked = ''; this.trackView(); };
+    window.addEventListener('hashchange', this.onHash);
+    this.setState({ id: location.hash.slice(1) });
+    import('./data.js').then((m) => { this.m = m; this.setState({ ready: true }); this.trackView(); });
+  }
+  componentWillUnmount() { window.removeEventListener('hashchange', this.onHash); }
+  trackView() {
+    const id = location.hash.slice(1);
+    if (this.m && id && this.tracked !== id && this.m.AVAIL.find((a) => a.id === id)) { this.tracked = id; this.m.track('available_unit_view', { unit: id }); }
+  }
+  renderVals() {
+    const m = this.m;
+    const id = this.state.id || (m ? m.AVAIL[0].id : '');
+    const u = m ? (m.AVAIL.find((a) => a.id === id) || null) : null;
+    if (!m || !u) return { found: !m, notFound: !!m && !u, suits: [], includes: [], unit: '', unitStr: '' };
+    return {
+      found: true, notFound: false,
+      unit: u.unit, unitStr: String(u.unit), name: u.name, where: u.where,
+      size: u.size, sizeNote: u.sizeNote, status: u.status, statusColor: u.statusColor,
+      suits: u.suits.map((x) => ({ text: x })), includes: u.includes.map((x) => ({ text: x })),
+      mapHref: 'Map.dc.html#unit=' + u.unit,
+    };
+  }
+}
+</script>
+</body>
+</html>

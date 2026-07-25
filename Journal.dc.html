@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Journal — Wood Street Indoor Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Archivo+Narrow:wght@500;600;700&amp;family=Young+Serif&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4EBD9;color:#29231C;font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:#7C2A1D}a:hover{color:#BF3B26}
+:focus-visible{outline:3px solid #BF3B26;outline-offset:2px}
+::selection{background:#DCA528;color:#29231C}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</helmet>
+<dc-import name="Header" active="journal" hint-size="100%,120px"></dc-import>
+<main id="main" data-screen-label="Journal">
+  <section style="padding:48px 24px 28px">
+    <div style="max-width:1080px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:9px"><span aria-hidden="true" style="width:10px;height:10px;background:#DCA528;border:1.5px solid #29231C;display:inline-block"></span><span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D">Stories from inside</span></div>
+      <h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(36px,5vw,56px);line-height:1.05;margin:12px 0 10px">The Journal</h1>
+      <p style="font-size:17px;line-height:1.6;color:#5C5142;max-width:62ch;margin:0">Trader interviews, collecting guides, market news and the odd wander up Wood Street. <span style="font-style:italic;color:#8A7B5E">(Sample articles for design review.)</span></p>
+    </div>
+  </section>
+  <section style="padding:12px 24px 80px">
+    <div style="max-width:1080px;margin:0 auto">
+      <sc-if value="{{ hasLead }}" hint-placeholder-val="{{ true }}">
+        <a href="{{ lead.href }}" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0;text-decoration:none;color:#29231C;border:2px solid #29231C;border-radius:14px;overflow:hidden;background:#FBF5E7;box-shadow:5px 5px 0 rgba(41,35,28,.85);margin-bottom:26px;transition:transform .15s,box-shadow .15s" style-hover="transform:translate(-2px,-2px);box-shadow:7px 7px 0 #29231C">
+          <span style="display:block;background:#7C2A1D;min-height:220px;position:relative;border-bottom:2px solid #29231C">
+            <span style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(243,231,206,.12) 0 14px,transparent 14px 28px)"></span>
+            <span style="position:absolute;left:22px;bottom:20px;right:22px;color:#F3E7CE;font-family:'Young Serif',serif;font-size:clamp(24px,3vw,34px);line-height:1.15">{{ lead.title }}</span>
+            <span style="position:absolute;left:22px;top:18px;background:#DCA528;color:#29231C;border:2px solid #29231C;border-radius:999px;padding:4px 12px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;transform:rotate(-2deg)">{{ lead.cat }}</span>
+          </span>
+          <span style="display:flex;flex-direction:column;justify-content:center;padding:28px 26px;gap:12px">
+            <span style="font-size:16px;line-height:1.65;color:#3E362B">{{ lead.excerpt }}</span>
+            <span style="font-size:13.5px;color:#8A7B5E;font-weight:600">{{ lead.byline }}</span>
+            <span style="font-weight:700;font-size:15px;color:#7C2A1D">Read the story →</span>
+          </span>
+        </a>
+      </sc-if>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px">
+        <sc-for list="{{ rest }}" as="a" hint-placeholder-count="3">
+          <a href="{{ a.href }}" style="display:block;text-decoration:none;color:#29231C;border:2px solid #29231C;border-radius:12px;background:#FBF5E7;padding:22px;box-shadow:4px 4px 0 rgba(41,35,28,.85);transform:rotate({{ a.rot }});transition:transform .15s,box-shadow .15s" style-hover="transform:translate(-2px,-2px) rotate(0deg);box-shadow:6px 6px 0 #29231C">
+            <span style="display:inline-block;background:#F4EBD9;border:1.5px solid #29231C;border-radius:999px;padding:3px 10px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase">{{ a.cat }}</span>
+            <span style="display:block;font-family:'Young Serif',serif;font-size:22px;line-height:1.2;margin:12px 0 8px">{{ a.title }}</span>
+            <span style="display:block;font-size:14.5px;line-height:1.6;color:#5C5142">{{ a.excerpt }}</span>
+            <span style="display:block;font-size:13px;color:#8A7B5E;margin-top:12px;font-weight:600">{{ a.byline }}</span>
+            <span style="display:block;font-weight:700;font-size:14px;color:#7C2A1D;margin-top:10px">Read →</span>
+          </a>
+        </sc-for>
+      </div>
+      <div style="margin-top:44px;border:2px solid #29231C;border-radius:12px;background:#DCA528;padding:24px 26px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px;box-shadow:4px 4px 0 rgba(41,35,28,.85)">
+        <p style="margin:0;font-size:16px;font-weight:600;max-width:52ch">Like reading about the market? The newsletter is the Journal’s little sibling — once a month, no noise.</p>
+        <a href="Home.dc.html" style="display:inline-block;background:#29231C;color:#F4EBD9;border:2px solid #29231C;border-radius:10px;padding:12px 18px;font-weight:700;font-size:14.5px;text-decoration:none;box-shadow:3px 3px 0 #7C2A1D" style-hover="transform:translate(-1px,-1px);box-shadow:4px 4px 0 #7C2A1D;color:#F4EBD9">Sign up on the home page →</a>
+      </div>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,460px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false };
+  componentDidMount() { import('./data.js').then((m) => { this.m = m; this.setState({ ready: true }); }); }
+  renderVals() {
+    const m = this.m;
+    const rot = ['-0.8deg', '0.7deg', '-0.5deg'];
+    const vm = (a) => ({ title: a.title, cat: a.cat, excerpt: a.excerpt, byline: 'By ' + a.author + ' · ' + a.date, href: 'Article.dc.html#' + a.slug });
+    const all = m ? m.ARTICLES : [];
+    return {
+      hasLead: all.length > 0,
+      lead: all.length ? vm(all[0]) : { title: '', cat: '', excerpt: '', byline: '', href: '#' },
+      rest: all.slice(1).map((a, i) => ({ ...vm(a), rot: rot[i % rot.length] })),
+    };
+  }
+}
+</script>
+</body>
+</html>

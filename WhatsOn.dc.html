@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What’s On — Wood Street Indoor Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Archivo+Narrow:wght@500;600;700&amp;family=Young+Serif&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4EBD9;color:#29231C;font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:#7C2A1D}a:hover{color:#BF3B26}
+:focus-visible{outline:3px solid #BF3B26;outline-offset:2px}
+::selection{background:#DCA528;color:#29231C}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</helmet>
+<dc-import name="Header" active="whatson" hint-size="100%,120px"></dc-import>
+<main id="main" data-screen-label="What's On">
+  <section style="padding:48px 24px 24px">
+    <div style="max-width:1080px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:9px"><span aria-hidden="true" style="width:10px;height:10px;background:#DCA528;border:1.5px solid #29231C;display:inline-block"></span><span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D">Fairs, lates &amp; doings</span></div>
+      <h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(36px,5vw,56px);line-height:1.05;margin:12px 0 10px">What’s On</h1>
+      <p style="font-size:17px;line-height:1.6;color:#5C5142;max-width:62ch;margin:0">Record fairs, late openings, kilo sales and the market’s birthday. Most things are free and none of them need a ticket — just turn up. <span style="font-style:italic;color:#8A7B5E">(Sample programme for design review.)</span></p>
+    </div>
+  </section>
+  <section style="padding:12px 24px 72px">
+    <div style="max-width:1080px;margin:0 auto">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:22px">
+        <div role="group" aria-label="View" style="display:flex;border:2px solid #29231C;border-radius:10px;overflow:hidden">
+          <button type="button" onClick="{{ setListV }}" aria-pressed="{{ listPressed }}" style="padding:10px 16px;font-weight:700;font-size:14px;font-family:'Archivo',sans-serif;border:none;cursor:pointer;background:{{ listBg }};color:{{ listFg }}">List</button>
+          <button type="button" onClick="{{ setCalV }}" aria-pressed="{{ calPressed }}" style="padding:10px 16px;font-weight:700;font-size:14px;font-family:'Archivo',sans-serif;border:none;border-left:2px solid #29231C;cursor:pointer;background:{{ calBg }};color:{{ calFg }}">Calendar</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <sc-for list="{{ chips }}" as="c" hint-placeholder-count="6">
+            <button type="button" onClick="{{ c.toggle }}" aria-pressed="{{ c.pressedStr }}" style="display:inline-flex;align-items:center;gap:7px;border:1.5px solid #29231C;border-radius:999px;padding:6px 12px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;background:{{ c.bg }};color:{{ c.fg }}"><span aria-hidden="true" style="width:9px;height:9px;border-radius:99px;background:{{ c.dot }};border:1px solid #29231C"></span>{{ c.label }}</button>
+          </sc-for>
+          <sc-if value="{{ hasFilter }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ clearFilter }}" style="border:none;background:none;font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;color:#7C2A1D;text-decoration:underline;cursor:pointer">Clear</button>
+          </sc-if>
+        </div>
+      </div>
+      <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;gap:16px">
+          <sc-for list="{{ events }}" as="e" hint-placeholder-count="5">
+            <a href="{{ e.href }}" style="display:flex;text-decoration:none;color:#29231C;border:2px solid #29231C;border-radius:12px;overflow:hidden;background:#FBF5E7;box-shadow:4px 4px 0 rgba(41,35,28,.85);transition:transform .15s,box-shadow .15s" style-hover="transform:translate(-2px,-2px);box-shadow:6px 6px 0 #29231C">
+              <span style="background:#7C2A1D;color:#F3E7CE;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 16px;min-width:82px;gap:1px">
+                <span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.12em">{{ e.day }}</span>
+                <span style="font-family:'Young Serif',serif;font-size:34px;line-height:1">{{ e.dd }}</span>
+                <span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.12em">{{ e.mon }}</span>
+              </span>
+              <span aria-hidden="true" style="border-left:2px dashed rgba(41,35,28,.45)"></span>
+              <span style="display:block;padding:17px 20px;flex:1;min-width:0">
+                <span style="display:inline-flex;align-items:center;gap:6px;background:#F4EBD9;border:1.5px solid #29231C;border-radius:999px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;padding:2px 9px"><span aria-hidden="true" style="width:8px;height:8px;border-radius:99px;background:{{ e.catColor }};border:1px solid #29231C"></span>{{ e.catLabel }}</span>
+                <span style="display:block;font-family:'Young Serif',serif;font-size:23px;line-height:1.15;margin:9px 0 6px">{{ e.title }}</span>
+                <span style="display:block;font-size:14.5px;line-height:1.55;color:#5C5142">{{ e.blurb }}</span>
+                <span style="display:block;font-size:13px;color:#8A7B5E;margin-top:9px;font-weight:600">{{ e.meta }}</span>
+              </span>
+            </a>
+          </sc-for>
+        </div>
+        <sc-if value="{{ emptyList }}" hint-placeholder-val="{{ false }}">
+          <div style="border:2px dashed #A98F5F;border-radius:14px;padding:44px 24px;text-align:center;background:#F8F1E1">
+            <p style="font-family:'Young Serif',serif;font-size:26px;margin:0 0 8px">Nothing in that category just now.</p>
+            <p style="font-size:15px;color:#5C5142;margin:0">Clear the filter, or sign up to the newsletter and we’ll tell you when there is.</p>
+          </div>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{ isCal }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#FBF5E7;border:2px solid #29231C;border-radius:12px;padding:20px;box-shadow:4px 4px 0 rgba(41,35,28,.85)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <button type="button" onClick="{{ prevM }}" aria-label="Previous month" style="width:44px;height:44px;border:2px solid #29231C;border-radius:10px;background:#F8F1E1;font-size:18px;font-weight:700;cursor:pointer;opacity:{{ prevOp }}" style-hover="background:#F1E4C8">‹</button>
+            <span style="font-family:'Young Serif',serif;font-size:24px">{{ monthLabel }}</span>
+            <button type="button" onClick="{{ nextM }}" aria-label="Next month" style="width:44px;height:44px;border:2px solid #29231C;border-radius:10px;background:#F8F1E1;font-size:18px;font-weight:700;cursor:pointer;opacity:{{ nextOp }}" style-hover="background:#F1E4C8">›</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px">
+            <sc-for list="{{ dows }}" as="dw" hint-placeholder-count="7">
+              <span style="text-align:center;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.1em;color:#8A7B5E;padding:4px 0">{{ dw.t }}</span>
+            </sc-for>
+            <sc-for list="{{ cells }}" as="cl" hint-placeholder-count="35">
+              <div style="min-height:84px;border:1.5px solid {{ cl.bc }};border-radius:8px;background:{{ cl.bg }};padding:6px;overflow:hidden">
+                <span style="display:inline-block;font-family:'Archivo Narrow',sans-serif;font-size:12px;font-weight:700;border-radius:99px;padding:1px 7px;background:{{ cl.dayBg }};color:{{ cl.dayFg }}">{{ cl.d }}</span>
+                <sc-for list="{{ cl.pills }}" as="pl" hint-placeholder-count="0">
+                  <a href="{{ pl.href }}" title="{{ pl.full }}" style="display:block;background:{{ pl.bg }};color:#FBF3E2;border:1px solid #29231C;border-radius:5px;padding:3px 6px;font-size:10.5px;font-weight:700;margin-top:4px;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pl.t }}</a>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <p style="font-size:12.5px;color:#8A7B5E;margin:14px 0 0">Hatched days — the market is closed (Sunday &amp; Monday).</p>
+        </div>
+      </sc-if>
+      <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(24px,3vw,32px);margin:56px 0 8px">Missed it</h2>
+      <p style="font-size:14.5px;color:#5C5142;margin:0 0 18px">Recently at the market — sign up to the newsletter and don’t miss the next one.</p>
+      <div style="display:grid;gap:10px">
+        <sc-for list="{{ past }}" as="p" hint-placeholder-count="2">
+          <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border:1.5px dashed #A98F5F;border-radius:9px;background:#F8F1E1;padding:12px 16px;opacity:.85">
+            <span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.06em;color:#8A7B5E;flex:0 0 auto">{{ p.dateLabel }}</span>
+            <span style="font-weight:700;font-size:15px;flex:0 0 auto">{{ p.title }}</span>
+            <span style="font-size:13.5px;color:#5C5142;flex:1 1 260px">{{ p.blurb }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,460px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { view: 'list', cat: '', y: 2026, m: 6, ready: false };
+  componentDidMount() { import('./data.js').then((m) => { this.m = m; this.setState({ ready: true }); }); }
+  renderVals() {
+    const m = this.m, s = this.state;
+    const catOf = (id) => (m ? m.EVENT_CATS.find((c) => c.id === id) : null);
+    const filtered = m ? m.EVENTS.filter((e) => !s.cat || e.cat === s.cat) : [];
+    const events = filtered.map((e) => {
+      const c = catOf(e.cat);
+      return { ...e, catLabel: c.label, catColor: c.color, href: 'Event.dc.html#' + e.slug, meta: e.dateLabel + ' · ' + e.time + ' · ' + e.cost };
+    });
+    const chips = (m ? m.EVENT_CATS : []).map((c) => {
+      const pressed = s.cat === c.id;
+      return { label: c.label, dot: c.color, pressedStr: pressed ? 'true' : 'false', bg: pressed ? '#29231C' : '#F8F1E1', fg: pressed ? '#F4EBD9' : '#29231C', toggle: () => this.setState({ cat: pressed ? '' : c.id }) };
+    });
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const cells = [];
+    if (m) {
+      const first = new Date(s.y, s.m, 1);
+      const lead = (first.getDay() + 6) % 7;
+      const days = new Date(s.y, s.m + 1, 0).getDate();
+      const now = new Date();
+      for (let i = 0; i < lead; i++) cells.push({ d: '', bc: 'transparent', bg: 'transparent', dayBg: 'transparent', dayFg: 'transparent', pills: [] });
+      for (let d = 1; d <= days; d++) {
+        const dt = new Date(s.y, s.m, d);
+        const dow = dt.getDay();
+        const closed = dow === 0 || dow === 1;
+        const isToday = now.getFullYear() === s.y && now.getMonth() === s.m && now.getDate() === d;
+        const pills = filtered.filter((e) => {
+          const st = new Date(e.start + 'T00:00:00');
+          const en = new Date((e.end || e.start) + 'T23:59:59');
+          return dt >= new Date(st.getFullYear(), st.getMonth(), st.getDate()) && dt <= en;
+        }).map((e) => ({ t: e.title.length > 20 ? e.title.slice(0, 19) + '…' : e.title, full: e.title, bg: catOf(e.cat).color, href: 'Event.dc.html#' + e.slug }));
+        cells.push({
+          d: String(d),
+          bc: isToday ? '#BF3B26' : 'rgba(41,35,28,.25)',
+          bg: closed ? 'repeating-linear-gradient(45deg,#EFE2C6 0 6px,#F6EDDA 6px 12px)' : '#F8F1E1',
+          dayBg: isToday ? '#BF3B26' : 'transparent', dayFg: isToday ? '#FBF3E2' : (closed ? '#A99878' : '#29231C'),
+          pills,
+        });
+      }
+    }
+    const atMin = s.y === 2026 && s.m <= 6, atMax = s.y === 2026 && s.m >= 8;
+    return {
+      events, chips, hasFilter: !!s.cat, emptyList: this.m ? events.length === 0 : false,
+      clearFilter: () => this.setState({ cat: '' }),
+      isList: s.view === 'list', isCal: s.view === 'cal',
+      setListV: () => this.setState({ view: 'list' }), setCalV: () => this.setState({ view: 'cal' }),
+      listPressed: s.view === 'list' ? 'true' : 'false', calPressed: s.view === 'cal' ? 'true' : 'false',
+      listBg: s.view === 'list' ? '#29231C' : '#F8F1E1', listFg: s.view === 'list' ? '#F4EBD9' : '#29231C',
+      calBg: s.view === 'cal' ? '#29231C' : '#F8F1E1', calFg: s.view === 'cal' ? '#F4EBD9' : '#29231C',
+      monthLabel: MONTHS[s.m] + ' ' + s.y,
+      dows: ['MON','TUE','WED','THU','FRI','SAT','SUN'].map((t) => ({ t })),
+      cells,
+      prevOp: atMin ? '.35' : '1', nextOp: atMax ? '.35' : '1',
+      prevM: () => { if (!atMin) this.setState({ m: s.m - 1 }); },
+      nextM: () => { if (!atMax) this.setState({ m: s.m + 1 }); },
+      past: m ? m.PAST_EVENTS : [],
+    };
+  }
+}
+</script>
+</body>
+</html>

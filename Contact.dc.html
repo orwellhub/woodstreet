@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — Wood Street Indoor Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Archivo+Narrow:wght@500;600;700&amp;family=Young+Serif&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4EBD9;color:#29231C;font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:#7C2A1D}a:hover{color:#BF3B26}
+:focus-visible{outline:3px solid #BF3B26;outline-offset:2px}
+::selection{background:#DCA528;color:#29231C}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</helmet>
+<dc-import name="Header" active="" hint-size="100%,120px"></dc-import>
+<main id="main" data-screen-label="Contact">
+  <section style="padding:48px 24px 28px">
+    <div style="max-width:1080px;margin:0 auto">
+      <div style="display:flex;align-items:center;gap:9px"><span aria-hidden="true" style="width:10px;height:10px;background:#DCA528;border:1.5px solid #29231C;display:inline-block"></span><span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D">Say hello</span></div>
+      <h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(36px,5vw,56px);line-height:1.05;margin:12px 0 10px">Contact</h1>
+      <p style="font-size:16.5px;line-height:1.6;color:#5C5142;max-width:62ch;margin:0">Quickest of all: come in and ask — someone behind a counter will know. Otherwise, ring, write, or use the form. Individual traders are best reached through their own pages.</p>
+    </div>
+  </section>
+  <section style="padding:16px 24px 80px">
+    <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:36px;align-items:start">
+      <div style="display:grid;gap:16px">
+        <div style="background:#FBF5E7;border:2px solid #29231C;border-radius:12px;padding:22px;box-shadow:4px 4px 0 rgba(41,35,28,.85)">
+          <h2 style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D;margin:0 0 12px">The market office</h2>
+          <div style="display:grid;gap:12px;font-size:15px;line-height:1.6">
+            <div><span style="display:block;font-weight:700;font-size:13px">Phone</span>020 8521 0410 <span style="color:#8A7B5E">(to be verified before launch)</span></div>
+            <div><span style="display:block;font-weight:700;font-size:13px">Email</span><a href="mailto:hello@woodstreetindoormarket.co.uk">hello@woodstreetindoormarket.co.uk</a> <span style="color:#8A7B5E">(placeholder)</span></div>
+            <div><span style="display:block;font-weight:700;font-size:13px">Post &amp; visits</span>98 &amp; 102 Wood Street, Walthamstow, London E17 3HX</div>
+            <div><span style="display:block;font-weight:700;font-size:13px">Hours</span>Tuesday–Saturday, 10.00–5.30</div>
+          </div>
+        </div>
+        <div style="background:#FBF5E7;border:2px solid #29231C;border-radius:12px;padding:22px;box-shadow:4px 4px 0 rgba(41,35,28,.85)">
+          <h2 style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D;margin:0 0 12px">Faster answers</h2>
+          <div style="display:grid;gap:9px;font-size:14.5px">
+            <a href="Visit.dc.html">Opening hours, directions &amp; access →</a>
+            <a href="Traders.dc.html">Find a particular trader →</a>
+            <a href="Join.dc.html">Renting a unit →</a>
+            <a href="WhatsOn.dc.html">Events &amp; fairs →</a>
+          </div>
+        </div>
+      </div>
+      <div>
+        <sc-if value="{{ notDone }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submit }}" novalidate="novalidate" style="background:#FBF5E7;border:2px solid #29231C;border-radius:14px;padding:26px;box-shadow:5px 5px 0 rgba(41,35,28,.85)">
+            <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:22px;margin:0 0 16px">Drop us a line</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+              <label style="display:block">
+                <span style="display:block;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#7C2A1D;margin-bottom:6px">Name *</span>
+                <input type="text" value="{{ fName }}" onChange="{{ setName }}" autocomplete="name" style="width:100%;box-sizing:border-box;padding:12px 14px;border:2px solid {{ bcName }};border-radius:10px;font-size:16px;font-family:'Archivo',sans-serif;background:#F8F1E1;color:#29231C">
+              </label>
+              <label style="display:block">
+                <span style="display:block;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#7C2A1D;margin-bottom:6px">Email *</span>
+                <input type="email" value="{{ fEmail }}" onChange="{{ setEmail }}" autocomplete="email" style="width:100%;box-sizing:border-box;padding:12px 14px;border:2px solid {{ bcEmail }};border-radius:10px;font-size:16px;font-family:'Archivo',sans-serif;background:#F8F1E1;color:#29231C">
+              </label>
+            </div>
+            <label style="display:block;margin-top:14px">
+              <span style="display:block;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#7C2A1D;margin-bottom:6px">What’s it about?</span>
+              <select value="{{ fTopic }}" onChange="{{ setTopic }}" style="width:100%;box-sizing:border-box;padding:12px 14px;border:2px solid #29231C;border-radius:10px;font-size:16px;font-family:'Archivo',sans-serif;background:#F8F1E1;color:#29231C">
+                <option value="general">General question</option>
+                <option value="units">Trading &amp; units</option>
+                <option value="events">Events &amp; press</option>
+                <option value="history">History &amp; memories</option>
+                <option value="lost">Lost property</option>
+              </select>
+            </label>
+            <label style="display:block;margin-top:14px">
+              <span style="display:block;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#7C2A1D;margin-bottom:6px">Message *</span>
+              <textarea value="{{ fMsg }}" onChange="{{ setMsg }}" rows="5" style="width:100%;box-sizing:border-box;padding:12px 14px;border:2px solid {{ bcMsg }};border-radius:10px;font-size:16px;font-family:'Archivo',sans-serif;background:#F8F1E1;color:#29231C;resize:vertical"></textarea>
+            </label>
+            <sc-if value="{{ err }}" hint-placeholder-val="{{ false }}">
+              <p role="alert" style="background:#F6E3DC;border:2px solid #BF3B26;border-radius:10px;padding:11px 14px;font-size:14px;color:#7C2A1D;font-weight:600;margin:14px 0 0">{{ err }}</p>
+            </sc-if>
+            <button type="submit" style="margin-top:18px;background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:10px;padding:13px 22px;font-weight:700;font-size:15.5px;font-family:'Archivo',sans-serif;cursor:pointer;box-shadow:4px 4px 0 #29231C;transition:transform .15s,box-shadow .15s" style-hover="transform:translate(-2px,-2px);box-shadow:6px 6px 0 #29231C">{{ btnLabel }}</button>
+            <p style="font-size:12.5px;color:#8A7B5E;margin:12px 0 0">Preview mode: nothing is sent yet.</p>
+          </form>
+        </sc-if>
+        <sc-if value="{{ done }}" hint-placeholder-val="{{ false }}">
+          <div role="status" style="background:#FBF5E7;border:2px solid #29231C;border-radius:14px;padding:30px;box-shadow:5px 5px 0 rgba(41,35,28,.85)">
+            <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:26px;margin:0 0 8px">Got it — thanks.</h2>
+            <p style="font-size:15px;line-height:1.6;color:#5C5142;margin:0">We read everything, usually within a few days. If it’s urgent, ring the office on a trading day.</p>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,460px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { name: '', email: '', topic: 'general', msg: '', err: '', done: false, busy: false, errs: {}, ready: false };
+  componentDidMount() { import('./data.js').then((m) => { this.m = m; this.setState({ ready: true }); }); }
+  renderVals() {
+    const s = this.state;
+    return {
+      notDone: !s.done, done: s.done,
+      fName: s.name, fEmail: s.email, fTopic: s.topic, fMsg: s.msg, err: s.err,
+      bcName: s.errs.name ? '#BF3B26' : '#29231C', bcEmail: s.errs.email ? '#BF3B26' : '#29231C', bcMsg: s.errs.msg ? '#BF3B26' : '#29231C',
+      setName: (e) => this.setState({ name: e.target.value }), setEmail: (e) => this.setState({ email: e.target.value }),
+      setTopic: (e) => this.setState({ topic: e.target.value }), setMsg: (e) => this.setState({ msg: e.target.value }),
+      btnLabel: s.busy ? 'Sending…' : 'Send it',
+      submit: (e) => {
+        e.preventDefault();
+        const errs = {};
+        if (!s.name.trim()) errs.name = 1;
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s.email.trim())) errs.email = 1;
+        if (s.msg.trim().length < 10) errs.msg = 1;
+        if (Object.keys(errs).length) { this.setState({ errs, err: 'Check the highlighted fields — name, a real email, and a message of at least a sentence.' }); return; }
+        this.setState({ errs: {}, err: '', busy: true });
+        this.m.sendMessage({ name: s.name, email: s.email, topic: s.topic, msg: s.msg }).then(() => this.setState({ done: true, busy: false }));
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Our Story — Wood Street Indoor Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Archivo+Narrow:wght@500;600;700&amp;family=Young+Serif&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4EBD9;color:#29231C;font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:#7C2A1D}a:hover{color:#BF3B26}
+:focus-visible{outline:3px solid #BF3B26;outline-offset:2px}
+::selection{background:#DCA528;color:#29231C}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</helmet>
+<dc-import name="Header" active="story" hint-size="100%,120px"></dc-import>
+<main id="main" data-screen-label="Our story">
+  <section style="padding:48px 24px 8px">
+    <div style="max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:44px;align-items:center">
+      <div>
+        <div style="display:flex;align-items:center;gap:9px"><span aria-hidden="true" style="width:10px;height:10px;background:#DCA528;border:1.5px solid #29231C;display:inline-block"></span><span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D">Since 1955</span></div>
+        <h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(36px,5vw,56px);line-height:1.05;margin:12px 0 14px">Our Story</h1>
+        <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:56ch;margin:0 0 14px">Most markets sprawl. This one bends — one corridor looped like a horseshoe, thirty small doors, and seventy years of people finding things they weren’t looking for.</p>
+        <p style="font-size:15.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0">We’re piecing the full history together properly, with local archives and the people who lived it. Items below marked <span style="border:1.5px dashed #B98613;color:#8A6A0E;border-radius:5px;padding:1px 7px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em">TO BE CONFIRMED</span> are still being verified — no invented dates here.</p>
+      </div>
+      <div style="position:relative;max-width:380px;width:100%;justify-self:center">
+        <div style="border:2px solid #29231C;border-radius:190px 190px 12px 12px;overflow:hidden;background:#EFE2C6;aspect-ratio:3/4;position:relative;box-shadow:5px 5px 0 rgba(41,35,28,.85)">
+          <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="story-arch" shape="rect" placeholder="Drop: archive photo of the building or corridor" hint-size="100%,100%" style="position:absolute;left:0;top:0;width:100%;height:100%"></x-import>
+        </div>
+        <span style="position:absolute;bottom:22px;right:-12px;background:#DCA528;border:2px solid #29231C;border-radius:999px;padding:6px 13px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;transform:rotate(-4deg);box-shadow:2px 2px 0 #29231C">EST. 1955</span>
+      </div>
+    </div>
+  </section>
+  <section style="padding:48px 24px 64px">
+    <div style="max-width:840px;margin:0 auto">
+      <ol style="list-style:none;margin:0;padding:8px 0 8px 30px;border-left:3px solid #29231C;display:grid;gap:44px">
+        <sc-for list="{{ tl }}" as="e" hint-placeholder-count="6">
+          <li style="position:relative">
+            <span aria-hidden="true" style="position:absolute;left:-41px;top:3px;width:17px;height:17px;background:#DCA528;border:2px solid #29231C;border-radius:99px"></span>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <span style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13.5px;letter-spacing:.16em;text-transform:uppercase;color:#7C2A1D">{{ e.era }}</span>
+              <sc-if value="{{ e.verify }}" hint-placeholder-val="{{ false }}">
+                <span title="Being verified with local archives before launch" style="border:1.5px dashed #B98613;color:#8A6A0E;border-radius:5px;padding:1px 7px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.08em;transform:rotate(-1.5deg)">TO BE CONFIRMED</span>
+              </sc-if>
+            </div>
+            <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(22px,2.8vw,28px);margin:8px 0 8px">{{ e.title }}</h2>
+            <p style="font-size:15.5px;line-height:1.7;color:#3E362B;margin:0;max-width:66ch">{{ e.text }}</p>
+          </li>
+        </sc-for>
+      </ol>
+    </div>
+  </section>
+  <section style="border-top:2px solid #29231C;background:#17605B;color:#F3ECD9;padding:56px 24px">
+    <div style="max-width:840px;margin:0 auto;text-align:center">
+      <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(26px,3.4vw,36px);margin:0 0 12px;color:#F8F1E1">Traded here? Shopped here since the sixties?</h2>
+      <p style="font-size:16px;line-height:1.65;color:#BFD8D0;margin:0 0 24px;max-width:56ch;margin-left:auto;margin-right:auto">We’re collecting the market’s history — photographs, receipts, memories, tall tales. Help us tell it properly.</p>
+      <a href="Contact.dc.html" style="display:inline-block;background:#DCA528;color:#29231C;border:2px solid #29231C;border-radius:10px;padding:14px 22px;font-weight:700;font-size:16px;text-decoration:none;box-shadow:4px 4px 0 rgba(0,0,0,.35);transition:transform .15s,box-shadow .15s" style-hover="transform:translate(-2px,-2px);box-shadow:6px 6px 0 rgba(0,0,0,.35);color:#29231C">Share a memory →</a>
+    </div>
+  </section>
+  <section style="border-top:2px solid #29231C;padding:56px 24px">
+    <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px">
+      <div>
+        <h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(24px,3vw,32px);margin:0 0 8px">The story continues on the shop floor</h2>
+        <p style="font-size:15.5px;color:#5C5142;margin:0">Twenty independents are writing the next chapter, Tuesday to Saturday.</p>
+      </div>
+      <a href="Traders.dc.html" style="display:inline-block;background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:10px;padding:14px 22px;font-weight:700;font-size:16px;text-decoration:none;box-shadow:4px 4px 0 #29231C;transition:transform .15s,box-shadow .15s" style-hover="transform:translate(-2px,-2px);box-shadow:6px 6px 0 #29231C;color:#FBF3E2">Explore the Traders</a>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,460px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false };
+  componentDidMount() { import('./data.js').then((m) => { this.m = m; this.setState({ ready: true }); }); }
+  renderVals() { return { tl: this.m ? this.m.TIMELINE : [] }; }
+}
+</script>
+</body>
+</html>
