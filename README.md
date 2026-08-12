@@ -37,15 +37,17 @@ Five images, each in a fixed slot:
 |---|---|
 | `market-frontage.jpg` | Hero, top right. Also the social sharing preview. Portrait, shown uncropped. |
 | `market-entrance.jpg` | Our story, in the arched frame. Portrait, shown uncropped. |
-| `street-market.webp` | Gallery, left |
+| `coven-of-wiches.jpg` | Gallery, left |
 | `market-corridor.jpg` | Gallery, middle |
-| `market-hall.jpg` | Gallery, right |
+| `belas-brocante.jpg` | Gallery, right |
 
 To swap one, keep the same filename and the layout stays put. If you change
 the filename or the picture's shape, update the matching `width` and `height`
 attributes on the `<img>` tag so the page does not jump about while loading.
-The three gallery images are cropped to squares, so anything important should
-sit near the middle of the frame.
+The three gallery images are cropped to squares. Both shopfront photos are
+portrait, so each carries an `object-position` that pulls the crop upward and
+keeps the shop's sign in frame. A replacement of a different shape will need
+that value adjusting.
 
 Keep images to roughly 1000px on the long edge. They are only ever shown a
 few hundred pixels wide, and large files make the page slow on a phone.
