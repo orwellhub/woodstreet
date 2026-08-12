@@ -17,7 +17,7 @@ Everything is in `index.html`, in the order it appears on the page:
 
 1. Header and opening hours strip
 2. Hero
-3. `#shops` the shop cards, in walking order from the front doors
+3. `#shops` a placeholder until there is a real trader list
 4. `#map` the illustrated horseshoe map
 5. Our story
 6. `#visit` where, opening hours, getting here, inside the market
@@ -54,9 +54,13 @@ few hundred pixels wide, and large files make the page slow on a phone.
 ## The map
 
 The map is a grid of absolutely positioned boxes using percentage
-coordinates from a 980 by 764 drawing. To move a shop between units, change
-the number and the fill colour on the relevant box, and update the matching
-card in `#shops`.
+coordinates from a 980 by 764 drawing. Every unit is drawn the same, with
+just its number, because there is no confirmed record of who trades where.
+
+Once the real trader list exists, the units can carry a fill colour per
+trade and a tooltip naming the shop, and `#shops` can go back to being a
+card per trader. Both were built that way before and were removed because
+the names in the original design draft were invented.
 
 ## Deploy
 
@@ -65,6 +69,13 @@ and Hostinger redeploys. `index.html` must stay at the repository root.
 
 ## Before it goes live
 
-The shop names and descriptions came from the original design draft and are
-sample content. Confirm the real trader list, and check the phone number,
-the email address, the Instagram handle and the opening hours.
+These came from the original design draft and are still unconfirmed:
+
+- the phone number, the email address and the Instagram handle
+- the opening hours
+- "Est. 1955", which appears in the logo, the hero and the footer
+- the cinema history in Our story, which the draft flagged as needing
+  checking against local archives
+- the map: thirty units in a horseshoe, and the position of the two doors
+
+The invented trader names and descriptions have already been removed.
