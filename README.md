@@ -6,7 +6,7 @@ A single-page site. One file, no build step, no dependencies, no framework.
 
 | Path | Purpose |
 |---|---|
-| `index.html` | The whole site. Content, styling and the market map all live here. |
+| `index.html` | The whole site. Content and styling all live here. |
 | `uploads/` | Photography (see the slots below) |
 | `.htaccess` | Redirects old URLs to the landing page, plus gzip and caching |
 | `robots.txt` | Search engine directives |
@@ -18,12 +18,11 @@ Everything is in `index.html`, in the order it appears on the page:
 1. Header and opening hours strip
 2. Hero
 3. `#shops` a placeholder until there is a real trader list
-4. `#map` the illustrated horseshoe map
-5. Our story
-6. `#visit` where, opening hours, getting here, inside the market
-7. Photo strip
-8. `#join` the join the market call to action
-9. Footer
+4. Our story
+5. `#visit` where, opening hours, getting here, inside the market
+6. Photo strip
+7. `#join` the join the market call to action
+8. Footer, including the social buttons
 
 Opening hours appear in four places, so change all of them together:
 the top strip, the hero status line, the `#visit` hours table, and the footer.
@@ -51,16 +50,18 @@ sit near the middle of the frame.
 Keep images to roughly 1000px on the long edge. They are only ever shown a
 few hundred pixels wide, and large files make the page slow on a phone.
 
-## The map
+## Social links
 
-The map is a grid of absolutely positioned boxes using percentage
-coordinates from a 980 by 764 drawing. Every unit is drawn the same, with
-just its number, because there is no confirmed record of who trades where.
+Three buttons in the footer, using inline SVG icons so nothing is fetched
+from another server:
 
-Once the real trader list exists, the units can carry a fill colour per
-trade and a tooltip naming the shop, and `#shops` can go back to being a
-card per trader. Both were built that way before and were removed because
-the names in the original design draft were invented.
+- Facebook `https://www.facebook.com/WoodStreetIndoorMarket/`
+- Instagram `https://www.instagram.com/woodstreetindoormarket/`
+- X `https://x.com/WoodStreetMarke`
+
+The same three URLs appear in the `sameAs` list in the JSON-LD block in
+`<head>`, which is how search engines tie the profiles to the business.
+Change a link and change it in both places.
 
 ## Deploy
 
@@ -71,11 +72,10 @@ and Hostinger redeploys. `index.html` must stay at the repository root.
 
 These came from the original design draft and are still unconfirmed:
 
-- the phone number, the email address and the Instagram handle
+- the phone number and the email address
 - the opening hours
 - "Est. 1955", which appears in the logo, the hero and the footer
 - the cinema history in Our story, which the draft flagged as needing
   checking against local archives
-- the map: thirty units in a horseshoe, and the position of the two doors
 
 The invented trader names and descriptions have already been removed.
