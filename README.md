@@ -72,9 +72,19 @@ and Hostinger redeploys. `index.html` must stay at the repository root.
 
 ## Before it goes live
 
+The market is managed by Walthams (Waltham Estates, walthamestates.co.uk).
+The credit under the logo in the header and footer links there, and every
+phone number and email address on the page is theirs:
+
+- 020 8509 0444
+- info@walthamestates.co.uk
+
+Wood Street has no phone or email of its own. If Walthams' details change,
+they appear in the top strip, the two cards under The shops, Inside the
+market, the Join the Market button, the footer, and the JSON-LD block.
+
 These came from the original design draft and are still unconfirmed:
 
-- the phone number and the email address
 - the opening hours
 - "Est. 1955", which appears in the logo, the hero and the footer
 - the cinema history in Our story, which the draft flagged as needing
