@@ -39,21 +39,19 @@ h1,h2,h3{font-family:'Young Serif',serif;font-weight:400}
 .card{background:#FBF5E7;border:2px solid #29231C;border-radius:12px;padding:22px;box-shadow:4px 4px 0 rgba(41,35,28,.85)}
 .card h3{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#7C2A1D;margin:0 0 12px}
 .sec{border-top:2px solid #29231C;padding:72px 24px}
-main section[id]{scroll-margin-top:84px}
+main section[id]{scroll-margin-top:96px}
 .nav{display:flex;align-items:center;gap:2px;flex-wrap:wrap;justify-content:flex-end}
 .nav a{text-decoration:none;color:#29231C;font-weight:600;font-size:14.5px;padding:8px 9px;white-space:nowrap}
 .nav a:hover{color:#BF3B26}
-.managed{display:block;font-family:'Archivo',sans-serif;font-weight:500;font-size:10.5px;letter-spacing:.04em;color:#8A7B5E;margin-top:5px;white-space:nowrap;line-height:1.2}
-.managed a{color:#7C2A1D;font-weight:700;text-decoration:none;border-bottom:1px solid rgba(124,42,29,.35);transition:color .15s,border-color .15s}
-.managed a:hover{color:#BF3B26;border-bottom-color:#BF3B26}
+.managed{display:inline-flex;align-items:center;gap:6px;width:fit-content;margin-top:7px;font-family:'Archivo',sans-serif;font-weight:500;font-size:10.5px;letter-spacing:.04em;color:#8A7B5E;line-height:1;white-space:nowrap;text-decoration:none;transition:opacity .15s}
+.managed:hover{opacity:.7}
+.managed img{display:block;width:104px;height:auto}
 .managed-dark{color:#9A8E77}
-.managed-dark a{color:#E8B64C;border-bottom-color:rgba(232,182,76,.4)}
-.managed-dark a:hover{color:#F3D28A;border-bottom-color:#F3D28A}
 .social{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border:2px solid #DCA528;border-radius:999px;color:#E8B64C;background:transparent;transition:background .15s,color .15s,transform .15s}
 .social:hover{background:#DCA528;color:#29231C;transform:translateY(-2px)}
 @keyframes wsm-pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}}
-@media (max-width:760px){.sec{padding:52px 20px}.nav{display:none}.brand-sub{letter-spacing:.14em;font-size:9.5px}.managed{font-size:10px;margin-top:4px}main section[id]{scroll-margin-top:134px}}
+@media (max-width:760px){.sec{padding:52px 20px}.nav{display:none}.brand-sub{letter-spacing:.14em;font-size:9.5px}.managed{font-size:10px;margin-top:5px}.managed img{width:92px}main section[id]{scroll-margin-top:144px}}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ShoppingCenter","name":"Wood Street Indoor Market","description":"Independent indoor market of around thirty small shops arranged around one horseshoe corridor in Walthamstow, east London. Trading since 1955.","address":{"@type":"PostalAddress","streetAddress":"98 & 102 Wood Street","addressLocality":"Walthamstow, London","postalCode":"E17 3HX","addressCountry":"GB"},"telephone":"+44 20 8509 0444","email":"info@walthamestates.co.uk","url":"https://woodstreetindoormarket.co.uk/","sameAs":["https://www.facebook.com/WoodStreetIndoorMarket/","https://www.instagram.com/woodstreetindoormarket/","https://x.com/WoodStreetMarke"],"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"10:00","closes":"17:30"}]}</script>
 </head>
@@ -74,7 +72,10 @@ main section[id]{scroll-margin-top:84px}
         <span style="font-family:'Young Serif',serif;font-size:21px;color:#7C2A1D;letter-spacing:.01em">WOOD STREET</span>
         <span class="brand-sub" style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.28em;color:#17605B;margin-top:2px">INDOOR MARKET &middot; EST. 1955</span>
       </a>
-      <span class="managed">Managed by <a href="https://walthamestates.co.uk/" target="_blank" rel="noopener">Walthams</a></span>
+      <a class="managed" href="https://walthamestates.co.uk/" target="_blank" rel="noopener">
+        Managed by
+        <img src="brand/walthams-logo.svg" alt="Walthams" width="104" height="17">
+      </a>
     </div>
     <div style="margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">
       <nav class="nav" aria-label="Main">
@@ -230,7 +231,10 @@ main section[id]{scroll-margin-top:84px}
     <div>
       <span style="display:block;font-family:'Young Serif',serif;font-size:21px;color:#DCA528">WOOD STREET</span>
       <span style="display:block;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.28em;color:#8FB5AE;margin-top:2px">INDOOR MARKET &middot; EST. 1955</span>
-      <span class="managed managed-dark">Managed by <a href="https://walthamestates.co.uk/" target="_blank" rel="noopener">Walthams</a></span>
+      <a class="managed managed-dark" href="https://walthamestates.co.uk/" target="_blank" rel="noopener">
+        Managed by
+        <img src="brand/walthams-logo-inverse.svg" alt="Walthams" width="104" height="17">
+      </a>
       <p style="font-size:14.5px;line-height:1.65;margin:16px 0 0;color:#BEB197">Thirty little shops under one roof, a couple of minutes from Wood Street station.</p>
     </div>
     <div>

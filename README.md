@@ -8,6 +8,7 @@ A single-page site. One file, no build step, no dependencies, no framework.
 |---|---|
 | `index.html` | The whole site. Content and styling all live here. |
 | `uploads/` | Photography (see the slots below) |
+| `brand/` | Walthams logo, light and inverse |
 | `.htaccess` | Redirects old URLs to the landing page, plus gzip and caching |
 | `robots.txt` | Search engine directives |
 
@@ -73,8 +74,8 @@ and Hostinger redeploys. `index.html` must stay at the repository root.
 ## Before it goes live
 
 The market is managed by Walthams (Waltham Estates, walthamestates.co.uk).
-The credit under the logo in the header and footer links there, and every
-phone number and email address on the page is theirs:
+The credit under the wordmark in the header and footer carries their logo
+and links there. Every phone number and email address on the page is theirs:
 
 - 020 8509 0444
 - info@walthamestates.co.uk
@@ -91,3 +92,16 @@ These came from the original design draft and are still unconfirmed:
   checking against local archives
 
 The invented trader names and descriptions have already been removed.
+
+## The Walthams logo
+
+`brand/walthams-logo.svg` and `brand/walthams-logo-inverse.svg` come from the
+Walthams site repo (orwellhub/walthamestateswebsite, `public/brand/`). They are
+identical except for the wordmark ink: near black for light backgrounds, cream
+for dark. Use the plain one on the cream header and the inverse one on the dark
+footer. Both are plain vector paths, no scripts and nothing fetched from
+elsewhere.
+
+They are shown 104px wide, 92px on phones. Do not go much below that: the
+wordmark is roughly six times wider than it is tall, so it loses legibility
+quickly. If the logo is ever replaced, keep the two variants in step.
