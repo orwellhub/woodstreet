@@ -587,8 +587,8 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
       <div>
         ${eyebrow('Our story')}
         <h2 class="h2" style="margin-bottom:14px">From picture palace to market hall</h2>
-        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 14px">Before the stalls came the screen. The site had an earlier life as a local cinema, and the building still carries the shape of it: one long looping corridor where the audience used to be.</p>
-        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 26px">Since 1955 it has been a market. Thirty-odd small shops trading side by side while Wood Street changed around them. The faces turn over; the horseshoe holds.</p>
+        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 14px">Before the stalls came the screen. This was the Crown Cinema from 1912 to 1955, reached down a long passage from Wood Street, and that passage is the corridor you walk today.</p>
+        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 26px">The market moved in the year the projector stopped. Seventy years on, thirty-odd small shops still trade side by side while Wood Street changes around them. The faces turn over; the horseshoe holds.</p>
         <a href="story.html" class="btn btn-cream">Read our story &rarr;</a>
       </div>
     </div>
@@ -1025,13 +1025,18 @@ ${faqs.map(([q, a]) => `        <details>
 
 // Our Story
 {
+  // Sources: Cinema Treasures (Crown Cinema, Wood Street); Waltham Forest
+  // Council; the Mayor of London's Wood Street regeneration project page;
+  // Gort Scott; the market's own history page; Time Out; Hidden London.
   const tl = [
-    ['Early 1900s', 'A picture house on Wood Street', true, 'Before the stalls came the screen. The site had an earlier life as a local cinema, and the building still carries the shape of it. Exact dates, names and photographs are being confirmed with local archives.'],
-    ['1955', 'The market opens its doors', false, 'The building begins trading as an indoor market: small units, low rents, and a corridor that bends round in a horseshoe so no shop is ever a dead end.'],
-    ['1960s to 80s', 'Decades of dealers', true, 'Furniture, records, tools and tailoring. The market becomes the kind of place where you could furnish a flat and get your trousers taken up in the same afternoon. Trader histories are being gathered; share yours.'],
-    ['1990s to 2000s', 'The high street changes; the horseshoe holds', false, 'Chains come and go on the high streets around it. The market keeps doing what it has always done: small independent shops, side by side, run by the people behind the counter.'],
-    ['2010s', 'A new wave joins the old guard', false, 'Vinyl comes back round, makers move in, and a new generation of collectors discovers what E17 already knew. The mix of old hands and new keepers becomes the market&rsquo;s signature.'],
-    ['Today', 'Thirty little shops, one corridor', false, `${shops.length} shops trade Tuesday to Saturday: vintage, records, jewellery, toys, books, crafts, beauty and a juice bar, a couple of minutes from Wood Street station.`],
+    ['1873', 'A village gets a station', 'Wood Street was one of the four original settlements of Walthamstow, and it stayed a village on the edge of the forest long after the rest of the town had grown up. The railway arrived on 17 November 1873, with cheap workmen&rsquo;s fares into Liverpool Street, and the terraces followed. Within a generation Wood Street was a proper high street with its own shops, pubs and, before long, its own picture house.'],
+    ['October 1912', 'The Wood Street Picture Palace opens', 'The Penny Picture Theatre Company opened its cinema here in October 1912. The auditorium sat behind the row of shops, running parallel to the street, and you reached it down a long narrow passage from Wood Street. Nine hundred people at a time sat on wooden benches on a single floor to watch the pictures. Wood Street was making films as well as showing them: the street had its own studios from 1914 until 1932, turning out silents and then talkies.'],
+    ['1914 to 1950', 'The Crown', 'By 1914 the Picture Palace had become the Crown Picture Theatre, and the Crown it stayed, through a string of independent owners, for the next forty years. The benches gave way to proper cinema seats and the capacity settled at 650. It was the Crown Cinema by 1947, then the New Crown, and it showed its last film under that name on 8 July 1950.'],
+    ['1953 to 1955', 'A short second run as the Rio', 'New management reopened the building in 1953 as the Rio Cinema. It lasted two years. The Rio closed in 1955, and with it Wood Street&rsquo;s forty-odd years as a place to watch films.'],
+    ['1955', 'The market opens', 'The same year the projector stopped, the traders moved in. The building became an indoor market in 1955 and has been one ever since: small units, low rents, and one long corridor that bends round in a horseshoe so no shop is ever a dead end. Over the decades it built a reputation across London for antiques, collectables and records, the kind of place where you go in for one thing and come out with three.'],
+    ['2011 to 2012', 'The big revamp', 'By the end of the 2000s the market had gone shabby and many of its units stood empty. The Mayor of London&rsquo;s Outer London Fund picked Wood Street for regeneration, with the market at the heart of it. A team led by East Architects, with Gort Scott on the building itself, gave it a new front, new signage, a proper entrance on Marlowe Road and a freshened-up interior, and the entrance was painted like a circus big top. More than 160 people applied for the newly empty units and 21 new traders were chosen to join the old hands. The market relaunched in February 2012, and the Mayor came down to meet the tenants.'],
+    ['2019', 'The auditorium goes, the market stays', 'The old cinema auditorium at the back, long past use, was demolished and homes built on the site. The front of the old picture house, the passage the audience once queued down, carries on as the market. Which means the corridor you walk today is the same one that led to the pictures a century ago.'],
+    ['2026', 'Walthams take over', `Walthams, the letting agent for this corner of Walthamstow, took over the running of the market in 2026, with plans for the empty units, the frontage and a proper programme of fairs and late openings. ${shops.length} shops trade here today, Tuesday to Saturday: vintage, records, jewellery, toys, books, crafts, beauty and a juice bar, a couple of minutes from the station that started it all.`],
   ];
   out['story.html'] = page({
     file: 'story.html', active: 'story',
@@ -1045,7 +1050,7 @@ ${faqs.map(([q, a]) => `        <details>
         ${eyebrow('Since 1955')}
         <h1 class="h1" style="margin-bottom:14px">Our Story</h1>
         <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:56ch;margin:0 0 14px">Most markets sprawl. This one bends: one corridor looped like a horseshoe, thirty small doors, and seventy years of people finding things they weren&rsquo;t looking for.</p>
-        <p style="font-size:15.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0">We are piecing the full history together properly, with local archives and the people who lived it. Items below marked <span class="tbc">TO BE CONFIRMED</span> are still being verified. No invented dates here.</p>
+        <p style="font-size:15.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0">Before the market there was a cinema, and before the cinema there was a village. The building has been showing people things they did not expect since 1912. Here is how it got from there to here.</p>
       </div>
       <div style="position:relative;max-width:380px;width:100%;justify-self:center">
         <div class="photo-arch" style="border-radius:190px 190px 12px 12px">
@@ -1058,8 +1063,8 @@ ${faqs.map(([q, a]) => `        <details>
   <section style="padding:48px 24px 64px">
     <div class="wrap-r">
       <ol class="tl">
-${tl.map(([era, title, tbc, text]) => `        <li>
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="era">${era}</span>${tbc ? '<span class="tbc" title="Being verified with local archives">TO BE CONFIRMED</span>' : ''}</div>
+${tl.map(([era, title, text]) => `        <li>
+          <div><span class="era">${era}</span></div>
           <h2>${title}</h2>
           <p>${text}</p>
         </li>`).join('\n')}

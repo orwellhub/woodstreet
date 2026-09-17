@@ -125,12 +125,17 @@ Shop data:
   the map. If they exist, they need adding to `data/shops.json`.
 - Most shops have no phone number in the source.
 
-Unconfirmed since the first draft:
+Still to check:
 
-- the opening hours
-- "Est. 1955", in the logo, the hero and the footer
-- the cinema history on the story page, flagged there as to be confirmed
+- the opening hours came from the first draft; Waltham Forest Council and Visit
+  London both list Tuesday to Saturday, 10am to 5.30pm, which matches
 - the policies page is a draft and says so
+
+The history on the story page is researched, not drafted. Sources: Cinema
+Treasures (Crown Cinema, Wood Street), Waltham Forest Council's market page, the
+Mayor of London's Wood Street regeneration project page, Gort Scott's project
+page, the market's own previous history page, Time Out and Hidden London. "Est.
+1955" is the year the Rio Cinema closed and the market opened, per the council.
 
 Hosting:
 
