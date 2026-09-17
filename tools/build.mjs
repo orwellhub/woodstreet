@@ -2,7 +2,7 @@
 //   node tools/build.mjs
 // Plain HTML out, nothing to install. The shop data is the client spreadsheet
 // reduced to what is safe to publish: no rent, no deposit, no owner names.
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
@@ -91,7 +91,7 @@ const famOf = (r) => FAMILIES.find((f) => f.key === CAT_TO_FAMILY[r.category]) |
 
 const SIDES = {
   'Antique City': { name: 'Antique City', code: 'A', addr: '98 Wood Street', where: 'the inner side of the corridor' },
-  'Market Side': { name: 'Market Side', code: 'M', addr: '102a Wood Street', where: 'the outer side of the corridor' },
+  'Market Side': { name: 'Market Side', code: 'M', addr: '102 Wood Street', where: 'the outer side of the corridor' },
 };
 
 // ---------- the data --------------------------------------------------------
@@ -116,7 +116,7 @@ const usedFamilies = FAMILIES.filter((f) => famCount(f) > 0);
 // ---------- shared chrome ---------------------------------------------------
 const NAV = [
   ['The Shops', 'shops.html', 'shops'], ['Market Map', 'map.html', 'map'], ["What’s On", 'whats-on.html', 'whatson'],
-  ['Visit', 'visit.html', 'visit'], ['Our Story', 'story.html', 'story'], ['Journal', 'journal.html', 'journal'],
+  ['Visit', 'visit.html', 'visit'], ['Our Story', 'story.html', 'story'],
 ];
 const navLinks = (rel, active, cls) => NAV.map(([label, href, key]) =>
   `<a href="${rel}${href}"${key === active ? ' aria-current="page"' : ''}${cls ? ` class="${cls}"` : ''}>${label}</a>`).join('\n        ');
@@ -207,6 +207,7 @@ function footer(rel) {
       <h2>Explore</h2>
       <nav class="fnav" aria-label="Footer">
         ${navLinks(rel, '')}
+        <a href="${rel}journal.html">Journal</a>
         <a href="${rel}join.html">Join the Market</a>
         <a href="${rel}contact.html">Contact</a>
       </nav>
@@ -331,10 +332,10 @@ function mapHtml({ rel = '', hrefFor = null, mini = false, highlight = [] } = {}
     const pos = `left:${px(x)};top:${py(y)};width:${px(w)};height:${py(h)}`;
     const cls = hi.has(r.unit) ? ' mu-hi' : '';
     if (r.vacant) {
-      return `      <div class="mu mu-vacant${cls}" style="${pos}"><span class="code">${esc(r.unit)}</span><span class="nm">To let</span></div>`;
+      return `      <div class="mu mu-vacant${cls}" style="${pos}"><span class="code">${esc(r.unit)}</span> <span class="nm">To let</span></div>`;
     }
     const style = `${pos};--c:${r.fam.color};--t:${r.fam.tint}`;
-    const inner = `<span class="code">${esc(r.unit)}</span><span class="nm">${esc(r.name)}</span>`;
+    const inner = `<span class="code">${esc(r.unit)}</span> <span class="nm">${esc(r.name)}</span>`;
     if (hrefFor) return `      <a class="mu${cls}" href="${hrefFor(r)}" style="${style}" aria-label="${esc(r.name)}, unit ${esc(r.unit)}">${inner}</a>`;
     return `      <div class="mu${cls}" style="${style}">${inner}</div>`;
   }).join('\n');
@@ -414,7 +415,7 @@ function shopCard(r, rel, { withData = false } = {}) {
   return `<a href="${rel}${r.href}" class="shop-card tilt" style="--c:${r.fam.color}"${text}>
             ${photo}
             <span class="body">
-              <span class="row">${unitBadge(r.unit)}${catPill(r)}</span>
+              <span class="row">${unitBadge(r.unit)} ${catPill(r)}</span>
               <span class="nm">${esc(r.name)}</span>
               <span class="ab">${r.about ? esc(r.about) : 'A fuller listing for this shop is on its way.'}</span>
               ${r.hoursNice ? `<span class="hr">${esc(r.hoursNice)}</span>` : ''}
@@ -437,7 +438,7 @@ function pressRelease(rel) {
         <header class="paper-mast">
           <p class="paper-kicker">Walthamstow&rsquo;s indoor market since 1955</p>
           <p class="paper-name">Wood Street Market News</p>
-          <div class="paper-line"><span>No. 1</span><span>Walthamstow, E17 &middot; September 2026</span><span>Free</span></div>
+          <div class="paper-line"><span>No. 1</span> <span>Walthamstow, E17 &middot; September 2026</span> <span>Free</span></div>
         </header>
         <h3 class="paper-head">Walthams take on Wood Street Indoor Market</h3>
         <p class="paper-deck">The letting agent for this corner of Walthamstow is now running the market. Same corridor, same shops, and a lot more to come.</p>
@@ -505,7 +506,7 @@ const out = {};
       <div style="position:relative;max-width:430px;justify-self:center;width:100%">
         <div aria-hidden="true" style="position:absolute;left:18px;top:18px;right:-14px;bottom:-14px;background:#DCA528;border:2px solid #29231C;border-radius:14px"></div>
         <div class="photo-frame" style="position:relative">
-          <img src="uploads/market-frontage.jpg" alt="The painted frontage of 98 Wood Street Indoor Market, red with blue and green window frames and the market name above the door" width="800" height="1067" style="width:100%;height:auto">
+          <img src="uploads/market-frontage.jpg" alt="The painted frontage of 98 Wood Street Indoor Market, red with blue and green window frames and the market name above the door" width="800" height="1067" fetchpriority="high" style="width:100%;height:auto">
         </div>
         <span style="position:absolute;top:-16px;right:14px;background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:999px;padding:7px 14px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.08em;transform:rotate(3deg);box-shadow:2px 2px 0 #29231C">FIND US ON WOOD STREET</span>
       </div>
@@ -519,7 +520,7 @@ const out = {};
       <p class="lede" style="margin-bottom:30px">${usedFamilies.length} trades, ${shops.length} shops, one corridor. Pick a thread and pull.</p>
       <div class="grid grid-cats" style="--n:${usedFamilies.length}">
 ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-card tilt">
-          <span class="nm"><span class="sw" aria-hidden="true" style="background:${f.color}"></span>${esc(f.label).replace(/ (&amp;|and) /, '<br>$1 ')}</span>
+          <span class="nm"><span class="sw" aria-hidden="true" style="background:${f.color}"></span>${esc(f.label).replace(/ (&amp;|and) /, ' <br>$1 ')}</span>
           <span class="ct">${famCount(f)} ${famCount(f) === 1 ? 'shop' : 'shops'}</span>
         </a>`).join('\n')}
       </div>
@@ -627,7 +628,7 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
     <div class="wrap" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:28px">
       <div style="max-width:60ch">
         <h2 style="font-size:clamp(28px,3.6vw,40px);line-height:1.08;margin:0 0 10px">Got a shop in you?</h2>
-        <p style="font-size:16.5px;line-height:1.6;margin:0 0 16px;color:#4A3C14">${vacant.length} units are looking for their next keeper. Small spaces, straightforward terms, and a ready made Saturday crowd.</p>
+        <p style="font-size:16.5px;line-height:1.6;margin:0 0 16px;color:#4A3C14">${vacant.length} units are looking for their next keeper. Small spaces, straightforward terms, and a ready-made Saturday crowd.</p>
         <div style="display:flex;gap:9px;flex-wrap:wrap">
 ${vacant.map((v) => `          ${unitBadge(v.unit)}`).join('\n')}
         </div>
@@ -647,7 +648,7 @@ ${vacant.map((v) => `          ${unitBadge(v.unit)}`).join('\n')}
       </div>
       <div class="gallery">
         <div><img src="uploads/market-corridor.jpg" alt="Inside the market corridor, lined with leather bags, rugs and homeware" width="646" height="430" loading="lazy"></div>
-        <div><img src="uploads/coven-of-wiches.jpg" alt="The Coven of Wiches at unit 38, a plant based deli and pickle house with a bright yellow shopfront and bunting overhead" width="785" height="1000" loading="lazy" style="object-position:center top"></div>
+        <div><img src="uploads/coven-of-wiches.jpg" alt="The Coven of Wiches at unit 38, a plant-based deli and pickle house with a bright yellow shopfront and bunting overhead" width="785" height="1000" loading="lazy" style="object-position:center top"></div>
         <div><img src="uploads/belas-brocante.jpg" alt="Bela's Brocante at unit 31, pictures and collectables around the doorway, looking on down the market corridor" width="730" height="1000" loading="lazy" style="object-position:center 15%"></div>
         <div><img src="uploads/market-entrance.jpg" alt="The market entrance on Wood Street with its clock and bunting" width="452" height="679" loading="lazy" style="object-position:center 30%"></div>
       </div>
@@ -786,7 +787,7 @@ for (const r of shops) {
         ${neighbours.length ? `<div class="card">
           <h2 class="card-label">Good neighbours</h2>
           <div style="display:grid;gap:9px">
-${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">${unitBadge(n.unit)}<span class="nm">${esc(n.name)}</span><span class="ar" aria-hidden="true">&rarr;</span></a>`).join('\n')}
+${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">${unitBadge(n.unit)} <span class="nm">${esc(n.name)}</span> <span class="ar" aria-hidden="true">&rarr;</span></a>`).join('\n')}
           </div>
         </div>` : ''}
         <a href="${rel}visit.html" class="btn btn-red" style="text-align:center">Plan your visit &rarr;</a>
@@ -800,8 +801,8 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
 // Map
 {
   const list = (s) => bySide(s).map((u) => u.vacant
-    ? `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:#F6EDDA;border-style:dashed;border-color:#C4684E"></span>${unitBadge(u.unit)}<span style="color:#A94A32;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase">To let</span><a href="join.html" style="margin-left:auto;font-size:13px;font-weight:600">Enquire</a></li>`
-    : `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:${u.fam.color}"></span>${unitBadge(u.unit)}<a href="${u.href}">${esc(u.name)}</a></li>`).join('\n');
+    ? `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:#F6EDDA;border-style:dashed;border-color:#C4684E"></span> ${unitBadge(u.unit)} <span style="color:#A94A32;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase">To let</span> <a href="join.html" style="margin-left:auto;font-size:13px;font-weight:600">Enquire</a></li>`
+    : `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:${u.fam.color}"></span> ${unitBadge(u.unit)} <a href="${u.href}">${esc(u.name)}</a></li>`).join('\n');
   out['map.html'] = page({
     file: 'map.html', active: 'map',
     title: 'The Market Map | Wood Street Indoor Market',
@@ -834,7 +835,7 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
       <div class="two two-top" style="gap:36px">
         <div>
           <h3 style="font-size:24px;margin:0 0 4px">Market Side</h3>
-          <p style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C2A1D;margin:0 0 16px">Outer wall &middot; 102a Wood Street</p>
+          <p style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C2A1D;margin:0 0 16px">Outer wall &middot; 102 Wood Street</p>
           <ul class="unit-list" style="grid-template-columns:1fr">
 ${list('Market Side')}
           </ul>
@@ -862,10 +863,10 @@ ${list('Antique City')}
   }).join('\n');
   const faqs = [
     ['Do all the shops open every day?', `The market opens ${SITE.hoursShort}, but individual traders set their own days and hours, and a few open Wednesday to Saturday or Saturday only. If you are making a special trip for one shop, check its page or ring ahead.`],
-    ['Can I pay by card?', 'Most traders take cards. A few of the smaller units are cash friendlier, so a little cash in your pocket never hurts.'],
+    ['Can I pay by card?', 'Most traders take cards. A few of the smaller units prefer cash, so it is worth carrying some.'],
     ['Is the market step free?', `The market trades on one level inside, around a single looping corridor. For entrance thresholds and facilities, ring ${SITE.phone} and we will talk your visit through.`],
-    ['Are dogs welcome?', 'Well behaved dogs on leads are welcome in the corridor. Individual shops set their own rules, so ask at the door.'],
-    ['Is there parking?', 'Street parking around Wood Street is limited and mostly pay and display or permit. Coming by train, bus or bike is easier.'],
+    ['Are dogs welcome?', 'Well-behaved dogs on leads are welcome in the corridor. Individual shops set their own rules, so ask at the door.'],
+    ['Is there parking?', 'Street parking around Wood Street is limited and mostly pay-and-display or permit. Coming by train, bus or bike is easier.'],
     ['I want to open a shop here. Who do I talk to?', `Walthams manage the market and handle every unit enquiry. Email ${SITE.email} or ring ${SITE.phone}, or start on the <a href="join.html">Join the Market</a> page.`],
   ];
   out['visit.html'] = page({
@@ -888,7 +889,7 @@ ${list('Antique City')}
       <div class="card">
         <h2 class="card-label">Where</h2>
         <p style="font-size:16.5px;font-weight:600;color:#29231C">${SITE.address}<br>${SITE.town}</p>
-        <p style="margin-top:10px">Two doors onto Wood Street: 98 for Antique City and 102a for Market Side. Inside, it is all one corridor.</p>
+        <p style="margin-top:10px">Two doors onto Wood Street: 98 for Antique City and 102 for Market Side. Inside, it is all one corridor.</p>
         <a href="${SITE.directions}" target="_blank" rel="noopener" class="btn btn-red btn-sm" style="margin-top:14px">Get directions</a>
       </div>
       <div class="card">
@@ -901,17 +902,17 @@ ${hoursRows}
       <div class="card">
         <h2 class="card-label">Getting here</h2>
         <div style="display:grid;gap:12px;font-size:14.5px;line-height:1.6">
-          <div><span style="display:block;font-weight:700;font-size:13px">By train</span>Wood Street station is a two minute walk. Turn right out of the station and the market is on your left. Roughly 17 minutes from Liverpool Street on the Overground, 7 from Chingford. Walthamstow Central on the Victoria line is about a 15 minute walk.</div>
+          <div><span style="display:block;font-weight:700;font-size:13px">By train</span>Wood Street station is a two-minute walk. Turn right out of the station and the market is on your left. Roughly 17 minutes from Liverpool Street on the Overground, 7 from Chingford. Walthamstow Central on the Victoria line is about a 15-minute walk.</div>
           <div><span style="display:block;font-weight:700;font-size:13px">By bus</span>The W16 stops right outside. The 123, 212, 230, 275 and W12 stop within a short walk.</div>
-          <div><span style="display:block;font-weight:700;font-size:13px">By bike or car</span>Street parking is limited and mostly pay and display. The train really is easier.</div>
+          <div><span style="display:block;font-weight:700;font-size:13px">By bike or car</span>Street parking is limited and mostly pay-and-display. The train really is easier.</div>
         </div>
       </div>
       <div class="card">
         <h2 class="card-label">Inside the market</h2>
         <div style="display:grid;gap:12px;font-size:14.5px;line-height:1.6">
           <p>The market trades on one level, around a single looping corridor. Some units are snug and browsing can be close quarters, but traders are quick to help reach or fetch things.</p>
-          <p>Most traders take cards, though a few of the smaller units are cash friendlier.</p>
-          <p>Well behaved dogs on leads are welcome in the corridor. Individual shops set their own rules.</p>
+          <p>Most traders take cards, though a few of the smaller units prefer cash, so it is worth carrying some.</p>
+          <p>Well-behaved dogs on leads are welcome in the corridor. Individual shops set their own rules.</p>
           <p>For anything else, including access questions, ring <a href="${SITE.tel}" style="font-weight:700">${SITE.phone}</a> and we will talk your visit through.</p>
         </div>
       </div>
@@ -1118,10 +1119,10 @@ ${tl.map(([era, title, text]) => `        <li>
   </section>
   <section style="padding:24px 24px 8px">
     <div class="wrap-n grid grid-4">
-      <div class="card"><h2 class="card-title">A ready made crowd</h2><p>Browsers do the whole loop. Every door on the horseshoe gets walked past, Tuesday to Saturday.</p></div>
-      <div class="card"><h2 class="card-title">Low fuss spaces</h2><p>Small units, simple arrangements, none of the weight of a high street lease. Start small; grow sideways.</p></div>
+      <div class="card"><h2 class="card-title">A ready-made crowd</h2><p>Browsers do the whole loop. Every door on the horseshoe gets walked past, Tuesday to Saturday.</p></div>
+      <div class="card"><h2 class="card-title">Low-fuss spaces</h2><p>Small units, simple arrangements, none of the weight of a high street lease. Start small; grow sideways.</p></div>
       <div class="card"><h2 class="card-title">Good neighbours</h2><p>${shops.length} traders who lend tape, watch counters and send customers next door. The corridor looks after its own.</p></div>
-      <div class="card"><h2 class="card-title">E17, on the up</h2><p>Walthamstow&rsquo;s independent scene keeps growing, and the market is its longest running chapter.</p></div>
+      <div class="card"><h2 class="card-title">E17, on the up</h2><p>Walthamstow&rsquo;s independent scene keeps growing, and the market is its longest-running chapter.</p></div>
     </div>
   </section>
   <section style="padding:48px 24px 24px">
@@ -1131,7 +1132,7 @@ ${tl.map(([era, title, text]) => `        <li>
       <div class="two two-top" style="gap:36px">
         <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));align-content:start">
 ${vacant.map((v) => `          <a href="${enquire('unit', v.unit)}" class="card" style="display:block;text-decoration:none;color:#29231C;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translate(-2px,-2px)';this.style.boxShadow='6px 6px 0 #29231C'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-            <span style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">${unitBadge(v.unit)}<span class="cat" style="color:#A94A32">Available</span></span>
+            <span style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">${unitBadge(v.unit)} <span class="cat" style="color:#A94A32">Available</span></span>
             <span style="display:block;font-family:'Young Serif',serif;font-size:22px;margin:12px 0 6px">Unit ${esc(v.unit)}, ${esc(v.side)}</span>
             <span style="display:block;font-size:14px;color:#5C5142;line-height:1.6">${esc(SIDES[v.side].addr)}, on ${SIDES[v.side].where} &middot; Rent: enquire</span>
             <span style="display:block;font-weight:700;font-size:14px;color:#7C2A1D;margin-top:12px">Ask about this unit &rarr;</span>
@@ -1275,7 +1276,7 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
   <section style="padding:48px 24px 80px">
     <div style="max-width:920px;margin:0 auto">
       <h1 style="font-size:clamp(32px,4.4vw,46px);line-height:1.06;margin:0 0 8px">The small print</h1>
-      <p style="font-size:14.5px;color:#8A7B5E;margin:0 0 26px;font-style:italic">Drafts for review. To be checked by someone with a law degree before they are relied on.</p>
+      <p style="font-size:14.5px;color:#8A7B5E;margin:0 0 26px;font-style:italic">These policies cover this website. Questions about any of them go to Walthams, who manage the market.</p>
       <div class="legal-tabs" data-tabs role="tablist" aria-label="Policies">
         <a href="#privacy">Privacy</a>
         <a href="#cookies">Cookies</a>
@@ -1284,7 +1285,7 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
       <div class="card" style="padding:32px;border-radius:14px;box-shadow:5px 5px 0 rgba(41,35,28,.85);display:grid;gap:40px">
         <div class="legal-doc" id="privacy" data-doc>
           <h2>Privacy Policy</h2>
-          <p style="font-size:13px;color:#8A7B5E">Draft &middot; September 2026</p>
+          <p style="font-size:13px;color:#8A7B5E">Last updated September 2026</p>
           <p><strong>Who we are.</strong> Wood Street Indoor Market, ${SITE.address}, ${SITE.town}. The market is managed by Walthams. Questions about this policy: <a href="mailto:${SITE.email}">${SITE.email}</a>.</p>
           <p><strong>What we collect.</strong> Only what you give us: your name, email address, phone number if you add one, and whatever you write, when you send the contact form or email us. This website has no accounts and no newsletter, and it does not buy or sell data. This is a market, not that kind of market.</p>
           <p><strong>Why we use it.</strong> To reply to you and to progress unit enquiries. Legal bases: legitimate interest and steps taken before a contract.</p>
@@ -1294,7 +1295,7 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
         </div>
         <div class="legal-doc" id="cookies" data-doc>
           <h2>Cookie Policy</h2>
-          <p style="font-size:13px;color:#8A7B5E">Draft &middot; September 2026</p>
+          <p style="font-size:13px;color:#8A7B5E">Last updated September 2026</p>
           <p><strong>The short version.</strong> This site sets no cookies and runs no analytics or tracking. None.</p>
           <p><strong>If that changes.</strong> If the market adds analytics to count visits, it will only switch on after you say yes to a consent banner. Decline and the site works exactly the same.</p>
           <p><strong>Third parties.</strong> Fonts load from Google Fonts. The contact form sends through FormSubmit. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
@@ -1302,11 +1303,11 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
         </div>
         <div class="legal-doc" id="accessibility" data-doc>
           <h2>Accessibility Statement</h2>
-          <p style="font-size:13px;color:#8A7B5E">Draft &middot; September 2026</p>
+          <p style="font-size:13px;color:#8A7B5E">Last updated September 2026</p>
           <p><strong>Our aim.</strong> This website is built to meet WCAG 2.2 AA. Everyone should be able to find a shop, plan a visit and enquire about a unit, whatever they browse with.</p>
           <p><strong>What that means here.</strong> Full keyboard navigation with visible focus; a skip to content link; proper headings and labels; colour contrast checked against AA; touch targets of 44px and up; and every animation switches off when your device asks for reduced motion.</p>
           <p><strong>The market map.</strong> Every unit on the illustrated map is a keyboard operable link, and the same information is published as a plain list on the same page. You never need the picture to get the information.</p>
-          <p><strong>Known limitations.</strong> Most shop photographs are still being gathered; where one is missing the page says so rather than showing a stand in.</p>
+          <p><strong>Known limitations.</strong> Most shop photographs are still being gathered; where one is missing the page says so rather than showing a stand-in.</p>
           <p><strong>The building itself.</strong> The market trades on one level inside. For entrance thresholds and facilities, ring ${SITE.phone} and we will talk it through.</p>
           <p><strong>Spotted a problem?</strong> Tell us: <a href="mailto:${SITE.email}">${SITE.email}</a>. We would rather know.</p>
         </div>
@@ -1357,8 +1358,21 @@ ${files.map((f) => `  <url><loc>${SITE.url}${f === 'index.html' ? '' : f}</loc><
 }
 
 // ---------- write and check -------------------------------------------------
+// Every photo is offered as WebP first, with the JPEG as the fallback, and
+// decodes off the main thread. tools/webp.mjs makes the .webp copies.
+function pictures(html) {
+  return html.replace(/<img src="([^"]+\.jpg)"([^>]*)>/g, (m, src, rest) => {
+    const attrs = rest.includes('decoding=') ? rest : rest + ' decoding="async"';
+    const img = `<img src="${src}"${attrs}>`;
+    const webp = src.replace(/\.jpg$/, '.webp');
+    if (!existsSync(join(ROOT, webp.replace(/^(\.\.\/)+/, '')))) return img;
+    return `<picture><source type="image/webp" srcset="${webp}">${img}</picture>`;
+  });
+}
+
 let problems = 0;
-for (const [file, html] of Object.entries(out)) {
+for (const [file, raw] of Object.entries(out)) {
+  const html = file.endsWith('.html') ? pictures(raw) : raw;
   const bad = html.match(/[‒–—―−]/);
   if (bad) { console.error(`  ! long dash in ${file}`); problems++; }
   if (/£\s?\d|\bdeposit\b(?! are set out| and)|\bowner\b/i.test(html)) { console.error(`  ! possible rent/deposit/owner leak in ${file}`); problems++; }

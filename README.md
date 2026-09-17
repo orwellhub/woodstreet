@@ -11,9 +11,10 @@ nothing to install beyond Node.
 | `shop/*.html` | One page per shop, 24 of them. Generated. |
 | `sitemap.xml` | Generated. |
 | `tools/build.mjs` | The generator. All page copy and layout lives here. |
+| `tools/webp.mjs` | Makes a WebP copy of every photo and trims heavy JPEGs. Run after adding a photo. |
 | `data/shops.json` | The shop data, one entry per unit. Public, so it holds no rent, deposit or owner names. |
 | `assets/site.css`, `assets/site.js` | Shared styles and scripts, hand written. |
-| `uploads/` | Photography |
+| `uploads/` | Photography, each JPEG with a WebP copy beside it |
 | `brand/` | Walthams logo, light and inverse |
 | `archive/` | An earlier layout kept for reference, not served |
 | `.htaccess` | Redirects from the old page names, the 404 page, gzip and caching |
@@ -32,7 +33,9 @@ or the words deposit or owner in the output.
   `data/shops.json` and rebuild. Hours can be typed loosely ("wed 11:00-17:00");
   the build normalises them to "Wednesday 11.00 to 5.00".
 - **A shop photo**: put the file in `uploads/shops/`, named after the unit
-  (`shop-a16.jpg`, `shop-m25-26-27.jpg`), about 1000px wide and 4:3. Then set the
+  (`shop-a16.jpg`, `shop-m25-26-27.jpg`), about 1000px wide and 4:3. Run
+  `node tools/webp.mjs` so it gets a WebP copy (add the path to the list at the
+  top of that file). Then set the
   unit's `image` in `data/shops.json` to `{"src": "uploads/shops/shop-m28.jpg",
   "alt": "what the picture shows"}` and rebuild. The photo appears on the shop's
   page, its easel sheet, its directory card, and on the home page if it is among
@@ -70,7 +73,7 @@ next build will overwrite it, so put the change in the generator or the data.
 ## The map
 
 One U-shaped corridor open at the bottom onto Wood Street. Market Side units
-(M, 102a Wood Street) line the outer wall and Antique City units (A, 98 Wood
+(M, 102 Wood Street) line the outer wall and Antique City units (A, 98 Wood
 Street) sit on the inner block. Both rings run the same way round: in on the
 left arm, across the top, out on the right. The sequence is the real unit
 numbering; the shape is that walk drawn as a loop, not a measured plan, and the
@@ -129,7 +132,6 @@ Still to check:
 
 - the opening hours came from the first draft; Waltham Forest Council and Visit
   London both list Tuesday to Saturday, 10am to 5.30pm, which matches
-- the policies page is a draft and says so
 
 The history on the story page is researched, not drafted. Sources: Cinema
 Treasures (Crown Cinema, Wood Street), Waltham Forest Council's market page, the
