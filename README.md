@@ -9,6 +9,7 @@ A single-page site. One file, no build step, no dependencies, no framework.
 | `index.html` | The whole site. Content and styling all live here. |
 | `uploads/` | Photography (see the slots below) |
 | `brand/` | Walthams logo, light and inverse |
+| `archive/` | Earlier layouts kept for reference, not served |
 | `.htaccess` | Redirects old URLs to the landing page, plus gzip and caching |
 | `robots.txt` | Search engine directives |
 
@@ -18,7 +19,7 @@ Everything is in `index.html`, in the order it appears on the page:
 
 1. Header and opening hours strip
 2. Hero
-3. `#shops` the shop directory, grouped by building
+3. `#shops` the shop directory, one shop at a time on an easel
 4. `#map` the unit map for both buildings
 5. Our story
 6. `#visit` where, opening hours, getting here, inside the market
@@ -73,7 +74,20 @@ Three rules the generated markup follows, worth keeping if it is ever regenerate
 
 The map colours each unit by trade family and every unit also carries its shop name
 as text, so the colour is never the only thing carrying the information. Merged units
-(A2/3, M25/26/27 and so on) span two columns.
+(A2/3, M25/26/27 and so on) span two columns. Each occupied unit is a link to that
+shop's entry, `#shop-a1`, `#shop-m25-26-27` and so on.
+
+### The easel
+
+The directory shows one shop at a time on a drawn easel, with Previous and Next
+buttons, a counter, and the arrow keys. Clicking a unit on the map flips the easel
+to that shop and scrolls to it. All 24 entries are in the HTML; the script only
+hides all but one, so with JavaScript off the board simply lists every shop, and
+search engines see every description either way. The flip animation is off for
+anyone who has asked their system for reduced motion.
+
+The previous layout, a card grid grouped by building, is kept in
+`archive/shops-grid.html` with instructions for putting it back.
 
 To change a shop, edit the page directly. If the spreadsheet is reissued with many
 changes, regenerating is easier than patching by hand.
