@@ -156,18 +156,24 @@ a.tilt:hover{transform:translate(-2px,-2px) rotate(0deg);box-shadow:6px 6px 0 #2
 .social-ink{border-color:#29231C;color:#29231C}
 .social-ink:hover{background:#29231C;color:#F4EBD9}
 
-/* the announcement */
-.release{position:relative;background:#FBF5E7;border:2px solid #29231C;border-radius:14px;padding:34px 36px 30px;box-shadow:6px 6px 0 rgba(41,35,28,.85);max-width:860px;margin:0 auto}
-.release::before{content:"";position:absolute;left:0;right:0;top:0;height:12px;background:repeating-linear-gradient(90deg,#BF3B26 0 18px,#DCA528 18px 36px);border-bottom:2px solid #29231C;border-radius:12px 12px 0 0}
-.release-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:8px 0 22px}
-.release-date{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C2A1D}
-.release-head{font-size:clamp(28px,3.6vw,40px);line-height:1.1;margin:0 0 12px}
-.release-stand{font-size:18px;line-height:1.5;color:#3E362B;margin:0 0 22px;padding-bottom:22px;border-bottom:2px dashed rgba(41,35,28,.3);max-width:60ch}
-.release-body p{font-size:16.5px;line-height:1.7;margin:0 0 16px;max-width:66ch}
-.release-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-top:26px;padding-top:22px;border-top:2px solid #29231C}
-.release-sig{display:grid;gap:8px;font-size:14px}
-.release-sig img{width:130px;height:auto}
-@media (max-width:760px){.release{padding:26px 20px 24px}}
+/* the announcement, set like the front page of a local paper */
+.paper{position:relative;background:#FBF5E7;color:#29231C;border:2px solid #29231C;padding:22px 34px 26px;box-shadow:7px 7px 0 rgba(41,35,28,.85);max-width:980px;margin:0 auto;background-image:repeating-linear-gradient(0deg,rgba(41,35,28,.025) 0 1px,transparent 1px 4px)}
+.paper-stamp{position:absolute;top:-18px;right:28px;transform:rotate(5deg);background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:4px;padding:6px 14px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;box-shadow:3px 3px 0 #29231C}
+.paper-mast{text-align:center;border-bottom:4px double #29231C;padding-bottom:0;margin:0 0 18px}
+.paper-kicker{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:#7C2A1D;margin:0 0 8px}
+.paper-name{font-family:'Young Serif',serif;font-size:clamp(30px,5vw,58px);line-height:1;letter-spacing:.02em;text-transform:uppercase;margin:0 0 10px;color:#29231C}
+.paper-line{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid #29231C;border-bottom:1px solid #29231C;padding:6px 0;margin-bottom:4px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.paper-head{font-family:'Young Serif',serif;font-size:clamp(30px,4.6vw,54px);line-height:1.04;margin:0 auto 12px;text-align:center;max-width:22ch}
+.paper-deck{text-align:center;font-style:italic;font-size:18.5px;line-height:1.5;color:#3E362B;max-width:58ch;margin:0 auto 18px}
+.paper-by{text-align:center;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;border-top:1px solid #29231C;border-bottom:1px solid #29231C;padding:7px 0;margin:0 0 22px}
+.paper-cols{columns:3;column-gap:34px;column-rule:1px solid rgba(41,35,28,.35)}
+.paper-cols p{font-size:15.5px;line-height:1.6;margin:0 0 14px;text-align:justify;hyphens:auto}
+.paper-cols p:first-child::first-letter{float:left;font-family:'Young Serif',serif;font-size:62px;line-height:.8;padding:6px 8px 0 0;color:#7C2A1D}
+.paper-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-top:14px;padding-top:16px;border-top:4px double #29231C}
+.paper-sig{display:grid;gap:8px;font-size:14px}
+.paper-sig img{width:120px;height:auto}
+@media (max-width:900px){.paper-cols{columns:2}}
+@media (max-width:620px){.paper{padding:20px 18px 22px}.paper-cols{columns:1}.paper-cols p{text-align:left}.paper-stamp{right:14px;font-size:11.5px;padding:5px 10px}}
 
 /* top strip and header */
 .topstrip{background:#7C2A1D;color:#F3E7CE;font-size:13px;padding:6px 20px}
