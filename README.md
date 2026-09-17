@@ -92,8 +92,9 @@ entry, `#shop-a1`, `#shop-m25-26-27` and so on.
 The directory shows one shop at a time on a drawn easel, as a stack of sheets:
 Next peels the top sheet off to show the one beneath, Previous peels it back on.
 There are Previous and Next buttons, a counter, and the arrow keys. The board is
-held at the height of the tallest sheet, measured on load and again on resize, so
-the stand and the buttons stay exactly where they are as the shops change. Clicking a unit
+held at one height, the taller of the poster's own proportion and the tallest text
+panel, measured on load and again on resize, so the stand and the buttons stay
+exactly where they are as the shops change. Clicking a unit
 on the map flips the easel to that shop and scrolls to it. All 24 entries are in
 the HTML; the script only hides all but one, so with JavaScript off the board simply
 lists every shop, and search engines see every description either way. The peel is
@@ -103,15 +104,17 @@ Shops that have a photo come first in the stack, then the rest in unit order.
 
 ### Shop photos
 
-Each sheet has a photo slot, a pinned polaroid on the right on desktop and above
-the text on phones. Photos live in `uploads/shops/`, named after the unit:
+Each sheet is a poster: the photo fills the whole board and the words sit on it
+in a cream panel in the bottom left corner, so the picture shows through above
+and to the right. Keep the interesting part of a photo in its upper right, where
+it will not be covered. Photos live in `uploads/shops/`, named after the unit:
 `shop-a16.jpg`, `shop-a5-6.jpg`, `shop-m25-26-27.jpg`. Keep them 4:3 and about
 1000px wide.
 
 Two are in place, both taken from the spreadsheet: Mrs Tinsley's (A16) and
-Moroccan Corner (A5/6). Every other sheet holds a dashed "Photo on its way"
-placeholder with an HTML comment beside it giving the exact `<figure>` to paste
-in once the file exists. The placeholder is hidden from screen readers; a real
+Moroccan Corner (A5/6). Every other sheet holds the same composition over a
+marked-out frame with a "Photo on its way" tag, with an HTML comment beside it
+giving the exact `<figure>` to paste in once the file exists. The placeholder is hidden from screen readers; a real
 photo needs a proper `alt`.
 
 Two earlier photos, The Coven of Wiches (unit 38) and Bela's Brocante (unit 31),

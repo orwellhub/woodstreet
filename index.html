@@ -57,35 +57,36 @@ main section[id]{scroll-margin-top:96px}
 .easel-board::before,.easel-board::after{content:"";position:absolute;inset:0;background:#F3E9D3;border:2px solid #29231C;border-radius:12px;z-index:0}
 .easel-board::before{transform:translate(6px,7px) rotate(.8deg)}
 .easel-board::after{transform:translate(12px,14px) rotate(-1.2deg);background:#EDE1C6}
-.easel-sheet{position:relative;z-index:1;background:#FBF5E7;border:2px solid #29231C;border-radius:12px;box-shadow:6px 6px 0 rgba(41,35,28,.85);padding:32px 28px 26px;min-height:300px}
+.easel-sheet{--easel-ratio:0.667;position:relative;z-index:1;background:#EFE2C6;border:2px solid #29231C;border-radius:12px;box-shadow:6px 6px 0 rgba(41,35,28,.85);padding:0;overflow:hidden}
 .easel-clip{position:absolute;z-index:6;top:-15px;left:50%;transform:translateX(-50%) rotate(-1.5deg);width:104px;height:24px;background:#29231C;border-radius:7px 7px 4px 4px;box-shadow:inset 0 -3px 0 rgba(255,255,255,.12)}
 .easel-clip::after{content:"";position:absolute;left:50%;top:8px;width:34px;height:7px;margin-left:-17px;background:#DCA528;border-radius:3px}
-.easel-pad{list-style:none;margin:0;padding:0}
-.easel-page{display:block}
-.easel-page::after{content:"";display:block;clear:both}
-.easel:not(.is-js) .easel-page+.easel-page{border-top:2px dashed rgba(41,35,28,.3);margin-top:24px;padding-top:24px}
+.easel-pad{list-style:none;margin:0;padding:0;height:100%}
+.easel-page{position:relative;height:100%;min-height:100%}
+.easel:not(.is-js) .easel-page{aspect-ratio:3/2;border-bottom:2px solid #29231C}
+.easel:not(.is-js) .easel-page:last-child{border-bottom:0}
 .easel.is-js .easel-page{display:none}
 .easel.is-js .easel-page.is-current{display:block}
 .easel.is-js .easel-page.is-measure{display:block;visibility:hidden;position:static}
-.easel.is-js .easel-page.is-leaving,.easel.is-js .easel-page.is-arriving{display:block;position:absolute;z-index:5;left:-2px;top:-2px;right:-2px;bottom:-2px;box-sizing:border-box;padding:32px 28px 26px;background:#FBF5E7;border:2px solid #29231C;border-radius:12px;overflow:hidden;transform-origin:0% 100%;backface-visibility:hidden;will-change:transform,opacity}
+.easel.is-js .easel-page.is-leaving,.easel.is-js .easel-page.is-arriving{display:block;position:absolute;z-index:5;left:-2px;top:-2px;right:-2px;bottom:-2px;height:auto;min-height:0;box-sizing:border-box;background:#EFE2C6;border:2px solid #29231C;border-radius:12px;overflow:hidden;transform-origin:0% 100%;backface-visibility:hidden;will-change:transform,opacity}
 .easel.is-js .easel-page.is-leaving{animation:easel-peel-off .6s cubic-bezier(.55,.05,.7,.2) forwards}
 .easel.is-js .easel-page.is-arriving{animation:easel-peel-on .6s cubic-bezier(.2,.75,.25,1) both}
 @keyframes easel-peel-off{0%{transform:none;opacity:1}35%{transform:translate(4%,-3%) rotate(-3deg) rotateY(-12deg);opacity:1}100%{transform:translate(70%,-42%) rotate(-16deg) rotateY(-35deg);opacity:0}}
 @keyframes easel-peel-on{0%{transform:translate(70%,-42%) rotate(-16deg) rotateY(-35deg);opacity:0}65%{opacity:1}100%{transform:none;opacity:1}}
-.easel-photo{float:right;width:220px;margin:0 0 14px 22px;padding:8px 8px 12px;background:#fff;border:2px solid #29231C;box-shadow:4px 4px 0 rgba(41,35,28,.85);transform:rotate(2deg)}
-.easel-photo img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;height:auto}
-.easel-photo-empty{display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;background:#F6EDDA;border-style:dashed;border-color:#C4684E;box-shadow:none;padding:0}
-.easel-photo-empty span{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#A94A32}
+.easel-photo{position:absolute;inset:0;margin:0;padding:0;background:#EFE2C6}
+.easel-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.easel-photo-empty::before{content:"";position:absolute;inset:14px;border:2px dashed #C4684E;border-radius:8px;opacity:.7}
+.easel-photo-empty span{position:absolute;top:26px;right:28px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#A94A32;background:#F6EDDA;border:1.5px solid #C4684E;border-radius:999px;padding:4px 10px;transform:rotate(3deg)}
+.easel-text{position:absolute;left:22px;bottom:22px;max-width:min(62%,440px);background:rgba(251,245,231,.95);border:2px solid #29231C;border-radius:10px;box-shadow:4px 4px 0 rgba(41,35,28,.85);padding:18px 20px 18px}
 .easel-tags{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .easel-unit{background:#29231C;color:#F4EBD9;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.08em;padding:3px 8px;border-radius:4px}
 .easel-building{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#7C2A1D}
 .easel-cat{border:1.5px solid #29231C;border-radius:999px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px}
-.easel-name{font-size:clamp(26px,3.4vw,34px);line-height:1.12;margin:16px 0 10px;display:flex;align-items:center;gap:12px}
+.easel-name{font-size:clamp(24px,3vw,30px);line-height:1.12;margin:12px 0 8px;display:flex;align-items:center;gap:10px}
 .easel-swatch{flex:0 0 auto;width:14px;height:14px;border-radius:99px;border:1.5px solid #29231C}
-.easel-about{font-size:17px;line-height:1.65;color:#3E362B;margin:0 0 14px}
+.easel-about{font-size:15.5px;line-height:1.55;color:#3E362B;margin:0 0 10px}
 .easel-about-pending{color:#8A7B5E;font-style:italic}
-.easel-hours{font-size:14px;color:#8A7B5E;margin:0 0 12px}
-.easel-meta{display:flex;gap:16px;flex-wrap:wrap;margin:0;font-size:15px}
+.easel-hours{font-size:13px;color:#8A7B5E;margin:0 0 8px}
+.easel-meta{display:flex;gap:14px;flex-wrap:wrap;margin:0;font-size:14.5px}
 .easel-meta-link{font-weight:700}
 .easel-stand{position:relative;height:118px;z-index:1}
 .easel-ledge{position:absolute;z-index:3;top:-9px;left:9%;right:9%;height:13px;background:#B07A3C;border:2px solid #29231C;border-radius:3px;box-shadow:3px 3px 0 rgba(41,35,28,.6)}
@@ -105,7 +106,7 @@ main section[id]{scroll-margin-top:96px}
 .map-unit{transition:transform .15s,box-shadow .15s}
 .map-unit:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 rgba(41,35,28,.85);color:#29231C;z-index:2}
 @media (prefers-reduced-motion:reduce){.easel.is-js .easel-page.is-leaving,.easel.is-js .easel-page.is-arriving{animation:none}.easel-sheet{transition:none}}
-@media (max-width:760px){.easel{scroll-margin-top:144px}.easel-sheet{padding:26px 18px 22px}.easel.is-js .easel-page.is-leaving,.easel.is-js .easel-page.is-arriving{padding:26px 18px 22px}.easel-photo{float:none;width:100%;max-width:300px;margin:0 0 16px;transform:none}.easel-stand{height:92px}.easel-leg-l{left:20%}.easel-leg-r{right:20%}.easel-hint{display:none}.easel-controls{grid-template-columns:1fr 70px 1fr;gap:8px}.easel-btn{padding:11px 12px;font-size:14px}}
+@media (max-width:760px){.easel{scroll-margin-top:144px}.easel-sheet{--easel-ratio:1.2}.easel:not(.is-js) .easel-page{aspect-ratio:5/6}.easel-text{left:12px;right:12px;bottom:12px;max-width:none;padding:14px 14px 14px}.easel-photo-empty span{top:18px;right:18px}.easel-stand{height:92px}.easel-leg-l{left:20%}.easel-leg-r{right:20%}.easel-hint{display:none}.easel-controls{grid-template-columns:1fr 70px 1fr;gap:8px}.easel-btn{padding:11px 12px;font-size:14px}}
 @keyframes wsm-pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}}
 @media (max-width:760px){.sec{padding:52px 20px}.nav{display:none}.brand-sub{letter-spacing:.14em;font-size:9.5px}.managed{font-size:10px;margin-top:5px}.managed img{width:92px}main section[id]{scroll-margin-top:144px}}
@@ -194,6 +195,7 @@ main section[id]{scroll-margin-top:96px}
           <ol class="easel-pad" data-easel-pad>
           <li class="easel-page" id="shop-a5-6" data-unit="A5/6" data-building="Antique City">
             <figure class="easel-photo"><img src="uploads/shops/shop-a5-6.jpg" alt="Inside Moroccan Corner: stacked rugs, leather bags, poufs and painted ceramics" width="1000" height="750" loading="lazy"></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A5/6</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -203,9 +205,11 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Discover Moroccan artisan goods and crafts at Moroccan Corner. This small independent shop brings a taste of Moroccan craftsmanship to Wood Street Indoor Market.</p>
             
             <p class="easel-meta"><a href="tel:+447879363631" class="easel-meta-link">07879 363631</a><a href="https://www.instagram.com/moroccan_corner_e17/" target="_blank" rel="noopener" class="easel-meta-link">Instagram</a></p>
+            </div>
           </li>
           <li class="easel-page" id="shop-a16" data-unit="A16" data-building="Antique City">
             <figure class="easel-photo"><img src="uploads/shops/shop-a16.jpg" alt="Mrs Tinsley's Vintage and Retro, framed pictures and prints hung around the shop window" width="1000" height="750" loading="lazy"></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A16</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -215,11 +219,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Explore furniture, lighting and decorative finds from the past at Mrs Tinsley’s Vintage &amp; Retro. This small vintage and antiques shop also stocks art, advertising collectibles, clothing and textiles.</p>
             <p class="easel-hours">Tuesday to Saturday 10am until 4pm</p>
             
+            </div>
           </li>
           <li class="easel-page" id="shop-a1" data-unit="A1" data-building="Antique City">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-a1.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A1</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -229,11 +235,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Make a gift feel personal at Tokens &amp; Treats. Discover personalised cards, bags and T-shirts, alongside wedding favours and decorated glassware for celebrations and thoughtful everyday presents.</p>
             
             <p class="easel-meta"><a href="tel:+447951103425" class="easel-meta-link">07951 103425</a></p>
+            </div>
           </li>
           <li class="easel-page" id="shop-a2-3" data-unit="A2/3" data-building="Antique City">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-a2-3.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A2/3</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -243,11 +251,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Get your next craft project started at Lilac Domino. Browse wool, yarn and sewing and needlework supplies, whether you enjoy knitting, stitching or making something by hand.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-a8" data-unit="A8" data-building="Antique City">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-a8.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A8</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -257,11 +267,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Discover rare second-hand shoes at Tony Shoe Sale, specialising in trainers, high-tops and casual footwear. Browse shelves packed with distinctive styles, alongside a selection of bags and denim clothing.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-a9" data-unit="A9" data-building="Antique City">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-a9.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A9</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -271,11 +283,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Make time for a musical browse at Ray’s Records, one of Wood Street Indoor Market’s independent record shops. Explore the selection and see what catches your ear.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-a10" data-unit="A10" data-building="Antique City">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-a10.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A10</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -285,11 +299,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Take time for yourself at Malaya Therapies. Run by Kylie Marks, the practice offers osteopathy and a range of massage treatments, including deep tissue, sports, pregnancy and lymphatic drainage massage.</p>
             <p class="easel-hours">Wednesday to Saturday: 10am to 5pm</p>
             
+            </div>
           </li>
           <li class="easel-page" id="shop-a12-a13" data-unit="A12/A13" data-building="Antique City">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-a12-a13.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A12/A13</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -299,11 +315,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Discover your lash style at Claudia Rose Lashes. Choose from classic, hybrid and volume eyelash extensions, with infill and removal appointments also available.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-a14" data-unit="A14" data-building="Antique City">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-a14.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A14</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -313,11 +331,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Enjoy a little time for yourself at Beauty @ Anu. This beauty salon offers eyebrow threading and tinting, waxing, facials and Indian head massage.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-a15" data-unit="A15" data-building="Antique City">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-a15.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT A15</span>
               <span class="easel-building">Antique City &middot; 98 Wood Street</span>
@@ -327,11 +347,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Dig into second-hand vinyl at Mike’s Record Shop. Browse music spanning rock, punk, new wave, blues, jazz, folk, reggae and soul, and look out for an old favourite or a new discovery.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-m2" data-unit="M2" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m2.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M2</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -341,11 +363,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Freshly made drinks and a taste of Jamaica await at SRK Delight. Semone’s juice bar serves fruit juices, smoothies and fruit cups, alongside sugarcane juice, coconut water and Jamaican drinks and snacks.</p>
             <p class="easel-hours">Wednesday to Saturday, 11.00am to 4.00pm</p>
             <p class="easel-meta"><a href="tel:+447539218486" class="easel-meta-link">07539 218486</a><a href="https://www.instagram.com/srkdelightjuicing/" target="_blank" rel="noopener" class="easel-meta-link">Instagram</a></p>
+            </div>
           </li>
           <li class="easel-page" id="shop-m3" data-unit="M3" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m3.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M3</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -355,11 +379,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Create something personal or give a treasured piece a new lease of life at RoseCraft Jewellers. Discover bespoke jewellery and repair services, including stone replacement, engraving, polishing and refurbishment.</p>
             <p class="easel-hours">By appointment</p>
             <p class="easel-meta"><a href="tel:+447956851464" class="easel-meta-link">07956 851464</a><a href="https://www.rosecraftjewellery.co.uk" target="_blank" rel="noopener" class="easel-meta-link">Website</a></p>
+            </div>
           </li>
           <li class="easel-page" id="shop-m6-m7" data-unit="M6/M7" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m6-m7.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M6/M7</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -369,11 +395,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Find something to spark playtime at Rinkies Toys. Explore toys, games and gifts for children, from baby toys and cuddly plush characters to LEGO and action figures.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-m8" data-unit="M8" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m8.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M8</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -383,11 +411,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Find your next read at Books From Boxes, an independent bookshop tucked inside Wood Street Indoor Market. Browse a mix of new and second-hand books, alongside a small selection of stationery.</p>
             <p class="easel-hours">Saturday 10am to 5pm</p>
             
+            </div>
           </li>
           <li class="easel-page" id="shop-m9" data-unit="M9" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m9.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M9</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -397,11 +427,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Explore men’s fashion from decades past at Vintage Tony. Specialising mainly in the 1960s and 1970s, the shop offers vintage clothing for sale and hire, including sportswear and trainers.</p>
             
             <p class="easel-meta"><a href="tel:+447703645946" class="easel-meta-link">07703 645946</a></p>
+            </div>
           </li>
           <li class="easel-page" id="shop-m10" data-unit="M10" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m10.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M10</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -411,11 +443,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Add a little character to your wardrobe or home at Pritzy. Discover vintage-inspired jewellery, bags, hats and fashion accessories, alongside bridal accessories, gifts and decorative pieces for the home.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-m11-12" data-unit="M11/12" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m11-12.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M11/12</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -425,11 +459,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Give pre-loved fashion another outing with Sustainable style by S&amp;K. Browse vintage and retro clothing and find something with its own history to add to your wardrobe.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-m23-24" data-unit="M23/24" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m23-24.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M23/24</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -439,11 +475,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Browse records and CDs at Music Family Records. Take a moment to explore the music on offer, revisit a favourite or find something new for your collection.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-m25-26-27" data-unit="M25/26/27" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m25-26-27.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M25/26/27</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -453,11 +491,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Freshen up your look with Timmy Tapers. The barbering business offers haircuts, with mobile and home appointments currently advertised. Get in touch directly to arrange a booking.</p>
             <p class="easel-hours">Tuesday to Saturday: 10am to 5pm</p>
             <p class="easel-meta"><a href="https://www.instagram.com/timmytapersbarbershop/" target="_blank" rel="noopener" class="easel-meta-link">Instagram</a></p>
+            </div>
           </li>
           <li class="easel-page" id="shop-m28" data-unit="M28" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m28.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M28</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -467,11 +507,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Discover colourful artwork at Mykeyartzone, a small studio gallery in Wood Street Indoor Market. Browse portraits, landscapes and illustrated pieces in a variety of styles, and find something to bring character to your walls.</p>
             
             <p class="easel-meta"><a href="tel:+447765190033" class="easel-meta-link">07765 190033</a></p>
+            </div>
           </li>
           <li class="easel-page" id="shop-m29-30" data-unit="M29/30" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m29-30.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M29/30</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -481,11 +523,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Explore second-hand vinyl at Disc Disciple Records, with music spanning rock, punk, new wave, blues, jazz, folk, reggae and soul. Browse for a much-loved album or discover something new for your collection.</p>
             
             
+            </div>
           </li>
           <li class="easel-page" id="shop-m34-35" data-unit="M34/35" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m34-35.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M34/35</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -495,11 +539,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about easel-about-pending">A fuller listing for this shop is on its way.</p>
             
             <p class="easel-meta"><a href="tel:+447799486220" class="easel-meta-link">07799 486220</a></p>
+            </div>
           </li>
           <li class="easel-page" id="shop-m36" data-unit="M36" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m36.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M36</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -509,11 +555,13 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Discover handmade jewellery and fashion accessories by Japanese designer and maker Rie Tanabe at Flowerie88. The shop also offers repairs, alterations and remodelling to give treasured jewellery a fresh chapter.</p>
             <p class="easel-hours">Wednesday 11.00 to 5.00, Thursday 11.00 to 3.00, Friday 11.00 to 5.00, Saturday 11.00 to 4.00</p>
             <p class="easel-meta"><a href="tel:+447961989635" class="easel-meta-link">07961 989635</a><a href="https://www.flowerie88.com" target="_blank" rel="noopener" class="easel-meta-link">Website</a><a href="https://www.instagram.com/flowerie88/" target="_blank" rel="noopener" class="easel-meta-link">Instagram</a><a href="mailto:info@flowerie88.com" class="easel-meta-link">Email</a></p>
+            </div>
           </li>
           <li class="easel-page" id="shop-m37" data-unit="M37" data-building="Market Side">
             <!-- photo: drop the file in uploads/shops/ and replace this figure with
                  <figure class="easel-photo"><img src="uploads/shops/shop-m37.jpg" alt="..." width="1000" height="750" loading="lazy"></figure> -->
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>
+            <div class="easel-text">
             <span class="easel-tags">
               <span class="easel-unit">UNIT M37</span>
               <span class="easel-building">Market Side &middot; 102a Wood Street</span>
@@ -523,6 +571,7 @@ main section[id]{scroll-margin-top:96px}
             <p class="easel-about">Browse fashion and finds from the past at Jimmy Mack Vintage &amp; Retro. Discover vintage and retro clothing alongside film annuals and collectibles for a little everyday nostalgia.</p>
             
             
+            </div>
           </li>
           </ol>
           </div>
@@ -898,11 +947,12 @@ main section[id]{scroll-margin-top:96px}
   function fit() {
     var cs = getComputedStyle(sheet);
     var pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
-    var max = 0;
+    var ratio = parseFloat(cs.getPropertyValue('--easel-ratio')) || 0.667;
+    var max = Math.round(sheet.clientWidth * ratio);
     pages.forEach(function (p) {
-      var wasHidden = p.hidden;
+      var wasHidden = p.hidden, t = p.querySelector('.easel-text');
       p.hidden = false; p.classList.add('is-measure');
-      max = Math.max(max, p.offsetHeight);
+      if (t) max = Math.max(max, t.offsetHeight + 2 * (parseFloat(getComputedStyle(t).bottom) || 22));
       p.classList.remove('is-measure'); p.hidden = wasHidden;
     });
     sheet.style.height = Math.ceil(max + pad) + 'px';
