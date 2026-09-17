@@ -1,8 +1,6 @@
 # Wood Street Indoor Market, Apache config (Hostinger)
 DirectoryIndex index.html
 
-# The site is a single page. Send the old multi-page URLs, and anything else
-# that is not a real file, back to the landing page.
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
@@ -14,24 +12,38 @@ DirectoryIndex index.html
   RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
   RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
 
+  # The first version of the site used Name.dc.html pages. Send those
+  # addresses to their replacements.
+  RewriteRule ^Home\.dc\.html$ / [R=301,L]
+  RewriteRule ^(Traders|Trader)\.dc\.html$ /shops.html [R=301,L]
+  RewriteRule ^(Map|MiniMap)\.dc\.html$ /map.html [R=301,L]
+  RewriteRule ^(WhatsOn|Event)\.dc\.html$ /whats-on.html [R=301,L]
+  RewriteRule ^Visit\.dc\.html$ /visit.html [R=301,L]
+  RewriteRule ^Story\.dc\.html$ /story.html [R=301,L]
+  RewriteRule ^(Journal|Article)\.dc\.html$ /journal.html [R=301,L]
+  RewriteRule ^(Join|Unit|Apply)\.dc\.html$ /join.html [R=301,L]
+  RewriteRule ^Contact\.dc\.html$ /contact.html [R=301,L]
+  RewriteRule ^Legal\.dc\.html$ /legal.html [R=301,L]
   RewriteRule ^(.+)\.dc\.html$ / [R=301,L]
 </IfModule>
 
-ErrorDocument 404 /index.html
+ErrorDocument 404 /404.html
 
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml application/xml
 </IfModule>
 
 # Photos are cached hard, because a changed photo gets a new filename.
-# The page itself must never be cached: the whole site lives in index.html,
-# so a cached copy hides every deploy until it expires.
+# Pages must never be cached, or a cached copy hides every deploy until it
+# expires. The stylesheet and script are cached briefly for the same reason.
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType image/jpeg "access plus 1 month"
   ExpiresByType image/webp "access plus 1 month"
   ExpiresByType image/png "access plus 1 month"
   ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType text/css "access plus 1 hour"
+  ExpiresByType application/javascript "access plus 1 hour"
   ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
 

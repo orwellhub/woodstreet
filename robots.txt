@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /archive/
 
-# Update the host below to your live domain before launch
-# Sitemap: https://example.com/sitemap.xml
+Sitemap: https://woodstreetindoormarket.co.uk/sitemap.xml
