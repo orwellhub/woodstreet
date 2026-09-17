@@ -58,9 +58,10 @@ few hundred pixels wide, and large files make the page slow on a phone.
 ## The shops and the map
 
 Both sections are generated from the client spreadsheet
-(`Wood Street Market - Shops Updated.xlsx`), not hand written. The market has two
-buildings: Antique City at 98 Wood Street (units A1 to A16) and Market Side at
-102a Wood Street (units M2 to M38).
+(`Wood Street Market - Shops Updated.xlsx`), not hand written. The market is one
+U-shaped corridor with units down both sides of it. The sheet's two sections are
+the two sides: Market Side (units M2 to M38, 102a Wood Street) along the outer
+wall, Antique City (units A1 to A16, 98 Wood Street) on the inner block.
 
 Three rules the generated markup follows, worth keeping if it is ever regenerated:
 
@@ -72,10 +73,14 @@ Three rules the generated markup follows, worth keeping if it is ever regenerate
   column mostly holds pasted link text ("Pritzy logo", "Books From Boxes") rather
   than URLs, so most shops correctly have no website link.
 
-The map draws each building as a U: in from Wood Street, up the left side, across
-the top, and back down the right, with the corridor in the middle. The sequence is
-the real unit numbering; the shape is that walking order drawn as a loop, not a
-measured plan, and the page says so. If actual floor plans turn up, the generator's
+The map is one plan: a U-shaped corridor open at the bottom onto Wood Street, an
+outer ring of Market Side units around the walls, an inner ring of Antique City
+units on the block in the middle. Both rings run the same way round, in on the
+left arm and out on the right. The sequence is the real unit numbering; the shape
+is that walk drawn as a loop, not a measured plan, and the page says so. Two
+assumptions are baked in and are one-line changes in the generator: that Market
+Side is the outer ring (it has more units, so it is the longer side), and that
+both rings are numbered in the same direction. If actual floor plans turn up, the
 geometry block is the only thing that needs replacing. The map colours each unit by
 trade family and every unit also carries its shop name as text, so the colour is
 never the only thing carrying the information. Merged units (A2/3, M25/26/27 and so
@@ -86,7 +91,9 @@ entry, `#shop-a1`, `#shop-m25-26-27` and so on.
 
 The directory shows one shop at a time on a drawn easel, as a stack of sheets:
 Next peels the top sheet off to show the one beneath, Previous peels it back on.
-There are Previous and Next buttons, a counter, and the arrow keys. Clicking a unit
+There are Previous and Next buttons, a counter, and the arrow keys. The board is
+held at the height of the tallest sheet, measured on load and again on resize, so
+the stand and the buttons stay exactly where they are as the shops change. Clicking a unit
 on the map flips the easel to that shop and scrolls to it. All 24 entries are in
 the HTML; the script only hides all but one, so with JavaScript off the board simply
 lists every shop, and search engines see every description either way. The peel is
