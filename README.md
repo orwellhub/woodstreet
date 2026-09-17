@@ -18,12 +18,13 @@ Everything is in `index.html`, in the order it appears on the page:
 
 1. Header and opening hours strip
 2. Hero
-3. `#shops` a placeholder until there is a real trader list
-4. Our story
-5. `#visit` where, opening hours, getting here, inside the market
-6. Photo strip
-7. `#join` the join the market call to action
-8. Footer, including the social buttons
+3. `#shops` the shop directory, grouped by building
+4. `#map` the unit map for both buildings
+5. Our story
+6. `#visit` where, opening hours, getting here, inside the market
+7. Photo strip
+8. `#join` the join the market call to action
+9. Footer, including the social buttons
 
 Opening hours appear in four places, so change all of them together:
 the top strip, the hero status line, the `#visit` hours table, and the footer.
@@ -52,6 +53,30 @@ that value adjusting.
 
 Keep images to roughly 1000px on the long edge. They are only ever shown a
 few hundred pixels wide, and large files make the page slow on a phone.
+
+## The shops and the map
+
+Both sections are generated from the client spreadsheet
+(`Wood Street Market - Shops Updated.xlsx`), not hand written. The market has two
+buildings: Antique City at 98 Wood Street (units A1 to A16) and Market Side at
+102a Wood Street (units M2 to M38).
+
+Three rules the generated markup follows, worth keeping if it is ever regenerated:
+
+- **Rent and deposit never appear.** Both are columns in the spreadsheet and both
+  are commercially sensitive.
+- **Owner names are not published as a field.** They appear only where the client's
+  own description already names them.
+- **A link is only rendered for a genuine address.** The spreadsheet's Website
+  column mostly holds pasted link text ("Pritzy logo", "Books From Boxes") rather
+  than URLs, so most shops correctly have no website link.
+
+The map colours each unit by trade family and every unit also carries its shop name
+as text, so the colour is never the only thing carrying the information. Merged units
+(A2/3, M25/26/27 and so on) span two columns.
+
+To change a shop, edit the page directly. If the spreadsheet is reissued with many
+changes, regenerating is easier than patching by hand.
 
 ## Social links
 
@@ -83,6 +108,15 @@ and links there. Every phone number and email address on the page is theirs:
 Wood Street has no phone or email of its own. If Walthams' details change,
 they appear in the top strip, the two cards under The shops, Inside the
 market, the Join the Market button, the footer, and the JSON-LD block.
+
+Outstanding on the shop data:
+
+- **Vintage Corner (M34/35)** has no category and no description in the spreadsheet,
+  so its card says a fuller listing is coming.
+- **One of its two phone numbers is malformed** (12 digits) and is not published.
+- **Units M13 to M22 are absent from the spreadsheet** entirely, so they are absent
+  from the map. If they exist, they need adding.
+- Most shops have no phone number in the source, so most cards show none.
 
 These came from the original design draft and are still unconfirmed:
 
