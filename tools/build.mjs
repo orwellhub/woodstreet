@@ -411,6 +411,34 @@ const vacancyLine = (rel) => {
   return `${vacant.length} units are currently available to let: ${parts}. <a href="${rel}join.html" style="font-weight:700">Enquire about taking one on</a>.`;
 };
 
+// The announcement that Walthams have taken the market on. Shown on the home
+// page and in full on What's On.
+function pressRelease(rel) {
+  return `<article class="release">
+        <div class="release-top">
+          <span class="stamp" style="transform:rotate(-2deg)">PRESS RELEASE</span>
+          <span class="release-date">Walthamstow, September 2026</span>
+        </div>
+        <h3 class="release-head">Walthams take on Wood Street Indoor Market</h3>
+        <p class="release-stand">The letting agent for this corner of Walthamstow is now running the market. Same corridor, same shops, and a lot more to come.</p>
+        <div class="release-body">
+          <p>Wood Street Indoor Market has a new team behind it. Walthams, the letting agent for this part of E17, have taken over the running of the market and are now looking after the building, the units and the traders inside them.</p>
+          <p>For anyone walking through the door, nothing changes. The corridor is the same corridor, the shops are the same shops, and it all opens Tuesday to Saturday just as it always has. What changes is what comes next. There are empty units to fill, a frontage that deserves some attention, and a market that has been quietly brilliant for seventy years without ever making much noise about it. That last part is about to change.</p>
+          <p>Stay tuned. Fairs, late openings and new arrivals will be announced here first, and on the market&rsquo;s Instagram and Facebook pages. If you have ever fancied a shop of your own, this is a very good moment to get in touch. And if you already trade here, come and say hello. We are in the building most weeks.</p>
+        </div>
+        <div class="release-foot">
+          <div class="release-sig">
+            <img src="${rel}brand/walthams-logo.svg" alt="Walthams" width="130" height="21">
+            <span><a href="${SITE.tel}">${SITE.phone}</a> &middot; <a href="mailto:${SITE.email}">${SITE.email}</a></span>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a href="${rel}join.html" class="btn btn-red btn-sm">Ask about a unit</a>
+            <a href="${SITE.ig}" target="_blank" rel="noopener" class="btn btn-cream btn-sm">Follow on Instagram</a>
+          </div>
+        </div>
+      </article>`;
+}
+
 const statusLine = (extra = '') => `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="status-dot" data-open-dot aria-hidden="true"></span>
           <span data-open-detail style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:13.5px;letter-spacing:.06em;text-transform:uppercase">Open ${SITE.hoursShort}</span>${extra}
@@ -421,7 +449,6 @@ const out = {};
 
 // Home
 {
-  const featured = [...shops.filter((s) => s.image), ...shops.filter((s) => !s.image && (s.phones.length || Object.keys(s.links).length)), ...shops.filter((s) => !s.image && !s.phones.length && !Object.keys(s.links).length)].slice(0, 6);
   out['index.html'] = page({
     file: 'index.html', active: '',
     title: 'Wood Street Indoor Market | 30 little shops in Walthamstow, E17',
@@ -468,65 +495,61 @@ const out = {};
       ${eyebrow('Start somewhere')}
       <h2 class="h2">What are you after?</h2>
       <p class="lede" style="margin-bottom:30px">${usedFamilies.length} trades, ${shops.length} shops, one corridor. Pick a thread and pull.</p>
-      <div class="grid grid-cats">
+      <div class="grid grid-cats" style="--n:${usedFamilies.length}">
 ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-card tilt">
-          <span class="nm"><span class="sw" aria-hidden="true" style="background:${f.color}"></span>${esc(f.label)}</span>
+          <span class="nm"><span class="sw" aria-hidden="true" style="background:${f.color}"></span>${esc(f.label).replace(/ (&amp;|and) /, '<br>$1 ')}</span>
           <span class="ct">${famCount(f)} ${famCount(f) === 1 ? 'shop' : 'shops'}</span>
         </a>`).join('\n')}
       </div>
     </div>
   </section>
 
-  <section class="sec">
+  <section id="shops" class="sec">
     <div class="wrap">
-      <div class="sec-head">
+      <div class="sec-head" style="margin-bottom:6px">
         <div>
-          ${eyebrow('Meet the shops')}
-          <h2 class="h2">The people behind the counters</h2>
+          ${eyebrow('Who is in the market')}
+          <h2 class="h2">The shops</h2>
         </div>
-        <a href="shops.html" class="more">Explore all ${shops.length} shops &rarr;</a>
+        <a href="shops.html" class="more">Search all ${shops.length} shops &rarr;</a>
       </div>
-      <div class="grid grid-cards">
-${featured.map((r) => '          ' + shopCard(r, '')).join('\n')}
-      </div>
+      <p class="lede" style="font-size:16.5px;line-height:1.65">One corridor bent into a U, with small units down both sides of it. Every shop is independent and run by the person behind the counter, so most keep their own days and hours inside the market&rsquo;s opening times. Ring ahead if you are making the trip for one in particular. Flip through them one at a time below, or pick a unit on the map to jump straight to it.</p>
+      ${easelHtml('')}
+      <p style="font-size:14.5px;line-height:1.6;color:#5C5142;max-width:62ch;margin:30px auto 0;text-align:center">${vacancyLine('')}</p>
     </div>
   </section>
 
-  <section class="sec sec-alt">
-    <div class="wrap two" style="gap:48px">
-      <div>
-        ${eyebrow('The famous horseshoe')}
-        <h2 class="h2" style="margin-bottom:10px">One corridor. Thirty doors.</h2>
-        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:52ch;margin:0 0 22px">The market bends round a single horseshoe corridor. In one door, round the loop, out wherever you end up. Market Side units line the outer wall, Antique City units the inner block, and the map knows every one of them.</p>
-        <div style="margin-bottom:26px">${legend()}</div>
-        <a href="map.html" class="btn btn-cream">Open the market map &rarr;</a>
+  <section id="map" class="sec sec-alt">
+    <div class="wrap">
+      <div class="sec-head" style="margin-bottom:6px">
+        <div>
+          ${eyebrow('Find your way round')}
+          <h2 class="h2">The market map</h2>
+        </div>
+        <a href="map.html" class="more">Open the full map page &rarr;</a>
       </div>
-      <div>
-        <a href="map.html" aria-label="Open the market map" style="display:block;text-decoration:none;color:inherit">
-          ${mapHtml({ mini: true })}
-        </a>
-        <p class="note">The order the units come in, not measured distances. Tap for the full map.</p>
+      <p class="lede" style="font-size:16.5px;line-height:1.65;max-width:64ch;margin-bottom:30px">One corridor, bent into a U, with shops down both sides of the walkway. Market Side units line the outer wall and Antique City units the inner block, and both run the same way round: in from Wood Street, up one arm, across the top and back down the other. It shows the order the units come in rather than measured distances, and any unit can be tapped to bring that shop up on the easel.</p>
+      <div class="map-card">
+        <div class="head">
+          <h3>One corridor, two sides</h3>
+          <span>Outer: Market Side (M) &middot; Inner: Antique City (A)</span>
+        </div>
+        ${mapHtml({ hrefFor: (r) => '#shop-' + r.slug })}
       </div>
+      ${legend()}
     </div>
   </section>
 
-  <section class="sec">
+  <section id="news" class="sec">
     <div class="wrap">
       <div class="sec-head">
         <div>
-          ${eyebrow('Worth a diary note')}
-          <h2 class="h2">What&rsquo;s on at the market</h2>
+          ${eyebrow('News from the market')}
+          <h2 class="h2">Under new management</h2>
         </div>
-        <a href="whats-on.html" class="more">See what&rsquo;s on &rarr;</a>
+        <a href="whats-on.html" class="more">What&rsquo;s on &rarr;</a>
       </div>
-      <div class="empty">
-        <p class="big">Nothing in the diary just now.</p>
-        <p>Fairs, late openings and market days will be listed here as they are fixed. Until then the shops themselves are the event, Tuesday to Saturday.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-          <a href="${SITE.ig}" target="_blank" rel="noopener" class="btn btn-cream btn-sm">Follow on Instagram</a>
-          <a href="${SITE.fb}" target="_blank" rel="noopener" class="btn btn-cream btn-sm">Follow on Facebook</a>
-        </div>
-      </div>
+      ${pressRelease('')}
     </div>
   </section>
 
@@ -916,13 +939,19 @@ ${faqs.map(([q, a]) => `        <details>
     <div class="wrap-n">
       ${eyebrow('Fairs, lates &amp; doings')}
       <h1 class="h1">What&rsquo;s On</h1>
-      <p class="lede">Record fairs, late openings, kilo sales and the market&rsquo;s birthday will all be listed here as they are fixed. Most things are free and none of them need a ticket. Just turn up.</p>
+      <p class="lede">News first, then the diary. Record fairs, late openings, kilo sales and the market&rsquo;s birthday will all be listed here as they are fixed. Most things are free and none of them need a ticket. Just turn up.</p>
     </div>
   </section>
-  <section style="padding:12px 24px 72px">
+  <section style="padding:12px 24px 48px">
     <div class="wrap-n">
-      <div class="empty" style="padding:56px 28px">
-        <p class="big">Nothing in the diary just now.</p>
+      ${pressRelease('')}
+    </div>
+  </section>
+  <section style="padding:0 24px 72px">
+    <div class="wrap-n">
+      <h2 class="h3">The diary</h2>
+      <div class="empty" style="padding:48px 28px">
+        <p class="big">Nothing else in the diary just now.</p>
         <p>The shops themselves are the event, ${SITE.hoursShort}. When there is something to put in the diary it will appear here first, and on the market&rsquo;s social pages.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
           <a href="${SITE.ig}" target="_blank" rel="noopener" class="btn btn-cream btn-sm">Instagram</a>
