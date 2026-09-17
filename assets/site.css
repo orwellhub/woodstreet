@@ -153,6 +153,7 @@ a.tilt:hover{transform:translate(-2px,-2px) rotate(0deg);box-shadow:6px 6px 0 #2
 textarea.field{resize:vertical;min-height:120px}
 select.field{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%2329231C' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
 .enquiry label{display:block}
+.enquiry label[hidden]{display:none}
 .honey{display:none !important}
 .enquiry .field:user-invalid{border-color:#BF3B26}
 .label{display:block;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#7C2A1D;margin-bottom:6px}

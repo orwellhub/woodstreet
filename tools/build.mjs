@@ -1219,7 +1219,7 @@ ${faqs.map(([q, a]) => `        <details>
 ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).join('\n')}
             </select></label>
           </div>
-          <label data-unit-field style="display:block;margin-top:14px"><span class="label">Which unit? <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#8A7B5E">(if you have one in mind)</span></span><input class="field" type="text" name="unit" placeholder="For example A4 or M31"></label>
+          <label data-unit-field style="margin-top:14px"><span class="label">Which unit? <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#8A7B5E">(if you have one in mind)</span></span><input class="field" type="text" name="unit" placeholder="For example A4 or M31"></label>
           <label style="display:block;margin-top:14px"><span class="label">Message</span><textarea class="field" name="message" rows="6" required></textarea></label>
           <button type="submit" class="btn btn-red" style="margin-top:18px">Send it</button>
           <p style="margin:14px 0 0;font-size:12.5px;color:#8A7B5E;line-height:1.55">Goes straight to Walthams at ${SITE.email}. Your details are used only to reply to you; see the <a href="legal.html#privacy">privacy policy</a>.</p>
