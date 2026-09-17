@@ -72,19 +72,45 @@ Three rules the generated markup follows, worth keeping if it is ever regenerate
   column mostly holds pasted link text ("Pritzy logo", "Books From Boxes") rather
   than URLs, so most shops correctly have no website link.
 
-The map colours each unit by trade family and every unit also carries its shop name
-as text, so the colour is never the only thing carrying the information. Merged units
-(A2/3, M25/26/27 and so on) span two columns. Each occupied unit is a link to that
-shop's entry, `#shop-a1`, `#shop-m25-26-27` and so on.
+The map draws each building as a U: in from Wood Street, up the left side, across
+the top, and back down the right, with the corridor in the middle. The sequence is
+the real unit numbering; the shape is that walking order drawn as a loop, not a
+measured plan, and the page says so. If actual floor plans turn up, the generator's
+geometry block is the only thing that needs replacing. The map colours each unit by
+trade family and every unit also carries its shop name as text, so the colour is
+never the only thing carrying the information. Merged units (A2/3, M25/26/27 and so
+on) take two cells along their run. Each occupied unit is a link to that shop's
+entry, `#shop-a1`, `#shop-m25-26-27` and so on.
 
 ### The easel
 
-The directory shows one shop at a time on a drawn easel, with Previous and Next
-buttons, a counter, and the arrow keys. Clicking a unit on the map flips the easel
-to that shop and scrolls to it. All 24 entries are in the HTML; the script only
-hides all but one, so with JavaScript off the board simply lists every shop, and
-search engines see every description either way. The flip animation is off for
-anyone who has asked their system for reduced motion.
+The directory shows one shop at a time on a drawn easel, as a stack of sheets:
+Next peels the top sheet off to show the one beneath, Previous peels it back on.
+There are Previous and Next buttons, a counter, and the arrow keys. Clicking a unit
+on the map flips the easel to that shop and scrolls to it. All 24 entries are in
+the HTML; the script only hides all but one, so with JavaScript off the board simply
+lists every shop, and search engines see every description either way. The peel is
+off for anyone who has asked their system for reduced motion.
+
+Shops that have a photo come first in the stack, then the rest in unit order.
+
+### Shop photos
+
+Each sheet has a photo slot, a pinned polaroid on the right on desktop and above
+the text on phones. Photos live in `uploads/shops/`, named after the unit:
+`shop-a16.jpg`, `shop-a5-6.jpg`, `shop-m25-26-27.jpg`. Keep them 4:3 and about
+1000px wide.
+
+Two are in place, both taken from the spreadsheet: Mrs Tinsley's (A16) and
+Moroccan Corner (A5/6). Every other sheet holds a dashed "Photo on its way"
+placeholder with an HTML comment beside it giving the exact `<figure>` to paste
+in once the file exists. The placeholder is hidden from screen readers; a real
+photo needs a proper `alt`.
+
+Two earlier photos, The Coven of Wiches (unit 38) and Bela's Brocante (unit 31),
+are not attached to any sheet because the spreadsheet lists M31 and M38 as
+available to let. One of the two sources is out of date; until that is settled
+those photos stay in the gallery only.
 
 The previous layout, a card grid grouped by building, is kept in
 `archive/shops-grid.html` with instructions for putting it back.
