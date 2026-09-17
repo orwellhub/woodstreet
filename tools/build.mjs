@@ -28,7 +28,20 @@ const SITE = {
   x: 'https://x.com/WoodStreetMarke',
   hoursShort: 'Tuesday to Saturday, 10.00 to 5.30',
 };
-const enquire = (subject) => `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}`;
+// Every enquiry button on the site lands on the contact form with the topic
+// (and unit, where there is one) filled in. The form posts through FormSubmit
+// to Walthams' mailbox.
+const TOPICS = [
+  ['general', 'A general question'],
+  ['unit', 'Renting a unit'],
+  ['trader', 'I already trade here'],
+  ['events', 'An event, fair or late opening'],
+  ['press', 'Press and media'],
+  ['history', 'A memory or a bit of history'],
+  ['lost', 'Lost property'],
+];
+const enquire = (topic = 'general', unit = '', rel = '') => `${rel}contact.html?topic=${topic}${unit ? '&unit=' + encodeURIComponent(unit) : ''}`;
+const FORM_ACTION = `https://formsubmit.co/${SITE.email}`;
 
 // ---------- helpers ---------------------------------------------------------
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -441,7 +454,7 @@ function pressRelease(rel) {
             <span><a href="${SITE.tel}">${SITE.phone}</a> &middot; <a href="mailto:${SITE.email}">${SITE.email}</a></span>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <a href="${rel}join.html" class="btn btn-red btn-sm">Ask about a unit</a>
+            <a href="${enquire('unit', '', rel)}" class="btn btn-red btn-sm">Ask about a unit</a>
             <a href="${SITE.ig}" target="_blank" rel="noopener" class="btn btn-cream btn-sm">Follow on Instagram</a>
           </div>
         </footer>
@@ -971,7 +984,7 @@ ${faqs.map(([q, a]) => `        <details>
       </div>
       <div style="margin-top:44px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px" class="card">
         <p style="font-size:16px;font-weight:600;max-width:52ch;color:#29231C">Running a fair, a launch or a late at the market? Walthams can help you set it up.</p>
-        <a href="${enquire('Wood Street Indoor Market event enquiry')}" class="btn btn-ink btn-sm">Email about an event &rarr;</a>
+        <a href="${enquire('events')}" class="btn btn-ink btn-sm">Tell us about an event &rarr;</a>
       </div>
     </div>
   </section>
@@ -1002,7 +1015,7 @@ ${faqs.map(([q, a]) => `        <details>
       </div>
       <div style="margin-top:44px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px;background:#DCA528" class="card">
         <p style="font-size:16px;font-weight:600;max-width:52ch;color:#29231C">Traded here? Shopped here since the sixties? We are collecting the market&rsquo;s history: photographs, receipts, memories, tall tales.</p>
-        <a href="contact.html" class="btn btn-ink btn-sm">Share a memory &rarr;</a>
+        <a href="${enquire('history')}" class="btn btn-ink btn-sm">Share a memory &rarr;</a>
       </div>
     </div>
   </section>
@@ -1057,7 +1070,7 @@ ${tl.map(([era, title, tbc, text]) => `        <li>
     <div class="wrap-r" style="text-align:center">
       <h2 style="font-size:clamp(26px,3.4vw,36px);margin:0 0 12px;color:#F8F1E1">Traded here? Shopped here since the sixties?</h2>
       <p style="font-size:16px;line-height:1.65;color:#BFD8D0;margin:0 auto 24px;max-width:56ch">We are collecting the market&rsquo;s history: photographs, receipts, memories, tall tales. Help us tell it properly.</p>
-      <a href="contact.html" class="btn btn-gold">Share a memory &rarr;</a>
+      <a href="${enquire('history')}" class="btn btn-gold">Share a memory &rarr;</a>
     </div>
   </section>
   <section class="sec" style="padding:56px 24px">
@@ -1093,7 +1106,7 @@ ${tl.map(([era, title, tbc, text]) => `        <li>
       <h1 class="h1" style="margin-bottom:12px">Got a shop in you?</h1>
       <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:62ch;margin:0 0 22px">${shops.length} independents already trade here. ${vacant.length} doors are waiting for their next keeper: small spaces with straightforward terms, inside a market people cross London to wander. The market is managed by Walthams, who handle every enquiry.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-        <a href="${enquire('Wood Street Indoor Market unit enquiry')}" class="btn btn-red">Email about a unit &rarr;</a>
+        <a href="${enquire('unit')}" class="btn btn-red">Ask about a unit &rarr;</a>
         <a href="${SITE.tel}" class="btn btn-cream">Ring ${SITE.phone}</a>
       </div>
     </div>
@@ -1112,11 +1125,11 @@ ${tl.map(([era, title, tbc, text]) => `        <li>
       <p style="font-size:15.5px;color:#5C5142;margin:0 0 24px">${vacant.length} units right now. Rents are not published here; enquire and Walthams will send current figures.</p>
       <div class="two two-top" style="gap:36px">
         <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));align-content:start">
-${vacant.map((v) => `          <a href="${enquire(`Wood Street Indoor Market: unit ${v.unit} enquiry`)}" class="card" style="display:block;text-decoration:none;color:#29231C;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translate(-2px,-2px)';this.style.boxShadow='6px 6px 0 #29231C'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+${vacant.map((v) => `          <a href="${enquire('unit', v.unit)}" class="card" style="display:block;text-decoration:none;color:#29231C;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translate(-2px,-2px)';this.style.boxShadow='6px 6px 0 #29231C'" onmouseout="this.style.transform='';this.style.boxShadow=''">
             <span style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">${unitBadge(v.unit)}<span class="cat" style="color:#A94A32">Available</span></span>
             <span style="display:block;font-family:'Young Serif',serif;font-size:22px;margin:12px 0 6px">Unit ${esc(v.unit)}, ${esc(v.side)}</span>
             <span style="display:block;font-size:14px;color:#5C5142;line-height:1.6">${esc(SIDES[v.side].addr)}, on ${SIDES[v.side].where} &middot; Rent: enquire</span>
-            <span style="display:block;font-weight:700;font-size:14px;color:#7C2A1D;margin-top:12px">Email about this unit &rarr;</span>
+            <span style="display:block;font-weight:700;font-size:14px;color:#7C2A1D;margin-top:12px">Ask about this unit &rarr;</span>
           </a>`).join('\n')}
         </div>
         <div>
@@ -1141,9 +1154,9 @@ ${faqs.map(([q, a]) => `        <details>
     <div class="wrap-n" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px">
       <div>
         <h2 style="font-size:clamp(26px,3.4vw,38px);margin:0 0 8px">Fancy the corridor life?</h2>
-        <p style="font-size:16px;color:#4A3C14;margin:0">Email Walthams with a line about what you sell and which unit caught your eye. Every enquiry gets a reply.</p>
+        <p style="font-size:16px;color:#4A3C14;margin:0">Send Walthams a line about what you sell and which unit caught your eye. Every enquiry gets a reply.</p>
       </div>
-      <a href="${enquire('Wood Street Indoor Market unit enquiry')}" class="btn btn-ink">Email about a unit &rarr;</a>
+      <a href="${enquire('unit')}" class="btn btn-ink">Ask about a unit &rarr;</a>
     </div>
   </section>
 `,
@@ -1188,17 +1201,58 @@ ${faqs.map(([q, a]) => `        <details>
         </div>
       </div>
       <div>
-        <div class="card" style="padding:26px;border-radius:14px;box-shadow:5px 5px 0 rgba(41,35,28,.85)">
-          <h2 style="font-size:22px;margin:0 0 10px">Drop us a line</h2>
+        <form class="card enquiry" method="POST" action="${FORM_ACTION}" data-enquiry id="form" style="padding:26px;border-radius:14px;box-shadow:5px 5px 0 rgba(41,35,28,.85)">
+          <h2 style="font-size:22px;margin:0 0 8px">Drop us a line</h2>
           <p style="margin:0 0 20px">Tell us what it is about and Walthams will come back to you. Unit enquiries, event ideas, press, lost property, memories of the market: it all goes to the same place.</p>
-          <div style="display:grid;gap:12px">
-            <a href="${enquire('Wood Street Indoor Market enquiry')}" class="btn btn-red" style="text-align:center">Email ${SITE.email}</a>
-            <a href="${SITE.tel}" class="btn btn-cream" style="text-align:center">Ring ${SITE.phone}</a>
+          <input type="hidden" name="_subject" value="Wood Street Indoor Market: website enquiry">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" value="${SITE.url}thanks.html">
+          <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+            <label><span class="label">Name</span><input class="field" type="text" name="name" required autocomplete="name"></label>
+            <label><span class="label">Email</span><input class="field" type="email" name="email" required autocomplete="email"></label>
           </div>
-          <p style="margin-top:22px;font-size:13.5px">Or find the market on social media:</p>
-          <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">${socials('social-ink')}
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:14px">
+            <label><span class="label">Phone <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#8A7B5E">(optional)</span></span><input class="field" type="tel" name="phone" autocomplete="tel"></label>
+            <label><span class="label">What is it about?</span><select class="field" name="topic">
+${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).join('\n')}
+            </select></label>
           </div>
+          <label data-unit-field style="display:block;margin-top:14px"><span class="label">Which unit? <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#8A7B5E">(if you have one in mind)</span></span><input class="field" type="text" name="unit" placeholder="For example A4 or M31"></label>
+          <label style="display:block;margin-top:14px"><span class="label">Message</span><textarea class="field" name="message" rows="6" required></textarea></label>
+          <button type="submit" class="btn btn-red" style="margin-top:18px">Send it</button>
+          <p style="margin:14px 0 0;font-size:12.5px;color:#8A7B5E;line-height:1.55">Goes straight to Walthams at ${SITE.email}. Your details are used only to reply to you; see the <a href="legal.html#privacy">privacy policy</a>.</p>
+        </form>
+        <p style="margin:18px 0 0;font-size:14.5px">Rather talk? Ring <a href="${SITE.tel}" style="font-weight:700">${SITE.phone}</a>, or find the market on social media:</p>
+        <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">${socials('social-ink')}
         </div>
+      </div>
+    </div>
+  </section>
+`,
+  });
+}
+
+// Thank you, after the form sends
+{
+  out['thanks.html'] = page({
+    file: 'thanks.html', active: '',
+    title: 'Thanks | Wood Street Indoor Market',
+    desc: 'Your message is on its way to Walthams.',
+    extraHead: '<meta name="robots" content="noindex">\n',
+    body: `
+  <section style="padding:80px 24px 100px;text-align:center">
+    <div style="max-width:640px;margin:0 auto">
+      <div style="display:inline-block;position:relative;background:#FBF5E7;border:2px solid #29231C;border-radius:14px;padding:36px 44px;box-shadow:6px 6px 0 rgba(41,35,28,.85);transform:rotate(-1deg)">
+        <span class="stamp" style="position:absolute;top:-14px;left:24px;transform:rotate(2deg);font-size:11.5px;padding:5px 13px">RECEIVED</span>
+        <h1 style="font-size:clamp(34px,5vw,54px);line-height:1.05;margin:0">Got it, thanks.</h1>
+        <p style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:14px;letter-spacing:.22em;text-transform:uppercase;margin:8px 0 0;color:#5C5142">Your message is with Walthams</p>
+      </div>
+      <p style="font-size:17px;line-height:1.65;color:#3E362B;margin:34px auto 8px;max-width:44ch">Someone will come back to you, usually within a few days. If it is urgent, ring <a href="${SITE.tel}" style="font-weight:700">${SITE.phone}</a> on a trading day.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:30px">
+        <a href="index.html" class="btn btn-red btn-sm">Back to the front door</a>
+        <a href="shops.html" class="btn btn-cream btn-sm">Explore the Shops</a>
       </div>
     </div>
   </section>
@@ -1227,9 +1281,9 @@ ${faqs.map(([q, a]) => `        <details>
           <h2>Privacy Policy</h2>
           <p style="font-size:13px;color:#8A7B5E">Draft &middot; September 2026</p>
           <p><strong>Who we are.</strong> Wood Street Indoor Market, ${SITE.address}, ${SITE.town}. The market is managed by Walthams. Questions about this policy: <a href="mailto:${SITE.email}">${SITE.email}</a>.</p>
-          <p><strong>What we collect.</strong> Only what you give us: your contact details and business information if you email about a unit or send a message. This website has no forms, no accounts and no newsletter, and it does not buy or sell data. This is a market, not that kind of market.</p>
+          <p><strong>What we collect.</strong> Only what you give us: your name, email address, phone number if you add one, and whatever you write, when you send the contact form or email us. This website has no accounts and no newsletter, and it does not buy or sell data. This is a market, not that kind of market.</p>
           <p><strong>Why we use it.</strong> To reply to you and to progress unit enquiries. Legal bases: legitimate interest and steps taken before a contract.</p>
-          <p><strong>Where it lives.</strong> Emails go to Walthams&rsquo; mailbox and are handled under their own privacy policy.</p>
+          <p><strong>Where it lives.</strong> The contact form is delivered by FormSubmit (formsubmit.co), which passes your message to Walthams&rsquo; mailbox and does not keep it. From there it is handled under Walthams&rsquo; own privacy policy.</p>
           <p><strong>How long.</strong> Enquiries: up to 12 months. Unit applications: for the length of the process plus 6 months.</p>
           <p><strong>Your rights.</strong> Ask us what we hold, ask us to correct it, ask us to delete it. Email or write to the office and we will sort it. You can also complain to the ICO (ico.org.uk).</p>
         </div>
@@ -1238,7 +1292,7 @@ ${faqs.map(([q, a]) => `        <details>
           <p style="font-size:13px;color:#8A7B5E">Draft &middot; September 2026</p>
           <p><strong>The short version.</strong> This site sets no cookies and runs no analytics or tracking. None.</p>
           <p><strong>If that changes.</strong> If the market adds analytics to count visits, it will only switch on after you say yes to a consent banner. Decline and the site works exactly the same.</p>
-          <p><strong>Third parties.</strong> Fonts load from Google Fonts. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
+          <p><strong>Third parties.</strong> Fonts load from Google Fonts. The contact form sends through FormSubmit. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
           <p><strong>Managing cookies.</strong> Your browser settings can block or clear cookies at any time. The site will carry on politely without them.</p>
         </div>
         <div class="legal-doc" id="accessibility" data-doc>
@@ -1289,7 +1343,7 @@ ${faqs.map(([q, a]) => `        <details>
 
 // Sitemap
 {
-  const files = Object.keys(out).filter((f) => f !== '404.html');
+  const files = Object.keys(out).filter((f) => f !== '404.html' && f !== 'thanks.html');
   out['sitemap.xml'] = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${files.map((f) => `  <url><loc>${SITE.url}${f === 'index.html' ? '' : f}</loc></url>`).join('\n')}

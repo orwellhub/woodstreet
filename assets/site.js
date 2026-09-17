@@ -191,6 +191,32 @@ document.documentElement.classList.add('is-js');
   state = parse(); apply(false);
 })();
 
+/* The contact form. Buttons around the site arrive with ?topic=unit&unit=A4,
+   which fills the form in; the email subject follows whatever is chosen.
+   Without JS the form still sends, with a plain subject. */
+(function () {
+  var f = document.querySelector('[data-enquiry]');
+  if (!f) return;
+  var q = new URLSearchParams(location.search);
+  var topic = f.querySelector('[name="topic"]'), unit = f.querySelector('[name="unit"]');
+  var unitRow = f.querySelector('[data-unit-field]'), subject = f.querySelector('[name="_subject"]');
+  var want = q.get('topic');
+  if (want && topic) for (var i = 0; i < topic.options.length; i++) if (topic.options[i].value === want) topic.value = want;
+  if (q.get('unit') && unit) unit.value = q.get('unit');
+  function sync() {
+    var t = topic.options[topic.selectedIndex].text, u = unit && unit.value.trim();
+    subject.value = 'Wood Street Indoor Market: ' + t + (u ? ' (unit ' + u + ')' : '');
+    if (unitRow) unitRow.hidden = !(topic.value === 'unit' || topic.value === 'trader' || u);
+  }
+  topic.addEventListener('change', sync);
+  if (unit) unit.addEventListener('input', sync);
+  sync();
+  if (q.get('topic') || q.get('unit')) {
+    f.scrollIntoView({ block: 'start' });
+    var first = f.querySelector('[name="name"]'); if (first) first.focus({ preventScroll: true });
+  }
+})();
+
 /* Policies page: one document at a time. Without JS all three show in full. */
 (function () {
   var tabs = document.querySelector('[data-tabs]');
