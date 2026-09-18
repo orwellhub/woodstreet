@@ -7,8 +7,16 @@ document.documentElement.classList.add('is-js');
   for (var i = 0; i < y.length; i++) y[i].textContent = new Date().getFullYear();
 })();
 
-/* Live open/closed status, Europe/London. */
+/* Live open/closed status, Europe/London. The hours come from the page
+   (<body data-open data-close data-days>), which the build fills from one
+   place, so this script never carries its own copy. */
 (function () {
+  var body = document.body;
+  function mins(t) { var p = (t || '').split(':'); return parseInt(p[0], 10) * 60 + parseInt(p[1] || '0', 10); }
+  var OPEN = mins(body.getAttribute('data-open') || '10:00'), CLOSE = mins(body.getAttribute('data-close') || '17:30');
+  var openDays = (body.getAttribute('data-days') || '2,3,4,5,6').split(',').map(function (d) { return parseInt(d, 10); });
+  function clock(m) { var h = Math.floor(m / 60), mm = m % 60, ap = h >= 12 ? 'pm' : 'am'; h = h % 12 || 12; return h + (mm ? '.' + (mm < 10 ? '0' : '') + mm : '') + ap; }
+  var OPEN_T = clock(OPEN), CLOSE_T = clock(CLOSE);
   function londonNow() {
     var parts = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Europe/London', weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false
@@ -18,15 +26,15 @@ document.documentElement.classList.add('is-js');
     return { wd: wd, mins: (parseInt(get('hour'), 10) % 24) * 60 + parseInt(get('minute'), 10) };
   }
   function status() {
-    var n = londonNow(), openDays = [2, 3, 4, 5, 6];
+    var n = londonNow();
     var names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     var isOpenDay = openDays.indexOf(n.wd) !== -1;
-    if (isOpenDay && n.mins >= 600 && n.mins < 1050) return { open: true, label: 'Open now', detail: 'Open now, closes 5.30pm', wd: n.wd };
-    if (isOpenDay && n.mins < 600) return { open: false, label: 'Opens 10am', detail: 'Closed, opens today at 10am', wd: n.wd };
+    if (isOpenDay && n.mins >= OPEN && n.mins < CLOSE) return { open: true, label: 'Open now', detail: 'Open now, closes ' + CLOSE_T, wd: n.wd };
+    if (isOpenDay && n.mins < OPEN) return { open: false, label: 'Opens ' + OPEN_T, detail: 'Closed, opens today at ' + OPEN_T, wd: n.wd };
     var next = n.wd;
     for (var i = 1; i <= 7; i++) { var d = (n.wd + i) % 7; if (openDays.indexOf(d) !== -1) { next = d; break; } }
     var tomorrow = (n.wd + 1) % 7 === next;
-    return { open: false, label: 'Closed now', detail: 'Closed, opens ' + (tomorrow ? 'tomorrow' : names[next]) + ' at 10am', wd: n.wd };
+    return { open: false, label: 'Closed now', detail: 'Closed, opens ' + (tomorrow ? 'tomorrow' : names[next]) + ' at ' + OPEN_T, wd: n.wd };
   }
   function setAll(sel, fn) { var els = document.querySelectorAll(sel); for (var i = 0; i < els.length; i++) fn(els[i]); }
   function paint() {

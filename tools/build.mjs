@@ -6,6 +6,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
+import { execSync } from 'child_process';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 // The stylesheet and script are cached by browsers, so each build stamps their
@@ -26,8 +27,20 @@ const SITE = {
   fb: 'https://www.facebook.com/WoodStreetIndoorMarket/',
   ig: 'https://www.instagram.com/woodstreetindoormarket/',
   x: 'https://x.com/WoodStreetMarke',
-  hoursShort: 'Tuesday to Saturday, 10.00 to 5.30',
+  // The one place the opening hours live. Everything else (the top strip,
+  // the footer, the Visit table, the JSON-LD block and the live open/closed
+  // status in site.js) is derived from here.
+  hours: { open: '10:00', close: '17:30', days: [2, 3, 4, 5, 6] },
 };
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+// "17:30" -> "5.30", the house style for times on the page.
+const clock = (t) => { const [h, m] = t.split(':').map(Number); return (h % 12 || 12) + '.' + String(m).padStart(2, '0'); };
+const openDaysText = (() => { const d = SITE.hours.days; return `${DAY_NAMES[d[0]]} to ${DAY_NAMES[d[d.length - 1]]}`; })();
+const closedDaysText = (() => { const c = [0, 1, 2, 3, 4, 5, 6].filter((d) => !SITE.hours.days.includes(d)); return c.map((d) => DAY_NAMES[d]); })();
+SITE.hoursRange = `${clock(SITE.hours.open)} to ${clock(SITE.hours.close)}`;
+SITE.hoursShort = `${openDaysText}, ${SITE.hoursRange}`;
+SITE.closedShort = closedDaysText.join(' &amp; ');
+SITE.closedLong = closedDaysText.join(' and ');
 // Every enquiry button on the site lands on the contact form with the topic
 // (and unit, where there is one) filled in. The form posts through FormSubmit
 // to Walthams' mailbox.
@@ -134,9 +147,9 @@ const socials = (cls = '') => `
 function header(rel, active) {
   return `<a href="#main" class="skip">Skip to content</a>
 
-<div class="topstrip">
+<div class="topstrip" role="region" aria-label="Opening hours and address">
   <div class="wrap">
-    <span style="font-weight:600">Open ${SITE.hoursShort} &middot; Closed Sunday &amp; Monday</span>
+    <span style="font-weight:600">Open ${SITE.hoursShort} &middot; Closed ${SITE.closedShort}</span>
     <span>${SITE.address}, Walthamstow E17 &middot; <a href="${SITE.tel}">${SITE.phone}</a></span>
   </div>
 </div>
@@ -199,7 +212,7 @@ function footer(rel) {
     </div>
     <div>
       <h2>Opening hours</h2>
-      <p>Tuesday to Saturday<br>10.00 to 5.30<br><span style="color:#9A8E77">Closed Sunday and Monday</span></p>
+      <p>${openDaysText}<br>${SITE.hoursRange}<br><span style="color:#9A8E77">Closed ${SITE.closedLong}</span></p>
       <p style="font-size:13px;line-height:1.6;margin-top:10px;color:#9A8E77">Individual shops set their own days. Check a shop&rsquo;s page before a special trip.</p>
       <p style="margin-top:10px"><a href="${rel}visit.html">Plan your visit</a></p>
     </div>
@@ -248,12 +261,11 @@ function page({ file, title, desc, active = '', rel = '', body, extraHead = '', 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#7C2A1D">
 <link rel="icon" href="${FAVICON}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
+<link rel="preload" href="${rel}assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="${rel}assets/fonts/young-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${rel}assets/site.css?v=${CSS_V}">
 ${extraHead}</head>
-<body>
+<body data-open="${SITE.hours.open}" data-close="${SITE.hours.close}" data-days="${SITE.hours.days.join(',')}">
 ${header(rel, active)}
 <main id="main">
 ${body}
@@ -432,7 +444,7 @@ const vacancyLine = (rel) => {
 
 // The announcement that Walthams have taken the market on. Shown on the home
 // page and in full on What's On.
-function pressRelease(rel) {
+function pressRelease(rel, h = 'h3') {
   return `<article class="paper" aria-label="Press release: Walthams take on Wood Street Indoor Market">
         <span class="paper-stamp" aria-hidden="true">Press release</span>
         <header class="paper-mast">
@@ -440,7 +452,7 @@ function pressRelease(rel) {
           <p class="paper-name">Wood Street Market News</p>
           <div class="paper-line"><span>No. 1</span> <span>Walthamstow, E17 &middot; September 2026</span> <span>Free</span></div>
         </header>
-        <h3 class="paper-head">Walthams take on Wood Street Indoor Market</h3>
+        <${h} class="paper-head">Walthams take on Wood Street Indoor Market</${h}>
         <p class="paper-deck">The letting agent for this corner of Walthamstow is now running the market. Same corridor, same shops, and a lot more to come.</p>
         <p class="paper-by">From Walthams, the market&rsquo;s new managers</p>
         <div class="paper-cols">
@@ -481,7 +493,7 @@ const out = {};
       description: 'Independent indoor market of around thirty small shops arranged around one horseshoe corridor in Walthamstow, east London. Trading since 1955.',
       address: { '@type': 'PostalAddress', streetAddress: '98 & 102 Wood Street', addressLocality: 'Walthamstow, London', postalCode: 'E17 3HX', addressCountry: 'GB' },
       telephone: '+44 20 8509 0444', email: SITE.email, url: SITE.url, sameAs: [SITE.fb, SITE.ig, SITE.x],
-      openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], opens: '10:00', closes: '17:30' }],
+      openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: SITE.hours.days.map((d) => DAY_NAMES[d]), opens: SITE.hours.open, closes: SITE.hours.close }],
     })}</script>
 `,
     body: `
@@ -612,8 +624,8 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
         </div>
         <div class="card">
           <h3 class="card-label">When</h3>
-          <div style="display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:4px 0"><span>Tuesday to Saturday</span><span style="font-weight:700">10.00 to 5.30</span></div>
-          <div style="display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:4px 0;color:#8A7B5E"><span>Sunday &amp; Monday</span><span>Closed</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:4px 0"><span>${openDaysText}</span><span style="font-weight:700">${SITE.hoursRange}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:4px 0;color:#6E6147"><span>${SITE.closedShort}</span><span>Closed</span></div>
           <div style="margin-top:12px">${statusLine()}</div>
         </div>
         <div class="card">
@@ -675,6 +687,7 @@ ${vacant.map((v) => `          ${unitBadge(v.unit)}`).join('\n')}
 
   <section id="easel" style="padding:12px 24px 64px">
     <div class="wrap">
+      <h2 class="sr-only">One shop at a time</h2>
       ${easelHtml('')}
       <p style="font-size:14.5px;line-height:1.6;color:#5C5142;max-width:62ch;margin:30px auto 0;text-align:center">${vacancyLine('')}</p>
     </div>
@@ -703,7 +716,7 @@ ${withPhotoFirst.map((r) => '        ' + shopCard(r, '', { withData: true })).jo
         <p class="big">Nothing under that name, yet.</p>
         <p>The corridor is full of things that don&rsquo;t match their labels. Clear the search and browse the loop, or ask any trader when you visit.</p>
         <a href="#" class="btn btn-cream btn-sm" data-clear>Clear everything</a>
-        <p style="font-size:14px;color:#8A7B5E;margin:20px 0 0">Reckon the market needs it? <a href="join.html" style="font-weight:700">Open the shop yourself &rarr;</a></p>
+        <p style="font-size:14px;color:#6E6147;margin:20px 0 0">Reckon the market needs it? <a href="join.html" style="font-weight:700">Open the shop yourself &rarr;</a></p>
       </div>
     </div>
   </section>
@@ -856,10 +869,9 @@ ${list('Antique City')}
 
 // Visit
 {
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const hoursRows = [1, 2, 3, 4, 5, 6, 0].map((d) => {
-    const open = d >= 2 && d <= 6;
-    return `            <div data-day="${d}"${open ? '' : ' class="closed"'}><span>${days[d]}</span><span>${open ? '10.00 to 5.30' : 'Closed'}</span></div>`;
+    const open = SITE.hours.days.includes(d);
+    return `            <div data-day="${d}"${open ? '' : ' class="closed"'}><span>${DAY_NAMES[d]}</span><span>${open ? SITE.hoursRange : 'Closed'}</span></div>`;
   }).join('\n');
   const faqs = [
     ['Do all the shops open every day?', `The market opens ${SITE.hoursShort}, but individual traders set their own days and hours, and a few open Wednesday to Saturday or Saturday only. If you are making a special trip for one shop, check its page or ring ahead.`],
@@ -897,7 +909,7 @@ ${list('Antique City')}
         <div class="hours">
 ${hoursRows}
         </div>
-        <p style="font-size:12.5px;margin-top:12px;color:#8A7B5E;line-height:1.55">Individual shops set their own days and hours. Check a shop&rsquo;s page before a special trip.</p>
+        <p style="font-size:12.5px;margin-top:12px;color:#6E6147;line-height:1.55">Individual shops set their own days and hours. Check a shop&rsquo;s page before a special trip.</p>
       </div>
       <div class="card">
         <h2 class="card-label">Getting here</h2>
@@ -968,7 +980,7 @@ ${faqs.map(([q, a]) => `        <details>
   </section>
   <section style="padding:12px 24px 48px">
     <div class="wrap-n">
-      ${pressRelease('')}
+      ${pressRelease('', 'h2')}
     </div>
   </section>
   <section style="padding:0 24px 72px">
@@ -1131,7 +1143,7 @@ ${tl.map(([era, title, text]) => `        <li>
       <p style="font-size:15.5px;color:#5C5142;margin:0 0 24px">${vacant.length} units right now. Rents are not published here; enquire and Walthams will send current figures.</p>
       <div class="two two-top" style="gap:36px">
         <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));align-content:start">
-${vacant.map((v) => `          <a href="${enquire('unit', v.unit)}" class="card" style="display:block;text-decoration:none;color:#29231C;transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translate(-2px,-2px)';this.style.boxShadow='6px 6px 0 #29231C'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+${vacant.map((v) => `          <a href="${enquire('unit', v.unit)}" class="card card-link">
             <span style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">${unitBadge(v.unit)} <span class="cat" style="color:#A94A32">Available</span></span>
             <span style="display:block;font-family:'Young Serif',serif;font-size:22px;margin:12px 0 6px">Unit ${esc(v.unit)}, ${esc(v.side)}</span>
             <span style="display:block;font-size:14px;color:#5C5142;line-height:1.6">${esc(SIDES[v.side].addr)}, on ${SIDES[v.side].where} &middot; Rent: enquire</span>
@@ -1212,7 +1224,7 @@ ${faqs.map(([q, a]) => `        <details>
           <p style="margin:0 0 20px">Tell us what it is about and Walthams will come back to you. Unit enquiries, event ideas, press, lost property, memories of the market: it all goes to the same place.</p>
           <input type="hidden" name="_subject" value="Wood Street Indoor Market: website enquiry">
           <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_captcha" value="true">
           <input type="hidden" name="_next" value="${SITE.url}thanks.html">
           <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
@@ -1220,15 +1232,15 @@ ${faqs.map(([q, a]) => `        <details>
             <label><span class="label">Email</span><input class="field" type="email" name="email" required autocomplete="email"></label>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:14px">
-            <label><span class="label">Phone <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#8A7B5E">(optional)</span></span><input class="field" type="tel" name="phone" autocomplete="tel"></label>
+            <label><span class="label">Phone <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#6E6147">(optional)</span></span><input class="field" type="tel" name="phone" autocomplete="tel"></label>
             <label><span class="label">What is it about?</span><select class="field" name="topic">
 ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).join('\n')}
             </select></label>
           </div>
-          <label data-unit-field style="margin-top:14px"><span class="label">Which unit? <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#8A7B5E">(if you have one in mind)</span></span><input class="field" type="text" name="unit" placeholder="For example A4 or M31"></label>
+          <label data-unit-field style="margin-top:14px"><span class="label">Which unit? <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#6E6147">(if you have one in mind)</span></span><input class="field" type="text" name="unit" placeholder="For example A4 or M31"></label>
           <label style="display:block;margin-top:14px"><span class="label">Message</span><textarea class="field" name="message" rows="6" required></textarea></label>
           <button type="submit" class="btn btn-red" style="margin-top:18px">Send it</button>
-          <p style="margin:14px 0 0;font-size:12.5px;color:#8A7B5E;line-height:1.55">Goes straight to Walthams at ${SITE.email}. Your details are used only to reply to you; see the <a href="legal.html#privacy">privacy policy</a>.</p>
+          <p style="margin:14px 0 0;font-size:12.5px;color:#6E6147;line-height:1.55">Goes straight to Walthams at ${SITE.email}. You will be asked to tick a quick &ldquo;I am not a robot&rdquo; box on the way. Your details are used only to reply to you; see the <a href="legal.html#privacy">privacy policy</a>.</p>
         </form>
         <p style="margin:18px 0 0;font-size:14.5px">Rather talk? Ring <a href="${SITE.tel}" style="font-weight:700">${SITE.phone}</a>, or find the market on social media:</p>
         <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">${socials('social-ink')}
@@ -1276,16 +1288,16 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
   <section style="padding:48px 24px 80px">
     <div style="max-width:920px;margin:0 auto">
       <h1 style="font-size:clamp(32px,4.4vw,46px);line-height:1.06;margin:0 0 8px">The small print</h1>
-      <p style="font-size:14.5px;color:#8A7B5E;margin:0 0 26px;font-style:italic">These policies cover this website. Questions about any of them go to Walthams, who manage the market.</p>
-      <div class="legal-tabs" data-tabs role="tablist" aria-label="Policies">
+      <p style="font-size:14.5px;color:#6E6147;margin:0 0 26px;font-style:italic">These policies cover this website. Questions about any of them go to Walthams, who manage the market.</p>
+      <nav class="legal-tabs" data-tabs aria-label="Policies">
         <a href="#privacy">Privacy</a>
         <a href="#cookies">Cookies</a>
         <a href="#accessibility">Accessibility</a>
-      </div>
+      </nav>
       <div class="card" style="padding:32px;border-radius:14px;box-shadow:5px 5px 0 rgba(41,35,28,.85);display:grid;gap:40px">
         <div class="legal-doc" id="privacy" data-doc>
           <h2>Privacy Policy</h2>
-          <p style="font-size:13px;color:#8A7B5E">Last updated September 2026</p>
+          <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
           <p><strong>Who we are.</strong> Wood Street Indoor Market, ${SITE.address}, ${SITE.town}. The market is managed by Walthams. Questions about this policy: <a href="mailto:${SITE.email}">${SITE.email}</a>.</p>
           <p><strong>What we collect.</strong> Only what you give us: your name, email address, phone number if you add one, and whatever you write, when you send the contact form or email us. This website has no accounts and no newsletter, and it does not buy or sell data. This is a market, not that kind of market.</p>
           <p><strong>Why we use it.</strong> To reply to you and to progress unit enquiries. Legal bases: legitimate interest and steps taken before a contract.</p>
@@ -1295,17 +1307,18 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
         </div>
         <div class="legal-doc" id="cookies" data-doc>
           <h2>Cookie Policy</h2>
-          <p style="font-size:13px;color:#8A7B5E">Last updated September 2026</p>
+          <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
           <p><strong>The short version.</strong> This site sets no cookies and runs no analytics or tracking. None.</p>
           <p><strong>If that changes.</strong> If the market adds analytics to count visits, it will only switch on after you say yes to a consent banner. Decline and the site works exactly the same.</p>
-          <p><strong>Third parties.</strong> Fonts load from Google Fonts. The contact form sends through FormSubmit. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
+          <p><strong>Third parties.</strong> Fonts are served from this site, not from Google. The contact form sends through FormSubmit, which shows a short &ldquo;I am not a robot&rdquo; check on its own page before passing the message on. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
           <p><strong>Managing cookies.</strong> Your browser settings can block or clear cookies at any time. The site will carry on politely without them.</p>
         </div>
         <div class="legal-doc" id="accessibility" data-doc>
           <h2>Accessibility Statement</h2>
-          <p style="font-size:13px;color:#8A7B5E">Last updated September 2026</p>
-          <p><strong>Our aim.</strong> This website is built to meet WCAG 2.2 AA. Everyone should be able to find a shop, plan a visit and enquire about a unit, whatever they browse with.</p>
+          <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
+          <p><strong>Our aim.</strong> This website is built to the WCAG 2.2 AA guidelines. Everyone should be able to find a shop, plan a visit and enquire about a unit, whatever they browse with.</p>
           <p><strong>What that means here.</strong> Full keyboard navigation with visible focus; a skip to content link; proper headings and labels; colour contrast checked against AA; touch targets of 44px and up; and every animation switches off when your device asks for reduced motion.</p>
+          <p><strong>How it has been checked.</strong> Every page passes automated testing with axe-core, and the site has been used by keyboard and at phone width by the people who built it. It has not yet had a formal audit by an independent accessibility specialist or with assistive technology users, so this statement describes our intent and our own testing rather than a certified result.</p>
           <p><strong>The market map.</strong> Every unit on the illustrated map is a keyboard operable link, and the same information is published as a plain list on the same page. You never need the picture to get the information.</p>
           <p><strong>Known limitations.</strong> Most shop photographs are still being gathered; where one is missing the page says so rather than showing a stand-in.</p>
           <p><strong>The building itself.</strong> The market trades on one level inside. For entrance thresholds and facilities, ring ${SITE.phone} and we will talk it through.</p>
@@ -1333,7 +1346,7 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
         <p style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:14px;letter-spacing:.22em;text-transform:uppercase;margin:8px 0 0;color:#5C5142">Wrong turning</p>
       </div>
       <p style="font-size:17px;line-height:1.65;color:#3E362B;margin:34px auto 8px;max-width:44ch">Even a horseshoe has its dead ends, and this page isn&rsquo;t on the corridor.</p>
-      <p style="font-size:15px;color:#8A7B5E;margin:0 0 30px">The good stuff is this way.</p>
+      <p style="font-size:15px;color:#6E6147;margin:0 0 30px">The good stuff is this way.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
         <a href="/" class="btn btn-red btn-sm">Back to the front door</a>
         <a href="/shops.html" class="btn btn-cream btn-sm">Explore the Shops</a>
@@ -1350,9 +1363,21 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
 // Sitemap
 {
   const files = Object.keys(out).filter((f) => f !== '404.html' && f !== 'thanks.html');
+  // A page's last-modified date is the date of the last commit that changed
+  // it, or today if this build changes it. The build writes identical pages
+  // byte for byte, so a page only counts as changed when its content did.
+  const today = new Date().toISOString().slice(0, 10);
+  const lastmod = (f) => {
+    try {
+      const committed = execSync(`git show HEAD:${f}`, { cwd: ROOT, stdio: ['ignore', 'pipe', 'ignore'] }).toString();
+      if (committed !== pictures(out[f])) return today;
+      const d = execSync(`git log -1 --format=%cs -- ${f}`, { cwd: ROOT, stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+      return d || today;
+    } catch (e) { return today; }
+  };
   out['sitemap.xml'] = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${files.map((f) => `  <url><loc>${SITE.url}${f === 'index.html' ? '' : f}</loc></url>`).join('\n')}
+${files.map((f) => `  <url><loc>${SITE.url}${f === 'index.html' ? '' : f}</loc><lastmod>${lastmod(f)}</lastmod></url>`).join('\n')}
 </urlset>
 `;
 }

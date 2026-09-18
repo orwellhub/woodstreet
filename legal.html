@@ -14,15 +14,14 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#7C2A1D">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%226%22%20fill%3D%22%23BF3B26%22%2F%3E%3Ctext%20x%3D%2216%22%20y%3D%2222%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2218%22%20fill%3D%22%23FBF3E2%22%3EW%3C%2Ftext%3E%3C%2Fsvg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Narrow:wght@500;600;700&family=Young+Serif&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=fb4f3c8f">
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/young-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css?v=b5e9fdd6">
 </head>
-<body>
+<body data-open="10:00" data-close="17:30" data-days="2,3,4,5,6">
 <a href="#main" class="skip">Skip to content</a>
 
-<div class="topstrip">
+<div class="topstrip" role="region" aria-label="Opening hours and address">
   <div class="wrap">
     <span style="font-weight:600">Open Tuesday to Saturday, 10.00 to 5.30 &middot; Closed Sunday &amp; Monday</span>
     <span>98 &amp; 102 Wood Street, Walthamstow E17 &middot; <a href="tel:+442085090444">020 8509 0444</a></span>
@@ -76,16 +75,16 @@
   <section style="padding:48px 24px 80px">
     <div style="max-width:920px;margin:0 auto">
       <h1 style="font-size:clamp(32px,4.4vw,46px);line-height:1.06;margin:0 0 8px">The small print</h1>
-      <p style="font-size:14.5px;color:#8A7B5E;margin:0 0 26px;font-style:italic">These policies cover this website. Questions about any of them go to Walthams, who manage the market.</p>
-      <div class="legal-tabs" data-tabs role="tablist" aria-label="Policies">
+      <p style="font-size:14.5px;color:#6E6147;margin:0 0 26px;font-style:italic">These policies cover this website. Questions about any of them go to Walthams, who manage the market.</p>
+      <nav class="legal-tabs" data-tabs aria-label="Policies">
         <a href="#privacy">Privacy</a>
         <a href="#cookies">Cookies</a>
         <a href="#accessibility">Accessibility</a>
-      </div>
+      </nav>
       <div class="card" style="padding:32px;border-radius:14px;box-shadow:5px 5px 0 rgba(41,35,28,.85);display:grid;gap:40px">
         <div class="legal-doc" id="privacy" data-doc>
           <h2>Privacy Policy</h2>
-          <p style="font-size:13px;color:#8A7B5E">Last updated September 2026</p>
+          <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
           <p><strong>Who we are.</strong> Wood Street Indoor Market, 98 &amp; 102 Wood Street, Walthamstow, London E17 3HX. The market is managed by Walthams. Questions about this policy: <a href="mailto:info@walthamestates.co.uk">info@walthamestates.co.uk</a>.</p>
           <p><strong>What we collect.</strong> Only what you give us: your name, email address, phone number if you add one, and whatever you write, when you send the contact form or email us. This website has no accounts and no newsletter, and it does not buy or sell data. This is a market, not that kind of market.</p>
           <p><strong>Why we use it.</strong> To reply to you and to progress unit enquiries. Legal bases: legitimate interest and steps taken before a contract.</p>
@@ -95,17 +94,18 @@
         </div>
         <div class="legal-doc" id="cookies" data-doc>
           <h2>Cookie Policy</h2>
-          <p style="font-size:13px;color:#8A7B5E">Last updated September 2026</p>
+          <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
           <p><strong>The short version.</strong> This site sets no cookies and runs no analytics or tracking. None.</p>
           <p><strong>If that changes.</strong> If the market adds analytics to count visits, it will only switch on after you say yes to a consent banner. Decline and the site works exactly the same.</p>
-          <p><strong>Third parties.</strong> Fonts load from Google Fonts. The contact form sends through FormSubmit. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
+          <p><strong>Third parties.</strong> Fonts are served from this site, not from Google. The contact form sends through FormSubmit, which shows a short &ldquo;I am not a robot&rdquo; check on its own page before passing the message on. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
           <p><strong>Managing cookies.</strong> Your browser settings can block or clear cookies at any time. The site will carry on politely without them.</p>
         </div>
         <div class="legal-doc" id="accessibility" data-doc>
           <h2>Accessibility Statement</h2>
-          <p style="font-size:13px;color:#8A7B5E">Last updated September 2026</p>
-          <p><strong>Our aim.</strong> This website is built to meet WCAG 2.2 AA. Everyone should be able to find a shop, plan a visit and enquire about a unit, whatever they browse with.</p>
+          <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
+          <p><strong>Our aim.</strong> This website is built to the WCAG 2.2 AA guidelines. Everyone should be able to find a shop, plan a visit and enquire about a unit, whatever they browse with.</p>
           <p><strong>What that means here.</strong> Full keyboard navigation with visible focus; a skip to content link; proper headings and labels; colour contrast checked against AA; touch targets of 44px and up; and every animation switches off when your device asks for reduced motion.</p>
+          <p><strong>How it has been checked.</strong> Every page passes automated testing with axe-core, and the site has been used by keyboard and at phone width by the people who built it. It has not yet had a formal audit by an independent accessibility specialist or with assistive technology users, so this statement describes our intent and our own testing rather than a certified result.</p>
           <p><strong>The market map.</strong> Every unit on the illustrated map is a keyboard operable link, and the same information is published as a plain list on the same page. You never need the picture to get the information.</p>
           <p><strong>Known limitations.</strong> Most shop photographs are still being gathered; where one is missing the page says so rather than showing a stand-in.</p>
           <p><strong>The building itself.</strong> The market trades on one level inside. For entrance thresholds and facilities, ring 020 8509 0444 and we will talk it through.</p>
@@ -172,6 +172,6 @@
   </div>
 </footer>
 
-<script src="assets/site.js?v=b1a843db" defer></script>
+<script src="assets/site.js?v=80d36808" defer></script>
 </body>
 </html>

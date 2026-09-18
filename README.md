@@ -14,10 +14,11 @@ nothing to install beyond Node.
 | `tools/webp.mjs` | Makes a WebP copy of every photo and trims heavy JPEGs. Run after adding a photo. |
 | `data/shops.json` | The shop data, one entry per unit. Public, so it holds no rent, deposit or owner names. |
 | `assets/site.css`, `assets/site.js` | Shared styles and scripts, hand written. |
+| `assets/fonts/` | Archivo, Archivo Narrow and Young Serif (latin subset, SIL Open Font License), served from here rather than from Google. |
 | `uploads/` | Photography, each JPEG with a WebP copy beside it |
 | `brand/` | Walthams logo, light and inverse |
 | `archive/` | An earlier layout kept for reference, not served |
-| `.htaccess` | Redirects from the old page names, the 404 page, gzip and caching |
+| `.htaccess` | HTTPS and www redirects, redirects from the old page names, the 404 page, security headers, gzip and caching |
 | `robots.txt` | Search engine directives |
 
 ## Editing
@@ -44,15 +45,48 @@ or the words deposit or owner in the output.
   way round, and rebuild. The map, the vacancy counts, the Join page and the home
   page all follow.
 - **Page copy, opening hours, contact details**: in `tools/build.mjs`. Opening
-  hours sit in the `SITE` object at the top and in `assets/site.js` (the live
-  open/closed status), so change both together. The hours are also in the JSON-LD
-  block on the home page, which is what Google reads.
+  hours live once, in `SITE.hours` at the top: the top strip, footer, Visit
+  table, JSON-LD block and the live open/closed status (which reads them from
+  `<body data-open data-close data-days>`) all follow from it.
 - **Events and Journal articles**: both pages currently show an honest empty
   state. When there is real content, add a section to the relevant page template
   in the generator. Nothing is invented in the meantime.
 
 Plain HTML output means anything can be edited directly in an emergency, but the
 next build will overwrite it, so put the change in the generator or the data.
+
+## Security
+
+`.htaccess` sends HSTS (one year, no subdomains until the certificate covers
+www), `X-Frame-Options: DENY`, `X-Content-Type-Options`, a `Referrer-Policy`, a
+`Permissions-Policy`, cross-origin opener and resource policies, and a Content
+Security Policy that allows scripts only from this site, styles from this site
+plus inline style attributes, images from this site, and form posts only to this
+site and FormSubmit. Nothing else loads from anywhere else.
+
+Two consequences to keep in mind:
+
+- **No inline scripts.** `<script>` blocks in the page will not run; put code in
+  `assets/site.js`. Inline `onclick` and friends are blocked too. The JSON-LD
+  blocks are fine, since they are data rather than code.
+- **Any new third party** (analytics, an embedded map, a font) needs adding to
+  the policy in `.htaccess` or it will be blocked.
+
+The generator, its data, the archive and this README return 404 on the live
+site; `.git` and dotfiles are blocked. The contact form goes through FormSubmit
+with its "I am not a robot" check switched on (`_captcha` in the form) and a
+honeypot field.
+
+Every page passes an automated axe-core accessibility check and loads with zero
+CSP violations. `tools/audit.mjs` runs that check: it loads each page in
+headless Chromium with the CSP applied and runs axe (`npm install --no-save
+playwright axe-core` first). Run it after any change to the policy or the
+pages. A formal accessibility audit has not been done and the policies page
+says so.
+
+There are no analytics. Adding a privacy-friendly service (Plausible, Fathom,
+GoatCounter or Cloudflare Web Analytics) means an account, one script tag in
+`page()` in the generator, its host in the CSP, and a line in the cookie policy.
 
 ## The pages
 
