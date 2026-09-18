@@ -9,11 +9,14 @@ import { createHash } from 'crypto';
 import { execSync } from 'child_process';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+// The build normally reads and writes the repo. Tests point it at a copy.
+const DATA_FILE = process.env.WSM_DATA || join(ROOT, 'data/shops.json');
+const OUT_DIR = process.env.WSM_OUT || ROOT;
 // The stylesheet and script are cached by browsers, so each build stamps their
 // URLs with a hash of their contents. A change is then picked up immediately.
 const ver = (f) => createHash('md5').update(readFileSync(join(ROOT, f))).digest('hex').slice(0, 8);
 const CSS_V = ver('assets/site.css'), JS_V = ver('assets/site.js');
-const DATA = JSON.parse(readFileSync(join(ROOT, 'data/shops.json'), 'utf8'));
+const DATA = JSON.parse(readFileSync(DATA_FILE, 'utf8'));
 
 const SITE = {
   name: 'Wood Street Indoor Market',
@@ -57,6 +60,10 @@ const enquire = (topic = 'general', unit = '', rel = '') => `${rel}contact.html?
 const FORM_ACTION = `https://formsubmit.co/${SITE.email}`;
 
 // ---------- helpers ---------------------------------------------------------
+// JSON embedded in HTML must not be able to close its own <script> tag.
+// Escaping the three characters as unicode keeps the JSON valid and makes a
+// breakout impossible, whatever ends up in the shop data.
+const jsonld = (o) => JSON.stringify(o).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 // No long dashes anywhere on the site. Ranges are written in words.
 const nodash = (s) => String(s || '').replace(/[‒–—―−]/g, ' to ').replace(/\s+to\s+to\s+/g, ' to ').replace(/\s{2,}/g, ' ').trim();
@@ -108,6 +115,50 @@ const SIDES = {
 };
 
 // ---------- the data --------------------------------------------------------
+// Shop data is escaped wherever it is printed, but escaping does not stop a
+// link scheme. Anything that becomes an href or src is checked here, once, so
+// a stray javascript:, data: or off-site URL in the data file can never reach
+// a page. A bad value is dropped and named in the build output.
+let dropped = 0;
+function safeUrl(u, where) {
+  if (!u) return null;
+  try {
+    const parsed = new URL(String(u));
+    if (parsed.protocol === 'https:') return parsed.href;
+    console.error(`  ! ${where}: dropping link, only https is allowed`);
+  } catch (e) {
+    console.error(`  ! ${where}: dropping link, not a valid address`);
+  }
+  dropped++;
+  return null;
+}
+function safeEmail(e, where) {
+  if (!e) return null;
+  if (/^[^\s@<>"'`]+@[^\s@<>"'`]+\.[a-z]{2,}$/i.test(String(e))) return String(e);
+  console.error(`  ! ${where}: dropping malformed email address`);
+  dropped++;
+  return null;
+}
+function safeImage(img, where) {
+  if (!img || !img.src) return null;
+  const src = String(img.src);
+  if (/^uploads\/[A-Za-z0-9][A-Za-z0-9._/-]*\.(jpg|webp|png)$/.test(src) && !src.includes('..')) return img;
+  console.error(`  ! ${where}: dropping image, must be a file under uploads/`);
+  dropped++;
+  return null;
+}
+function safeLinks(r) {
+  if (r.vacant) return {};
+  const l = r.links || {}, u = unitLabel(r.unit), out = {};
+  const web = safeUrl(l.website, `${u} website`);
+  const insta = safeUrl(l.instagram, `${u} instagram`);
+  const mail = safeEmail(l.email, `${u} email`);
+  if (web) out.website = web;
+  if (insta) out.instagram = insta;
+  if (mail) out.email = mail;
+  return out;
+}
+
 const units = DATA.units.map((r) => ({
   ...r,
   unit: unitLabel(r.unit),
@@ -116,7 +167,8 @@ const units = DATA.units.map((r) => ({
   hoursNice: r.vacant ? '' : hoursText(r.hours),
   about: r.vacant ? '' : nodash(r.about),
   phones: r.vacant ? [] : (r.phones || []).filter((p) => /^0\d{10}$/.test(p)),
-  links: r.vacant ? {} : (r.links || {}),
+  links: safeLinks(r),
+  image: r.vacant ? null : safeImage(r.image, unitLabel(r.unit)),
   href: `shop/${slug(r.unit)}.html`,
 }));
 const bySide = (s) => units.filter((u) => u.side === s).sort((a, b) => sortKey(a.unit) - sortKey(b.unit));
@@ -488,7 +540,7 @@ const out = {};
     file: 'index.html', active: '',
     title: 'Wood Street Indoor Market | 30 little shops in Walthamstow, E17',
     desc: 'An independent indoor market of around thirty small shops around one horseshoe corridor in Walthamstow E17, two minutes from Wood Street station. Open Tuesday to Saturday.',
-    extraHead: `<script type="application/ld+json">${JSON.stringify({
+    extraHead: `<script type="application/ld+json">${jsonld({
       '@context': 'https://schema.org', '@type': 'ShoppingCenter', name: SITE.name,
       description: 'Independent indoor market of around thirty small shops arranged around one horseshoe corridor in Walthamstow, east London. Trading since 1955.',
       address: { '@type': 'PostalAddress', streetAddress: '98 & 102 Wood Street', addressLocality: 'Walthamstow, London', postalCode: 'E17 3HX', addressCountry: 'GB' },
@@ -755,7 +807,7 @@ for (const r of shops) {
     title: `${r.name} | Wood Street Indoor Market`,
     desc: r.about || `${r.name}, unit ${r.unit} at Wood Street Indoor Market, Walthamstow E17.`,
     ogImage: r.image ? r.image.src : 'uploads/market-frontage.jpg',
-    extraHead: `<script type="application/ld+json">${JSON.stringify(ld)}</script>\n`,
+    extraHead: `<script type="application/ld+json">${jsonld(ld)}</script>\n`,
     body: `
   <div style="background:${r.fam.tint};border-bottom:2px solid #29231C">
     <div class="wrap" style="padding:36px 24px 40px">
@@ -1401,8 +1453,8 @@ for (const [file, raw] of Object.entries(out)) {
   const bad = html.match(/[‒–—―−]/);
   if (bad) { console.error(`  ! long dash in ${file}`); problems++; }
   if (/£\s?\d|\bdeposit\b(?! are set out| and)|\bowner\b/i.test(html)) { console.error(`  ! possible rent/deposit/owner leak in ${file}`); problems++; }
-  mkdirSync(join(ROOT, dirname(file)), { recursive: true });
-  writeFileSync(join(ROOT, file), html);
+  mkdirSync(join(OUT_DIR, dirname(file)), { recursive: true });
+  writeFileSync(join(OUT_DIR, file), html);
 }
 console.log(`wrote ${Object.keys(out).length} files: ${shops.length} shops, ${vacant.length} vacant units, ${shops.filter((s) => s.image).length} with photos`);
 if (problems) { console.error(`${problems} problem(s)`); process.exit(1); }
