@@ -1,0 +1,83 @@
+# Checks every pull request and every push to the deployment branch.
+#
+# This workflow deliberately uses no third-party actions. The audit standard
+# asks for them to be pinned to a commit SHA; using none at all removes the
+# question, and the only thing this repo needs is Node, which the runner
+# already has. Checkout is a shallow git fetch of the exact commit.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: ['**']
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out this commit
+        run: |
+          git init -q .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          git -c protocol.version=2 -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)" \
+            fetch --depth=1 origin "$GITHUB_SHA"
+          git checkout -q FETCH_HEAD
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Node version
+        run: node --version
+
+      - name: Regression tests
+        run: node --test tools/test.mjs
+
+      - name: The committed pages match a fresh build
+        run: |
+          node tools/build.mjs
+          if ! git diff --quiet; then
+            echo "::error::The committed HTML does not match a fresh build. Run 'node tools/build.mjs' and commit the result."
+            git diff --stat
+            exit 1
+          fi
+
+      - name: No secrets in the tree
+        run: |
+          if git ls-files -z | xargs -0 grep -nIE \
+            'sk-ant-|sk_live_|rk_live_|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|ghp_[0-9A-Za-z]{36}|github_pat_|xox[abp]-|sb_secret_|-----BEGIN .*PRIVATE KEY-----|://[^/[:space:]]+:[^@[:space:]]+@' ; then
+            echo "::error::Possible secret committed."
+            exit 1
+          fi
+          echo "No secret patterns found."
+
+      - name: No inline scripts or event handlers, so the CSP needs no unsafe-inline
+        run: |
+          if grep -rnE '<script(?![^>]*src=)(?![^>]*application/ld\+json)|\son(click|error|load|mouseover|mouseout)=' \
+             --include='*.html' -P . | grep -v '^./archive/'; then
+            echo "::error::Inline script or event handler found; it would be blocked by the Content-Security-Policy."
+            exit 1
+          fi
+          echo "Clean."
+
+      - name: Security headers are still declared
+        run: |
+          for h in Strict-Transport-Security X-Frame-Options Content-Security-Policy \
+                   X-Content-Type-Options Referrer-Policy Permissions-Policy; do
+            grep -q "$h" .htaccess || { echo "::error::$h missing from .htaccess"; exit 1; }
+          done
+          echo "All present."
+
+      - name: .htaccess is not obviously corrupt
+        run: |
+          # A bad .htaccess takes the whole site down with a 500, and a stray
+          # search-and-replace is an easy way to leave a one-word line behind.
+          if grep -nE '^[[:space:]]*[A-Za-z]+[[:space:]]*$' .htaccess; then
+            echo "::error::Line above is a bare word, not an Apache directive."
+            exit 1
+          fi
+          awk 'BEGIN{o=0} /<IfModule|<FilesMatch/{o++} /<\/IfModule>|<\/FilesMatch>/{o--} END{if(o!=0){print "::error::Unbalanced <IfModule>/<FilesMatch> blocks"; exit 1}}' .htaccess
+          grep -q 'RedirectMatch 404 \^/\\\.(?!well-known/)' .htaccess || { echo "::error::The dotfile rule must keep the /.well-known/ exception."; exit 1; }
+          echo "Looks structurally sound."

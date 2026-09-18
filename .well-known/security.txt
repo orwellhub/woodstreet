@@ -1,0 +1,9 @@
+# Wood Street Indoor Market
+# If you have found a security problem with this website, please tell us.
+# The site is a static brochure site with no accounts and no customer data,
+# but we would still rather know.
+
+Contact: mailto:info@walthamestates.co.uk
+Expires: 2027-09-18T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://woodstreetindoormarket.co.uk/.well-known/security.txt

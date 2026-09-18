@@ -31,9 +31,18 @@ Options -Indexes
 </IfModule>
 
 # Only the site itself is served. The generator, its data, the archive, the
-# README and any dotfile or directory answer 404 as if they were not there.
+# audit, the README and any dotfile answer 404 as if they were not there.
+# /.well-known/ is the one dotted path that stays public: it carries
+# security.txt and the ACME challenges that renew the TLS certificate.
 <IfModule mod_alias.c>
-  RedirectMatch 404 ^/(\.|tools/|data/|archive/|README\.md$|package\.json$)
+  RedirectMatch 404 ^/\.(?!well-known/)
+  RedirectMatch 404 ^/(tools/|data/|archive/|security-audit/|README\.md$|CLAUDE\.md$|package\.json$)
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "security\.txt$">
+    Header set Content-Type "text/plain; charset=utf-8"
+  </FilesMatch>
 </IfModule>
 
 ErrorDocument 404 /404.html
