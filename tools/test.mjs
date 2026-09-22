@@ -115,3 +115,16 @@ test('no page contains a long dash', () => {
     assert.doesNotMatch(readFileSync(join(ROOT, f), 'utf8'), /[‒–—―−]/, f);
   }
 });
+
+test('every photo the pages load carries a cache stamp', () => {
+  // .htaccess tells browsers to hold images for a month and photos keep
+  // their file names when they are replaced, so an unstamped URL means a
+  // returning visitor goes on seeing the old picture. Comments are ignored:
+  // they name files that do not exist yet.
+  for (const f of ['index.html', 'shops.html', 'story.html', 'shop/m36.html']) {
+    const page = readFileSync(join(ROOT, f), 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of page.matchAll(/(?:\.\.\/)*(?:uploads|brand)\/[A-Za-z0-9._/-]+\.(?:jpg|webp|png|svg)(\?v=[0-9a-f]{8})?/g)) {
+      assert.ok(m[1], `${f}: ${m[0]} has no ?v= stamp, so a replaced file stays cached`);
+    }
+  }
+});

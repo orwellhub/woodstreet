@@ -197,6 +197,12 @@ street still looks like the old pictures, that is why.
 
 Keep images to roughly 1000px on the long edge.
 
+Replacing a photo needs no rename. `.htaccess` tells browsers to hold images
+for a month, so the build stamps every image URL with a hash of the file
+(`market-frontage.jpg?v=6c4080e2`). Change the file and the address changes
+with it, so the new picture shows at once; leave it alone and it stays
+cached. A test fails if any image the pages load is missing its stamp.
+
 Shop photographs arrive as screenshots from a photo album, so each one
 carries some of the viewer around it and none of that belongs on the site.
 Two layouts turn up, and the crop for each is measured rather than

@@ -1505,6 +1505,21 @@ function pictures(html) {
   });
 }
 
+// A photo keeps its file name when its contents change, and .htaccess tells
+// browsers to hold images for a month, so anyone who had been to the site
+// before would go on seeing the old picture long after it was replaced.
+// Stamping each URL with a hash of the file gives a changed photo a new
+// address while an unchanged one stays cached, the same trick the stylesheet
+// and the script already use.
+const stamps = new Map();
+function stamp(html) {
+  return html.replace(/((?:\.\.\/)*)((?:uploads|brand)\/[A-Za-z0-9][A-Za-z0-9._/-]*\.(?:jpg|webp|png|svg))/g, (m, up, path) => {
+    if (!stamps.has(path)) stamps.set(path, existsSync(join(ROOT, path)) ? ver(path) : null);
+    const v = stamps.get(path);
+    return v ? `${up}${path}?v=${v}` : m;
+  });
+}
+
 // Every shop in the data must have a room on the floorplan, or it silently
 // disappears from the map. Checked here so it can never happen quietly.
 let problems = 0;
@@ -1528,7 +1543,7 @@ let problems = 0;
 }
 
 for (const [file, raw] of Object.entries(out)) {
-  const html = file.endsWith('.html') ? pictures(raw) : raw;
+  const html = file.endsWith('.html') ? stamp(pictures(raw)) : raw;
   const bad = html.match(/[‒–—―−]/);
   if (bad) { console.error(`  ! long dash in ${file}`); problems++; }
   if (/£\s?\d|\bdeposit\b(?! are set out| and)|\bowner\b/i.test(html)) { console.error(`  ! possible rent/deposit/owner leak in ${file}`); problems++; }

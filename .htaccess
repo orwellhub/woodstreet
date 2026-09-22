@@ -58,10 +58,12 @@ ErrorDocument 404 /404.html
 AddType image/webp .webp
 AddType font/woff2 .woff2
 
-# Photos and fonts are cached hard, because a changed file gets a new name.
+# Fonts are cached hard, because a changed file gets a new name. Photos keep
+# their names when they are replaced, so the build stamps every image URL
+# with a hash of the file: a replaced photo is a new address and a returning
+# visitor sees it at once. The stylesheet and script carry the same stamp.
 # Pages must never be cached, or a cached copy hides every deploy until it
-# expires. The stylesheet and script carry a content hash in their URL, so
-# they can be cached hard too.
+# expires.
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType image/jpeg "access plus 1 month"
