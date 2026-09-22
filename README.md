@@ -186,10 +186,18 @@ are exactly the nine the spreadsheet marks vacant.
 |---|---|
 | `market-frontage.jpg` | Home hero. Also the social sharing preview. |
 | `market-entrance.jpg` | Our story, home and story page, in the arched frame. Also the home gallery. |
-| `market-corridor.jpg`, `coven-of-wiches.jpg`, `belas-brocante.jpg` | Home gallery |
+| `market-corridor.jpg`, `coven-of-wiches.jpg`, `belas-brocante.jpg`, `market-left-side.jpg` | Home gallery |
 | `shops/shop-a5-6.jpg`, `shops/shop-a16.jpg` | Moroccan Corner and Mrs Tinsley's |
+| `shops/shop-m10.jpg`, `shops/shop-m23-24.jpg`, `shops/shop-m28.jpg`, `shops/shop-m34-35.jpg` | Pritzy, Music Family Records, Mykeyartzone and 1 Vintage Place |
 
 Keep images to roughly 1000px on the long edge.
+
+Shop photographs arrive as screenshots from a photo album, with the unit
+number captioned in a black band along the foot and the viewer's back
+chevron over the left edge. Both are cropped off before the file is
+committed: the band is the run of rows at the bottom averaging under 60 in
+brightness, the chevron sits inside the first 8% of the width. Nothing but
+the photograph itself goes on the site.
 
 The Coven of Wiches (unit 38) and Bela's Brocante (unit 31) photos are not
 attached to any shop because the spreadsheet lists M31 and M38 as available to
@@ -217,10 +225,9 @@ the top of `tools/build.mjs`.
 
 Shop data, as of the September 2026 spreadsheet:
 
-- **Photographs.** 22 of the 24 shops still have no photograph. The spreadsheet
-  points at a Google Photos album rather than naming a file per shop, and that
-  album is not reachable without signing in. Photos need to be added to
-  `uploads/shops/` and named per unit, as described above.
+- **Photographs.** 18 of the 24 shops still have no photograph. They are
+  arriving in batches from the market's own album; each one goes into
+  `uploads/shops/` named per unit, as described above.
 - **Units 13 and 16 to 22 do not exist** on the drawing or in the spreadsheet.
   The numbering simply skips them; nothing is missing.
 - Every shop now has a description. Nine have a website, seven an Instagram

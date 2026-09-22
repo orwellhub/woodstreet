@@ -292,7 +292,10 @@
    "links": {
     "website": "https://pritzy.com/"
    },
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m10.jpg",
+    "alt": "The Pritzy shopfront, a black fascia over white-framed windows of bags, hats and jewellery, with the door open onto the room beyond"
+   }
   },
   {
    "unit": "M11/12",
@@ -318,7 +321,10 @@
    "hours": "",
    "phones": [],
    "links": {},
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m23-24.jpg",
+    "alt": "Music Family Records, cut-paper lettering above open white doors, racks of LPs inside and bunting across the corridor"
+   }
   },
   {
    "unit": "M25/26/27",
@@ -355,7 +361,10 @@
    "links": {
     "instagram": "https://www.instagram.com/mikejohnart65/"
    },
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m28.jpg",
+    "alt": "Mykeyartzone, a lilac double doorway under a hand-painted sign, the studio walls hung with prints and paintings and two visitors at the threshold"
+   }
   },
   {
    "unit": "M29/30",
@@ -408,7 +417,10 @@
    "links": {
     "email": "info@1vintageplace.co.uk"
    },
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m34-35.jpg",
+    "alt": "The corner shopfront of 1 Vintage Place, its sign over glazed windows of framed pictures and curios, with a shopper looking in"
+   }
   },
   {
    "unit": "M36",

@@ -772,6 +772,7 @@ ${vacant.map((v) => `          ${unitBadge(v.label)}`).join('\n')}
         <div><img src="uploads/coven-of-wiches.jpg" alt="The Coven of Wiches at unit 38, a plant-based deli and pickle house with a bright yellow shopfront and bunting overhead" width="785" height="1000" loading="lazy" style="object-position:center top"></div>
         <div><img src="uploads/belas-brocante.jpg" alt="Bela's Brocante at unit 31, pictures and collectables around the doorway, looking on down the market corridor" width="730" height="1000" loading="lazy" style="object-position:center 15%"></div>
         <div><img src="uploads/market-entrance.jpg" alt="The market entrance on Wood Street with its clock and bunting" width="452" height="679" loading="lazy" style="object-position:center 30%"></div>
+        <div><img src="uploads/market-left-side.jpg" alt="The Antique City aisle, a shopper flicking through record racks under bunting, with unit signs hanging down the corridor" width="1000" height="829" loading="lazy"></div>
       </div>
     </div>
   </section>
