@@ -159,23 +159,23 @@ To move or resize a unit, edit its row in `ROOMS`. The build warns if a shop in
 the data has no room on the plan, and fails if a room points at a unit that is
 not in the data.
 
-### Open questions on the plan
+### Unit numbering
 
-Three things the drawing and the spreadsheet disagree about, all waiting on the
-client. Until they are settled the map shows what is certain and nothing more.
+The September 2026 spreadsheet settled the three places where the drawing and
+the older sheet disagreed, and the two now match unit for unit:
 
-- **`14/15`** on the drawing sits exactly where the spreadsheet's **A2/3
-  (Lilac Domino)** would be, at the same position and the same double width.
-  They are very probably the same room under two labels, but that has not been
-  confirmed, so Lilac Domino currently has no place on the map and the build
-  says so on every run.
-- **`A17/18`** is on the drawing but absent from the spreadsheet. It is shown
-  as "not yet listed" rather than guessed at.
-- **`A12` and `A13`** are two rooms on the drawing and one tenancy in the
-  spreadsheet, named "Claudia Rose Lashes/Mimi Rose". The map draws them as a
-  single room covering both footprints, which matches the spreadsheet and keeps
-  the row the right length. If they are two businesses they need splitting, and
-  the row already has the dividing position measured.
+- **`14/15`** is Lilac Domino. The older sheet called it A2/3. It sits in the
+  Antique City section but carries a bare number, exactly as the drawing shows.
+- **`A17/18`** is a real unit and is available to let.
+- **`A12/13`** is one tenancy across two rooms, so it is drawn as one room
+  covering both footprints.
+
+Every unit carries two identifiers. `unit` is the internal key, fixed so that a
+shop's page address never changes, and it keeps an `M` prefix for Market Side.
+`label` is what the drawing prints, which is what every page shows: bare
+numbers for Market Side, `A` numbers for Antique City. When a unit is
+renumbered, keep the key and change the label, and add a redirect in
+`.htaccess` only if the key itself has to move.
 
 Everything else cross-checks: all nine units the drawing shades yellow as empty
 are exactly the nine the spreadsheet marks vacant.
@@ -215,14 +215,16 @@ the top of `tools/build.mjs`.
 
 ## Outstanding
 
-Shop data:
+Shop data, as of the September 2026 spreadsheet:
 
-- **Vintage Corner (M34/35)** has no category and no description in the
-  spreadsheet, so its pages say a fuller listing is coming.
-- One of its two phone numbers is malformed (12 digits) and is not published.
-- **Units M13 to M22 are absent from the spreadsheet**, so they are absent from
-  the map. If they exist, they need adding to `data/shops.json`.
-- Most shops have no phone number in the source.
+- **Photographs.** 22 of the 24 shops still have no photograph. The spreadsheet
+  points at a Google Photos album rather than naming a file per shop, and that
+  album is not reachable without signing in. Photos need to be added to
+  `uploads/shops/` and named per unit, as described above.
+- **Units 13 and 16 to 22 do not exist** on the drawing or in the spreadsheet.
+  The numbering simply skips them; nothing is missing.
+- Every shop now has a description. Nine have a website, seven an Instagram
+  account, four an email address and twelve a phone number.
 
 Still to check:
 

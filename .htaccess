@@ -28,6 +28,10 @@ Options -Indexes
   RewriteRule ^Contact\.dc\.html$ /contact.html [R=301,L]
   RewriteRule ^Legal\.dc\.html$ /legal.html [R=301,L]
   RewriteRule ^(.+)\.dc\.html$ / [R=301,L]
+
+  # Two units were renumbered to match the market's floorplan.
+  RewriteRule ^shop/a2-3\.html$ /shop/14-15.html [R=301,L]
+  RewriteRule ^shop/a12-a13\.html$ /shop/a12-13.html [R=301,L]
 </IfModule>
 
 # Only the site itself is served. The generator, its data, the archive, the

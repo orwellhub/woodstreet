@@ -2,7 +2,7 @@
 //   node tools/build.mjs
 // Plain HTML out, nothing to install. The shop data is the client spreadsheet
 // reduced to what is safe to publish: no rent, no deposit, no owner names.
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { createHash } from 'crypto';
@@ -83,6 +83,8 @@ function hoursText(raw) {
     .replace(/(\d):(\d\d)/g, '$1.$2')
     .replace(/\b(1[3-9]|2[0-3])\.(\d\d)\b/g, (m, h, mm) => (h - 12) + '.' + mm)
     .replace(/\b([a-z]{3,5})\b/gi, (m) => DAYS[m.toLowerCase()] || m)
+    .replace(/([A-Za-z])\s+-\s+([A-Za-z])/g, '$1 to $2')
+    .replace(/([A-Za-z0-9])\(/g, '$1 (')
     .replace(/\s*,\s*$/, '').replace(/\.$/, '').replace(/\s{2,}/g, ' ').trim();
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
@@ -162,6 +164,7 @@ function safeLinks(r) {
 const units = DATA.units.map((r) => ({
   ...r,
   unit: unitLabel(r.unit),
+  label: unitLabel(r.label || r.unit),
   slug: slug(r.unit),
   fam: r.vacant ? null : famOf(r),
   hoursNice: r.vacant ? '' : hoursText(r.hours),
@@ -383,7 +386,7 @@ const ROOMS = [
   { unit: 'M29/30',    label: '29/30',    x: 668, y: 420, w: 52, h: 98 },
   // The Antique City aisle. The back row is shallower than the front row.
   { unit: 'A1',        label: 'A1',       x: 8,   y: 390, w: 52, h: 42 },
-  { unconfirmed: '14/15',                 x: 85,  y: 390, w: 107, h: 42 },
+  { unit: '14/15',     label: '14/15',    x: 85,  y: 390, w: 107, h: 42 },
   { unit: 'A4',        label: 'A4',       x: 192, y: 390, w: 50, h: 42 },
   { unit: 'A5/6',      label: 'A5/6',     x: 242, y: 390, w: 98, h: 42 },
   { unit: 'A7',        label: 'A7',       x: 340, y: 390, w: 48, h: 42 },
@@ -392,14 +395,14 @@ const ROOMS = [
   { unit: 'A10',       label: 'A10',      x: 505, y: 390, w: 45, h: 42 },
   // The front row. The Showcase is shallower than the units beside it.
   { facility: 'Showcase',                 x: 8,   y: 485, w: 67, h: 43 },
-  { unconfirmed: 'A17/18',                x: 80,  y: 467, w: 85, h: 61 },
+  { unit: 'A17/18',    label: 'A17/18',   x: 80,  y: 467, w: 85, h: 61 },
   { facility: 'WC',                       x: 168, y: 467, w: 74, h: 61 },
   { unit: 'A16',       label: 'A16',      x: 245, y: 467, w: 47, h: 61 },
   { unit: 'A15',       label: 'A15',      x: 295, y: 467, w: 45, h: 61 },
   { unit: 'A14',       label: 'A14',      x: 343, y: 467, w: 47, h: 61 },
-  // The drawing divides A13 and A12; the spreadsheet lets them as one
-  // tenancy, so they are drawn as the single room that tenancy occupies.
-  { unit: 'A12/A13',   label: 'A12/A13',  x: 393, y: 467, w: 95, h: 61 },
+  // The drawing divides A13 and A12; the spreadsheet lets them to one
+  // tenant, so they are drawn as the single room that tenancy occupies.
+  { unit: 'A12/13',    label: 'A12/13',   x: 393, y: 467, w: 95, h: 61 },
   { unit: 'A11',       label: 'A11',      x: 495, y: 467, w: 50, h: 61 },
   { unit: 'M31',       label: '31',       x: 548, y: 467, w: 72, h: 61 },
 ];
@@ -453,9 +456,6 @@ function mapHtml({ rel = '', hrefFor = null, mini = false, highlight = [] } = {}
     if (room.facility) {
       return `      <div class="mu mu-fac" style="${pos(room)}" aria-hidden="true"><span class="code">${esc(room.facility)}</span></div>`;
     }
-    if (room.unconfirmed) {
-      return `      <div class="mu mu-unknown" style="${pos(room)}${nm(room)}"><span class="code">${esc(room.unconfirmed)}</span> <span class="nm">Not yet listed</span></div>`;
-    }
     const r = byUnit[room.unit];
     if (!r) return '';
     const cls = hi.has(room.unit) ? ' mu-hi' : '';
@@ -488,11 +488,11 @@ function easelPage(r, rel) {
             <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>`;
   const meta = contactLinks(r, 'easel-meta-link');
   meta.push(`<a href="${rel}${r.href}" class="easel-meta-link">Full listing</a>`);
-  return `          <li class="easel-page" id="shop-${r.slug}" data-unit="${esc(r.unit)}" data-building="${esc(r.side)}">
+  return `          <li class="easel-page" id="shop-${r.slug}" data-unit="${esc(r.label)}" data-building="${esc(r.side)}">
             ${photo}
             <div class="easel-text">
             <span class="easel-tags">
-              ${unitBadge(r.unit)}
+              ${unitBadge(r.label)}
               <span class="easel-building">${buildingLine(r)}</span>
               ${catPill(r)}
             </span>
@@ -531,12 +531,12 @@ ${withPhotoFirst.map((r) => easelPage(r, rel)).join('\n')}
 
 // ---------- shop cards ------------------------------------------------------
 function shopCard(r, rel, { withData = false } = {}) {
-  const text = withData ? ` data-card data-fam="${r.fam.key}" data-text="${esc((r.name + ' ' + r.category + ' ' + r.about + ' ' + r.unit).toLowerCase())}"` : '';
+  const text = withData ? ` data-card data-fam="${r.fam.key}" data-text="${esc((r.name + ' ' + r.category + ' ' + r.about + ' ' + r.label + ' ' + r.unit).toLowerCase())}"` : '';
   const photo = r.image ? `<span class="photo"><img src="${rel}${esc(r.image.src)}" alt="${esc(r.image.alt)}" width="1000" height="750" loading="lazy"></span>` : `<span class="stripe" aria-hidden="true"></span>`;
   return `<a href="${rel}${r.href}" class="shop-card tilt" style="--c:${r.fam.color}"${text}>
             ${photo}
             <span class="body">
-              <span class="row">${unitBadge(r.unit)} ${catPill(r)}</span>
+              <span class="row">${unitBadge(r.label)} ${catPill(r)}</span>
               <span class="nm">${esc(r.name)}</span>
               <span class="ab">${r.about ? esc(r.about) : 'A fuller listing for this shop is on its way.'}</span>
               ${r.hoursNice ? `<span class="hr">${esc(r.hoursNice)}</span>` : ''}
@@ -546,7 +546,7 @@ function shopCard(r, rel, { withData = false } = {}) {
 }
 const vacancyLine = (rel) => {
   const by = {};
-  for (const v of vacant) (by[v.side] = by[v.side] || []).push(v.unit);
+  for (const v of vacant) (by[v.side] = by[v.side] || []).push(v.label);
   const parts = Object.entries(by).map(([s, us]) => `${us.length} in ${esc(s)} (${us.map((u) => `<strong>${esc(u)}</strong>`).join(', ')})`).join(' and ');
   return `${vacant.length} units are currently available to let: ${parts}. <a href="${rel}join.html" style="font-weight:700">Enquire about taking one on</a>.`;
 };
@@ -751,7 +751,7 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
         <h2 style="font-size:clamp(28px,3.6vw,40px);line-height:1.08;margin:0 0 10px">Got a shop in you?</h2>
         <p style="font-size:16.5px;line-height:1.6;margin:0 0 16px;color:#4A3C14">${vacant.length} units are looking for their next keeper. Small spaces, straightforward terms, and a ready-made Saturday crowd.</p>
         <div style="display:flex;gap:9px;flex-wrap:wrap">
-${vacant.map((v) => `          ${unitBadge(v.unit)}`).join('\n')}
+${vacant.map((v) => `          ${unitBadge(v.label)}`).join('\n')}
         </div>
       </div>
       <a href="join.html" class="btn btn-ink">Join the market &rarr;</a>
@@ -850,7 +850,7 @@ for (const r of shops) {
             <div class="photo-slot" style="transform:rotate(-.5deg)" aria-hidden="true"><span>Photo on its way</span></div>`;
   const ld = {
     '@context': 'https://schema.org', '@type': 'Store', name: r.name, url: SITE.url + r.href,
-    address: { '@type': 'PostalAddress', streetAddress: `${SIDES[r.side].addr}, unit ${r.unit}`, addressLocality: 'Walthamstow, London', postalCode: 'E17 3HX', addressCountry: 'GB' },
+    address: { '@type': 'PostalAddress', streetAddress: `${SIDES[r.side].addr}, unit ${r.label}`, addressLocality: 'Walthamstow, London', postalCode: 'E17 3HX', addressCountry: 'GB' },
     containedInPlace: { '@type': 'ShoppingCenter', name: SITE.name, url: SITE.url },
   };
   if (r.about) ld.description = r.about;
@@ -862,7 +862,7 @@ for (const r of shops) {
   out[r.href] = page({
     file: r.href, active: 'shops', rel,
     title: `${r.name} | Wood Street Indoor Market`,
-    desc: r.about || `${r.name}, unit ${r.unit} at Wood Street Indoor Market, Walthamstow E17.`,
+    desc: r.about || `${r.name}, unit ${r.label} at Wood Street Indoor Market, Walthamstow E17.`,
     ogImage: r.image ? r.image.src : 'uploads/market-frontage.jpg',
     extraHead: `<script type="application/ld+json">${jsonld(ld)}</script>\n`,
     body: `
@@ -872,7 +872,7 @@ for (const r of shops) {
         <a href="${rel}index.html">Home</a><span class="sep" aria-hidden="true">/</span><a href="${rel}shops.html">The Shops</a><span class="sep" aria-hidden="true">/</span><span style="font-weight:700">${esc(r.name)}</span>
       </nav>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
-        ${unitBadge(r.unit)}
+        ${unitBadge(r.label)}
         <span class="cat" style="background:#FBF5E7">${esc(r.side)} &middot; ${esc(SIDES[r.side].addr)}</span>
         ${r.category ? `<span class="cat" style="background:#FBF5E7">${esc(r.category)}</span>` : ''}
       </div>
@@ -886,7 +886,7 @@ for (const r of shops) {
         <h2 style="font-size:26px;margin:0 0 16px">A look inside</h2>
         ${photo}
         <h2 style="font-size:26px;margin:36px 0 12px">Finding them</h2>
-        <p style="font-size:16.5px;line-height:1.7;margin:0 0 18px">${esc(r.name)} is unit ${esc(r.unit)} in ${esc(r.side)}, ${esc(SIDES[r.side].addr)}, on ${SIDES[r.side].where}. Follow the loop round from the Wood Street entrance and you will pass it.</p>
+        <p style="font-size:16.5px;line-height:1.7;margin:0 0 18px">${esc(r.name)} is unit ${esc(r.label)} in ${esc(r.side)}, ${esc(SIDES[r.side].addr)}, on ${SIDES[r.side].where}. Follow the loop round from the Wood Street entrance and you will pass it.</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <a href="${rel}map.html#unit-${r.slug}" class="btn btn-cream btn-sm">See it on the map</a>
           <a href="${rel}shops.html#shop-${r.slug}" class="btn btn-cream btn-sm">Flip to it on the easel</a>
@@ -897,7 +897,7 @@ for (const r of shops) {
           <h2 class="card-label">The practical bit</h2>
           <div style="display:grid;gap:12px;font-size:14.5px;line-height:1.55">
             <div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Open</span>${r.hoursNice ? esc(r.hoursNice) : 'Within market hours'} <span class="muted">(the market opens ${SITE.hoursShort}; shop hours can differ)</span></div>
-            <div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Find them</span>Unit ${esc(r.unit)}, ${esc(r.side)}, ${esc(SIDES[r.side].addr)}</div>
+            <div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Find them</span>Unit ${esc(r.label)}, ${esc(r.side)}, ${esc(SIDES[r.side].addr)}</div>
             ${contacts.length ? `<div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Get in touch</span><span style="display:flex;gap:14px;flex-wrap:wrap;font-weight:700">${contacts.join('')}</span></div>` : `<div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Get in touch</span><span class="muted">No contact details published yet. Drop in during market hours.</span></div>`}
           </div>
         </div>
@@ -909,7 +909,7 @@ for (const r of shops) {
         ${neighbours.length ? `<div class="card">
           <h2 class="card-label">Good neighbours</h2>
           <div style="display:grid;gap:9px">
-${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">${unitBadge(n.unit)} <span class="nm">${esc(n.name)}</span> <span class="ar" aria-hidden="true">&rarr;</span></a>`).join('\n')}
+${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">${unitBadge(n.label)} <span class="nm">${esc(n.name)}</span> <span class="ar" aria-hidden="true">&rarr;</span></a>`).join('\n')}
           </div>
         </div>` : ''}
         <a href="${rel}visit.html" class="btn btn-red" style="text-align:center">Plan your visit &rarr;</a>
@@ -923,8 +923,8 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
 // Map
 {
   const list = (s) => bySide(s).map((u) => u.vacant
-    ? `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:#F6EDDA;border-style:dashed;border-color:#C4684E"></span> ${unitBadge(u.unit)} <span style="color:#A94A32;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase">To let</span> <a href="join.html" style="margin-left:auto;font-size:13px;font-weight:600">Enquire</a></li>`
-    : `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:${u.fam.color}"></span> ${unitBadge(u.unit)} <a href="${u.href}">${esc(u.name)}</a></li>`).join('\n');
+    ? `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:#F6EDDA;border-style:dashed;border-color:#C4684E"></span> ${unitBadge(u.label)} <span style="color:#A94A32;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase">To let</span> <a href="join.html" style="margin-left:auto;font-size:13px;font-weight:600">Enquire</a></li>`
+    : `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:${u.fam.color}"></span> ${unitBadge(u.label)} <a href="${u.href}">${esc(u.name)}</a></li>`).join('\n');
   out['map.html'] = page({
     file: 'map.html', active: 'map',
     title: 'The Market Map | Wood Street Indoor Market',
@@ -1252,9 +1252,9 @@ ${tl.map(([era, title, text]) => `        <li>
       <p style="font-size:15.5px;color:#5C5142;margin:0 0 24px">${vacant.length} units right now. Rents are not published here; enquire and Walthams will send current figures.</p>
       <div class="two two-top" style="gap:36px">
         <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));align-content:start">
-${vacant.map((v) => `          <a href="${enquire('unit', v.unit)}" class="card card-link">
-            <span style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">${unitBadge(v.unit)} <span class="cat" style="color:#A94A32">Available</span></span>
-            <span style="display:block;font-family:'Young Serif',serif;font-size:22px;margin:12px 0 6px">Unit ${esc(v.unit)}, ${esc(v.side)}</span>
+${vacant.map((v) => `          <a href="${enquire('unit', v.label)}" class="card card-link">
+            <span style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">${unitBadge(v.label)} <span class="cat" style="color:#A94A32">Available</span></span>
+            <span style="display:block;font-family:'Young Serif',serif;font-size:22px;margin:12px 0 6px">Unit ${esc(v.label)}, ${esc(v.side)}</span>
             <span style="display:block;font-size:14px;color:#5C5142;line-height:1.6">${esc(SIDES[v.side].addr)}, on ${SIDES[v.side].where} &middot; Rent: enquire</span>
             <span style="display:block;font-weight:700;font-size:14px;color:#7C2A1D;margin-top:12px">Ask about this unit &rarr;</span>
           </a>`).join('\n')}
@@ -1534,5 +1534,16 @@ for (const [file, raw] of Object.entries(out)) {
   mkdirSync(join(OUT_DIR, dirname(file)), { recursive: true });
   writeFileSync(join(OUT_DIR, file), html);
 }
+// A renamed unit leaves its old page behind, which would go on being served.
+{
+  const want = new Set(Object.keys(out).filter((f) => f.startsWith('shop/')).map((f) => f.slice(5)));
+  const dir = join(OUT_DIR, 'shop');
+  if (existsSync(dir)) {
+    for (const f of readdirSync(dir)) {
+      if (f.endsWith('.html') && !want.has(f)) { unlinkSync(join(dir, f)); console.log(`  removed shop/${f}, no longer a unit`); }
+    }
+  }
+}
+
 console.log(`wrote ${Object.keys(out).length} files: ${shops.length} shops, ${vacant.length} vacant units, ${shops.filter((s) => s.image).length} with photos`);
 if (problems) { console.error(`${problems} problem(s)`); process.exit(1); }

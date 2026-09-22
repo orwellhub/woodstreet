@@ -1,45 +1,53 @@
 {
- "_note": "Generated from the client spreadsheet. Rent, deposit and owner names are deliberately absent: this file is public.",
+ "_note": "Generated from the client spreadsheet by the workbook extractor in the session notes. Commercially sensitive columns from the workbook second sheet are deliberately absent: this file is public. Unit keys are internal and fixed; label is what the market floorplan prints.",
  "units": [
   {
    "unit": "A1",
+   "label": "A1",
    "side": "Antique City",
    "address": "98 Wood Street",
    "name": "Tokens & Treats",
    "category": "Gifts & accessories",
-   "about": "Make a gift feel personal at Tokens & Treats. Discover personalised cards, bags and T-shirts, alongside wedding favours and decorated glassware for celebrations and thoughtful everyday presents.",
+   "about": "Make your gift feel personal with Tokens & Treats. Discover personalised cards, bags and T-shirts for thoughtful everyday presents. Explore wedding favours and decorated glassware for celebrations. Add a personal touch to every occasion.",
    "hours": "",
    "phones": [
     "07951103425"
+   ],
+   "links": {
+    "instagram": "https://www.instagram.com/tokensandtreats/"
+   },
+   "image": null
+  },
+  {
+   "unit": "14/15",
+   "label": "14/15",
+   "side": "Antique City",
+   "address": "98 Wood Street",
+   "name": "Lilac Domino",
+   "category": "Wool & haberdashery",
+   "about": "Get ready to start your next craft project at Lilac Domino. Take a look through our range of wool and yarn, alongside supplies for sewing and needlework. Whether you enjoy knitting, stitching or creating something by hand, explore the range with your next project in mind.",
+   "hours": "",
+   "phones": [
+    "07930486513"
    ],
    "links": {},
    "image": null
   },
   {
-   "unit": "A2/3",
-   "side": "Antique City",
-   "address": "98 Wood Street",
-   "name": "Lilac Domino",
-   "category": "Wool & haberdashery",
-   "about": "Get your next craft project started at Lilac Domino. Browse wool, yarn, sewing and needlework supplies, whether you enjoy knitting, stitching or making something by hand.",
-   "hours": "",
-   "phones": [],
-   "links": {},
-   "image": null
-  },
-  {
    "unit": "A4",
+   "label": "A4",
    "side": "Antique City",
    "address": "98 Wood Street",
    "vacant": true
   },
   {
    "unit": "A5/6",
+   "label": "A5/6",
    "side": "Antique City",
    "address": "98 Wood Street",
    "name": "Moroccan Corner",
    "category": "Moroccan crafts",
-   "about": "Discover Moroccan artisan goods and crafts at Moroccan Corner. This small independent shop brings a taste of Moroccan craftsmanship to Wood Street Indoor Market.",
+   "about": "Discover a taste of Moroccan craftsmanship at Moroccan Corner. This small, independent shop offers Moroccan artisan goods and crafts. Explore what Moroccan Corner has to offer at Wood Street Indoor Market.",
    "hours": "",
    "phones": [
     "07879363631"
@@ -54,17 +62,19 @@
   },
   {
    "unit": "A7",
+   "label": "A7",
    "side": "Antique City",
    "address": "98 Wood Street",
    "vacant": true
   },
   {
    "unit": "A8",
+   "label": "A8",
    "side": "Antique City",
    "address": "98 Wood Street",
    "name": "Tony Shoe Sale",
    "category": "Shoes and more",
-   "about": "Discover rare second-hand shoes at Tony Shoe Sale, specialising in trainers, high-tops and casual footwear. Browse shelves packed with distinctive styles, alongside a selection of bags and denim clothing.",
+   "about": "Discover rare second-hand shoes at Tony Shoe Sale, specialising in trainers, high-tops and casual footwear. Take a look through shelves packed with distinctive styles. Alongside the footwear, browse a selection of bags and denim clothing.",
    "hours": "",
    "phones": [],
    "links": {},
@@ -72,6 +82,7 @@
   },
   {
    "unit": "A9",
+   "label": "A9",
    "side": "Antique City",
    "address": "98 Wood Street",
    "name": "Ray's Records",
@@ -84,29 +95,34 @@
   },
   {
    "unit": "A10",
+   "label": "A10",
    "side": "Antique City",
    "address": "98 Wood Street",
    "name": "Malaya Therapies",
    "category": "Massage & osteopathy",
-   "about": "Take time for yourself at Malaya Therapies. Run by Kylie Marks, the practice offers osteopathy and a range of massage treatments, including deep tissue, sports, pregnancy and lymphatic drainage massage.",
+   "about": "Take some time for yourself at Malaya Therapies. Run by Kylie Marks, the practice offers osteopathy alongside a range of massage treatments. These include deep tissue and sports massage, as well as pregnancy and lymphatic drainage massage.",
    "hours": "Wednesday to Saturday: 10am to 5pm",
    "phones": [],
-   "links": {},
+   "links": {
+    "website": "https://www.malayatherapies.co.uk/"
+   },
    "image": null
   },
   {
    "unit": "A11",
+   "label": "A11",
    "side": "Antique City",
    "address": "98 Wood Street",
    "vacant": true
   },
   {
-   "unit": "A12/A13",
+   "unit": "A12/13",
+   "label": "A12/13",
    "side": "Antique City",
    "address": "98 Wood Street",
    "name": "Claudia Rose Lashes/Mimi Rose",
    "category": "Eyelash treatments",
-   "about": "Discover your lash style at Claudia Rose Lashes. Choose from classic, hybrid and volume eyelash extensions, with infill and removal appointments also available.",
+   "about": "Discover your lash style at Claudia Rose Lashes. Explore a choice of classic, hybrid and volume eyelash extensions to find your preferred look. Appointments are also available for infills and eyelash extension removal.",
    "hours": "",
    "phones": [],
    "links": {},
@@ -114,11 +130,12 @@
   },
   {
    "unit": "A14",
+   "label": "A14",
    "side": "Antique City",
    "address": "98 Wood Street",
    "name": "Beauty @ Anu",
    "category": "Beauty services",
-   "about": "Enjoy a little time for yourself at Beauty @ Anu. This beauty salon offers eyebrow threading and tinting, waxing, facials and Indian head massage.",
+   "about": "Enjoy a little time for yourself at Beauty @ Anu. Explore the beauty salon’s range of treatments, including eyebrow threading and tinting. Waxing, facials and Indian head massage are also available.",
    "hours": "",
    "phones": [],
    "links": {},
@@ -126,11 +143,12 @@
   },
   {
    "unit": "A15",
+   "label": "A15",
    "side": "Antique City",
    "address": "98 Wood Street",
    "name": "Mike's Record Shop",
    "category": "Records & music",
-   "about": "Dig into second-hand vinyl at Mike’s Record Shop. Browse music spanning rock, punk, new wave, blues, jazz, folk, reggae and soul, and look out for an old favourite or a new discovery.",
+   "about": "Take some time to explore the second-hand vinyl at Mike’s Record Shop. Browse a range of music spanning rock, punk, new wave, blues, jazz, folk, reggae and soul. Look through the records for an old favourite or something new to discover.",
    "hours": "",
    "phones": [],
    "links": {},
@@ -138,94 +156,122 @@
   },
   {
    "unit": "A16",
+   "label": "A16",
    "side": "Antique City",
    "address": "98 Wood Street",
    "name": "Mrs Tinsley's Vintage & Retro",
    "category": "Vintage & antiques",
-   "about": "Explore furniture, lighting and decorative finds from the past at Mrs Tinsley’s Vintage & Retro. This small vintage and antiques shop also stocks art, advertising collectibles, clothing and textiles.",
+   "about": "Explore finds from the past at Mrs Tinsley’s Vintage & Retro. This small vintage and antiques shop offers furniture, lighting and decorative pieces to browse. You’ll also find a selection of art, advertising collectibles, clothing and textiles.",
    "hours": "Tuesday to Saturday 10am until 4pm",
    "phones": [],
-   "links": {},
+   "links": {
+    "website": "https://mrstinsleysvintage.com/"
+   },
    "image": {
     "src": "uploads/shops/shop-a16.jpg",
     "alt": "Mrs Tinsley's Vintage and Retro, framed pictures and prints hung around the shop window"
    }
   },
   {
+   "unit": "A17/18",
+   "label": "A17/18",
+   "side": "Antique City",
+   "address": "98 Wood Street",
+   "vacant": true
+  },
+  {
    "unit": "M2",
+   "label": "2",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "SRK Delight",
    "category": "Juice bar & snacks",
-   "about": "Freshly made drinks and a taste of Jamaica await at SRK Delight. Semone’s juice bar serves fruit juices, smoothies and fruit cups, alongside sugarcane juice, coconut water and Jamaican drinks and snacks.",
+   "about": "Enjoy freshly made drinks and a taste of Jamaica at SRK Delight. Semone’s juice bar serves a selection of fruit juices, smoothies and fruit cups. You’ll also find sugarcane juice and coconut water, alongside Jamaican drinks and snacks.",
    "hours": "Wednesday to Saturday, 11:00am to 4:00pm",
    "phones": [
     "07539218486"
    ],
    "links": {
+    "website": "https://srkdelightjuicing.co.uk/",
     "instagram": "https://www.instagram.com/srkdelightjuicing/"
    },
    "image": null
   },
   {
    "unit": "M3",
+   "label": "3",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "RoseCraft Jewellers",
    "category": "Jewellery & repairs",
-   "about": "Create something personal or give a treasured piece a new lease of life at RoseCraft Jewellers. Discover bespoke jewellery and repair services, including stone replacement, engraving, polishing and refurbishment.",
-   "hours": "by appointment",
+   "about": "Create something personal with bespoke jewellery at RoseCraft Jewellers. Give a treasured piece a new lease of life with the jeweller’s repair services. Available services include stone replacement, engraving, polishing and refurbishment.",
+   "hours": "Tue - Sat 10am-5.30pm(by appointment)",
    "phones": [
     "07956851464"
    ],
    "links": {
-    "website": "https://www.rosecraftjewellery.co.uk"
+    "website": "https://www.rosecraftjewellery.co.uk/",
+    "instagram": "https://www.instagram.com/winston.rosecraft/",
+    "email": "winston.rosecraft@gmail.com"
    },
    "image": null
   },
   {
    "unit": "M4",
+   "label": "4",
    "side": "Market Side",
    "address": "102 Wood Street",
    "vacant": true
   },
   {
    "unit": "M5",
+   "label": "5",
    "side": "Market Side",
    "address": "102 Wood Street",
    "vacant": true
   },
   {
    "unit": "M6/M7",
+   "label": "6/7",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Rinkies Toys",
    "category": "Toys & gifts",
-   "about": "Find something to spark playtime at Rinkies Toys. Explore toys, games and gifts for children, from baby toys and cuddly plush characters to LEGO and action figures.",
+   "about": "Find something to spark playtime at Rinkies Toys. Browse a selection of toys, games and gifts for children. Explore everything from baby toys and cuddly plush characters to LEGO and action figures.",
    "hours": "",
-   "phones": [],
-   "links": {},
+   "phones": [
+    "07720837254"
+   ],
+   "links": {
+    "website": "https://rinkies.com/"
+   },
    "image": null
   },
   {
    "unit": "M8",
+   "label": "8",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Books From Boxes",
    "category": "Books & stationery",
-   "about": "Find your next read at Books From Boxes, an independent bookshop tucked inside Wood Street Indoor Market. Browse a mix of new and second-hand books, alongside a small selection of stationery.",
+   "about": "Find your next read at Books From Boxes. Tucked inside Wood Street Indoor Market, this independent bookshop offers a mix of new and second-hand books to browse. You’ll also find a small selection of stationery alongside the books.",
    "hours": "Saturday 10am-5pm.",
-   "phones": [],
-   "links": {},
+   "phones": [
+    "07826774913"
+   ],
+   "links": {
+    "website": "https://www.booksfromboxes.co.uk/"
+   },
    "image": null
   },
   {
    "unit": "M9",
+   "label": "9",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Vintage Tony",
    "category": "Vintage clothing",
-   "about": "Explore men’s fashion from decades past at Vintage Tony. Specialising mainly in the 1960s and 1970s, the shop offers vintage clothing for sale and hire, including sportswear and trainers.",
+   "about": "Explore men’s fashion from decades past at Vintage Tony. The shop specialises mainly in clothing from the 1960s and 1970s, with vintage pieces available for both sale and hire. Browse a selection that also includes sportswear and trainers.",
    "hours": "",
    "phones": [
     "07703645946"
@@ -235,23 +281,27 @@
   },
   {
    "unit": "M10",
+   "label": "10",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Pritzy Ltd",
    "category": "Fashion & gifts",
-   "about": "Add a little character to your wardrobe or home at Pritzy. Discover vintage-inspired jewellery, bags, hats and fashion accessories, alongside bridal accessories, gifts and decorative pieces for the home.",
+   "about": "Add a little character to your wardrobe or home at Pritzy. Browse vintage-inspired jewellery, bags, hats and fashion accessories. Explore bridal accessories and gifts too, alongside decorative pieces for your home.",
    "hours": "",
    "phones": [],
-   "links": {},
+   "links": {
+    "website": "https://pritzy.com/"
+   },
    "image": null
   },
   {
    "unit": "M11/12",
+   "label": "11/12",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Sustainable style by S&K",
    "category": "Pre-loved clothing",
-   "about": "Give pre-loved fashion another outing with Sustainable style by S&K. Browse vintage and retro clothing and find something with its own history to add to your wardrobe.",
+   "about": "Give pre-loved fashion another outing with Sustainable style by S&K. Take a look through the range of vintage and retro clothing. Find something with a history of its own to add to your wardrobe.",
    "hours": "",
    "phones": [],
    "links": {},
@@ -259,11 +309,12 @@
   },
   {
    "unit": "M23/24",
+   "label": "23/24",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Music Family Records",
    "category": "Records & music",
-   "about": "Browse records and CDs at Music Family Records. Take a moment to explore the music on offer, revisit a favourite or find something new for your collection.",
+   "about": "Browse the records and CDs at Music Family Records. Take your time exploring the music on offer and revisiting a favourite. You might also find something new to add to your collection.",
    "hours": "",
    "phones": [],
    "links": {},
@@ -271,39 +322,49 @@
   },
   {
    "unit": "M25/26/27",
+   "label": "25/26/27",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Timmy Tapers Ltd",
    "category": "Barbering",
-   "about": "Freshen up your look with Timmy Tapers. The barbering business offers haircuts, with mobile and home appointments currently advertised. Get in touch directly to arrange a booking.",
+   "about": "Freshen up your look with a haircut from Timmy Tapers. The barbering business currently advertises both mobile and home appointments. To arrange your booking, get in touch with Timmy Tapers directly.",
    "hours": "Tuesday–Saturday: 10am–5pm",
-   "phones": [],
+   "phones": [
+    "07766319220",
+    "07983871376"
+   ],
    "links": {
-    "instagram": "https://www.instagram.com/timmytapersbarbershop/"
+    "website": "https://timmytapersbarbershop.co.uk/",
+    "instagram": "https://www.instagram.com/timmytapersbarbershop/",
+    "email": "timmytapersltd@gmail.com"
    },
    "image": null
   },
   {
    "unit": "M28",
+   "label": "28",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Mykeyartzone",
    "category": "Art",
-   "about": "Discover colourful artwork at Mykeyartzone, a small studio gallery in Wood Street Indoor Market. Browse portraits, landscapes and illustrated pieces in a variety of styles, and find something to bring character to your walls.",
+   "about": "Discover colourful artwork at Mykeyartzone, a small studio gallery tucked inside Wood Street Indoor Market. Take time to browse portraits, landscapes and illustrated pieces in a variety of styles. Explore the artwork and find something to bring character to your walls.",
    "hours": "",
    "phones": [
     "07765190033"
    ],
-   "links": {},
+   "links": {
+    "instagram": "https://www.instagram.com/mikejohnart65/"
+   },
    "image": null
   },
   {
    "unit": "M29/30",
+   "label": "29/30",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Disc Disciple Records",
    "category": "Records & music",
-   "about": "Explore second-hand vinyl at Disc Disciple Records, with music spanning rock, punk, new wave, blues, jazz, folk, reggae and soul. Browse for a much-loved album or discover something new for your collection.",
+   "about": "Explore the second-hand vinyl at Disc Disciple Records. Browse music spanning rock, punk, new wave, blues, jazz, folk, reggae and soul. Take your time looking for a much-loved album or discovering something new to add to your collection.",
    "hours": "",
    "phones": [],
    "links": {},
@@ -311,61 +372,71 @@
   },
   {
    "unit": "M31",
+   "label": "31",
    "side": "Market Side",
    "address": "102 Wood Street",
    "vacant": true
   },
   {
    "unit": "M32",
+   "label": "32",
    "side": "Market Side",
    "address": "102 Wood Street",
    "vacant": true
   },
   {
    "unit": "M33",
+   "label": "33",
    "side": "Market Side",
    "address": "102 Wood Street",
    "vacant": true
   },
   {
    "unit": "M34/35",
+   "label": "34/35",
    "side": "Market Side",
    "address": "102 Wood Street",
-   "name": "Vintage Corner",
-   "category": "",
-   "about": "",
+   "name": "1 Vintage Place",
+   "category": "Vintage & Retro",
+   "about": "Discover vintage finds with a timeless feel. Explore retro treasures, each with a story to tell. Embrace sustainable style with one-of-a-kind pieces.",
    "hours": "",
    "phones": [
-    "07799486220"
+    "07799486220",
+    "07901334461",
+    "07404189482"
    ],
-   "links": {},
+   "links": {
+    "email": "info@1vintageplace.co.uk"
+   },
    "image": null
   },
   {
    "unit": "M36",
+   "label": "36",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Flowerie88",
    "category": "Jewellery & accessories",
-   "about": "Discover handmade jewellery and fashion accessories by Japanese designer and maker Rie Tanabe at Flowerie88. The shop also offers repairs, alterations and remodelling to give treasured jewellery a fresh chapter.",
-   "hours": "wed 11:00-17:00, thur 11:00-15:00,  fri 11:00-17:00,  sat 11:00-16:00",
+   "about": "Discover handmade jewellery and fashion accessories at Flowerie88, created by Japanese designer and maker Rie Tanabe. The shop also offers jewellery repairs, alterations and remodelling. Give your treasured pieces a fresh chapter with these services.",
+   "hours": "wed 11:00-17:00, thur 11:00-15:00, fri 11:00-17:00, sat 11:00-16:00",
    "phones": [
     "07961989635"
    ],
    "links": {
+    "website": "https://www.flowerie88.com/",
     "instagram": "https://www.instagram.com/flowerie88/",
-    "website": "https://www.flowerie88.com",
     "email": "info@flowerie88.com"
    },
    "image": null
   },
   {
    "unit": "M37",
+   "label": "37",
    "side": "Market Side",
    "address": "102 Wood Street",
    "name": "Jimmy Mack Vintage & Retro",
    "category": "Vintage clothing",
-   "about": "Browse fashion and finds from the past at Jimmy Mack Vintage & Retro. Discover vintage and retro clothing alongside film annuals and collectibles for a little everyday nostalgia.",
+   "about": "Explore fashion and finds from the past at Jimmy Mack Vintage & Retro. Browse a selection of vintage and retro clothing, alongside film annuals and collectibles. Discover a little everyday nostalgia as you look through what’s on offer.",
    "hours": "",
    "phones": [],
    "links": {},
@@ -373,6 +444,7 @@
   },
   {
    "unit": "M38",
+   "label": "38",
    "side": "Market Side",
    "address": "102 Wood Street",
    "vacant": true

@@ -261,8 +261,6 @@ a.mu:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 rgba(41,35,28,.85
 .mu-vacant{background:#F6EDDA;border:2px dashed #C4684E}
 .mu-fac{background:#E4DCCB;border:1.5px solid rgba(41,35,28,.35);border-left-width:1.5px;color:#6E6147}
 .mu-fac .code{font-size:.7cqw;letter-spacing:.08em;text-transform:uppercase;opacity:1;color:#574D3A}
-.mu-unknown{background:#EFE9DC;border:2px dashed #9C8B62;border-left-width:2px}
-.mu-unknown .nm{font-size:.72cqw;letter-spacing:.04em;text-transform:uppercase;color:#6E6147;font-weight:700}
 .map-void{position:absolute;background:repeating-linear-gradient(45deg,#EFE7D6 0 7px,#F8F2E5 7px 14px);border:1.5px dashed rgba(41,35,28,.16);border-radius:12px;opacity:.4}
 .mu-vacant .nm{font-size:.75cqw;letter-spacing:.06em;text-transform:uppercase;color:#A94A32}
 .mu-hi{outline:3px solid #BF3B26;outline-offset:1px;box-shadow:0 0 0 6px rgba(191,59,38,.25);z-index:3}
