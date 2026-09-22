@@ -353,55 +353,59 @@ ${usedFamilies.map((f) => `        <span class="chip chip-static"><span class="d
 // `unit` matches data/shops.json. `label` is what the drawing prints where
 // that differs from the spreadsheet's code. `facility` is not a lettable shop.
 // `unconfirmed` is a room on the drawing that the spreadsheet does not list.
-const PLAN = { w: 1000, h: 570 };
+// Coordinates are taken straight from the drawing, so the proportions match:
+// the space is 730 by 545, which is the market's own width-to-height ratio.
+const PLAN = { w: 730, h: 545 };
 const ROOMS = [
-  // The top run, left to right along the back wall.
-  { unit: 'M2',        label: '2',        x: 150, y: 30,  w: 46, h: 62 },
-  { unit: 'M3',        label: '3',        x: 198, y: 30,  w: 46, h: 62 },
-  { unit: 'M4',        label: '4',        x: 246, y: 30,  w: 46, h: 62 },
-  { unit: 'M5',        label: '5',        x: 294, y: 30,  w: 46, h: 62 },
-  { unit: 'M6/M7',     label: '6/7',      x: 342, y: 30,  w: 94, h: 62 },
-  { unit: 'M8',        label: '8',        x: 438, y: 30,  w: 46, h: 62 },
-  { unit: 'M9',        label: '9',        x: 486, y: 30,  w: 46, h: 62 },
-  { unit: 'M10',       label: '10',       x: 534, y: 30,  w: 46, h: 62 },
-  { facility: 'Storage',                  x: 582, y: 30,  w: 44, h: 62 },
-  { unit: 'M11/12',    label: '11/12',    x: 628, y: 30,  w: 92, h: 62 },
-  // The block between the back wall and the right-hand run.
-  { unit: 'M38',       label: '38',       x: 594, y: 126, w: 96, h: 80 },
-  { unit: 'M37',       label: '37',       x: 694, y: 126, w: 58, h: 80 },
-  { unit: 'M36',       label: '36',       x: 694, y: 210, w: 58, h: 50 },
-  { unit: 'M33',       label: '33',       x: 694, y: 264, w: 58, h: 50 },
-  { unit: 'M32',       label: '32',       x: 694, y: 318, w: 58, h: 50 },
-  { unit: 'M34/35',    label: '34/35',    x: 694, y: 372, w: 58, h: 62 },
-  // The right-hand run, facing the street.
-  { unit: 'M23/24',    label: '23/24',    x: 800, y: 112, w: 78, h: 64 },
-  { unit: 'M25/26/27', label: '25/26/27', x: 800, y: 180, w: 78, h: 118 },
-  { unit: 'M28',       label: '28',       x: 800, y: 330, w: 78, h: 62 },
-  { unit: 'M29/30',    label: '29/30',    x: 800, y: 396, w: 78, h: 78 },
-  // The Antique City aisle: two rows facing each other. Upper row first.
-  { unit: 'A1',        label: 'A1',       x: 96,  y: 400, w: 58, h: 58 },
-  { unconfirmed: '14/15',                 x: 172, y: 398, w: 130, h: 56 },
-  { unit: 'A4',        label: 'A4',       x: 306, y: 398, w: 52, h: 56 },
-  { unit: 'A5/6',      label: 'A5/6',     x: 362, y: 398, w: 98, h: 56 },
-  { unit: 'A7',        label: 'A7',       x: 464, y: 398, w: 52, h: 56 },
-  { unit: 'A8',        label: 'A8',       x: 520, y: 398, w: 52, h: 56 },
-  { unit: 'A9',        label: 'A9',       x: 576, y: 398, w: 52, h: 56 },
-  { unit: 'A10',       label: 'A10',      x: 632, y: 398, w: 52, h: 56 },
-  // Lower row of the aisle.
-  { facility: 'Showcase',                 x: 92,  y: 482, w: 70, h: 72 },
-  { unconfirmed: 'A17/18',                x: 168, y: 482, w: 82, h: 72 },
-  { facility: 'WC',                       x: 256, y: 482, w: 76, h: 72 },
-  { unit: 'A16',       label: 'A16',      x: 350, y: 482, w: 54, h: 72 },
-  { unit: 'A15',       label: 'A15',      x: 410, y: 482, w: 54, h: 72 },
-  { unit: 'A14',       label: 'A14',      x: 470, y: 482, w: 54, h: 72 },
-  // The spreadsheet lists A12 and A13 as one tenancy; the drawing shows the
-  // two rooms it occupies.
-  { unit: 'A12/A13',   label: 'A12/A13',  x: 530, y: 482, w: 112, h: 72 },
-  { unit: 'A11',       label: 'A11',      x: 648, y: 482, w: 52, h: 72 },
-  { unit: 'M31',       label: '31',       x: 706, y: 482, w: 62, h: 72 },
+  // The back wall, left to right. Unit 2 is the widest of the run.
+  { unit: 'M2',        label: '2',        x: 57,  y: 8,   w: 73, h: 60 },
+  { unit: 'M3',        label: '3',        x: 130, y: 8,   w: 48, h: 60 },
+  { unit: 'M4',        label: '4',        x: 178, y: 8,   w: 50, h: 60 },
+  { unit: 'M5',        label: '5',        x: 228, y: 8,   w: 49, h: 60 },
+  { unit: 'M6/M7',     label: '6/7',      x: 277, y: 8,   w: 76, h: 60 },
+  { unit: 'M8',        label: '8',        x: 353, y: 8,   w: 40, h: 60 },
+  { unit: 'M9',        label: '9',        x: 393, y: 8,   w: 45, h: 60 },
+  { unit: 'M10',       label: '10',       x: 438, y: 8,   w: 49, h: 60 },
+  { facility: 'Storage',                  x: 490, y: 8,   w: 42, h: 60 },
+  { unit: 'M11/12',    label: '11/12',    x: 534, y: 8,   w: 91, h: 60 },
+  // 38 is the big room in the corner, with 37 beside it and the rest of the
+  // run dropping down the inside of the right-hand wall.
+  { unit: 'M38',       label: '38',       x: 475, y: 105, w: 95, h: 90 },
+  { unit: 'M37',       label: '37',       x: 573, y: 105, w: 49, h: 90 },
+  { unit: 'M36',       label: '36',       x: 573, y: 200, w: 49, h: 52 },
+  { unit: 'M33',       label: '33',       x: 573, y: 255, w: 49, h: 47 },
+  { unit: 'M32',       label: '32',       x: 573, y: 305, w: 49, h: 47 },
+  { unit: 'M34/35',    label: '34/35',    x: 573, y: 355, w: 49, h: 73 },
+  // The run along the street frontage, with openings between some of them.
+  { unit: 'M23/24',    label: '23/24',    x: 668, y: 80,  w: 52, h: 62 },
+  { unit: 'M25/26/27', label: '25/26/27', x: 668, y: 145, w: 52, h: 127 },
+  { unit: 'M28',       label: '28',       x: 668, y: 335, w: 52, h: 67 },
+  { unit: 'M29/30',    label: '29/30',    x: 668, y: 420, w: 52, h: 98 },
+  // The Antique City aisle. The back row is shallower than the front row.
+  { unit: 'A1',        label: 'A1',       x: 8,   y: 390, w: 52, h: 42 },
+  { unconfirmed: '14/15',                 x: 85,  y: 390, w: 107, h: 42 },
+  { unit: 'A4',        label: 'A4',       x: 192, y: 390, w: 50, h: 42 },
+  { unit: 'A5/6',      label: 'A5/6',     x: 242, y: 390, w: 98, h: 42 },
+  { unit: 'A7',        label: 'A7',       x: 340, y: 390, w: 48, h: 42 },
+  { unit: 'A8',        label: 'A8',       x: 390, y: 390, w: 60, h: 42 },
+  { unit: 'A9',        label: 'A9',       x: 450, y: 390, w: 55, h: 42 },
+  { unit: 'A10',       label: 'A10',      x: 505, y: 390, w: 45, h: 42 },
+  // The front row. The Showcase is shallower than the units beside it.
+  { facility: 'Showcase',                 x: 8,   y: 485, w: 67, h: 43 },
+  { unconfirmed: 'A17/18',                x: 80,  y: 467, w: 85, h: 61 },
+  { facility: 'WC',                       x: 168, y: 467, w: 74, h: 61 },
+  { unit: 'A16',       label: 'A16',      x: 245, y: 467, w: 47, h: 61 },
+  { unit: 'A15',       label: 'A15',      x: 295, y: 467, w: 45, h: 61 },
+  { unit: 'A14',       label: 'A14',      x: 343, y: 467, w: 47, h: 61 },
+  // The drawing divides A13 and A12; the spreadsheet lets them as one
+  // tenancy, so they are drawn as the single room that tenancy occupies.
+  { unit: 'A12/A13',   label: 'A12/A13',  x: 393, y: 467, w: 95, h: 61 },
+  { unit: 'A11',       label: 'A11',      x: 495, y: 467, w: 50, h: 61 },
+  { unit: 'M31',       label: '31',       x: 548, y: 467, w: 72, h: 61 },
 ];
-// The part of the building the market does not trade in.
-const VOID_BLOCK = { x: 90, y: 126, w: 500, h: 250 };
+// The part of the building the market does not trade in. Unit 38 sits over
+// its top-right corner and is drawn after it.
+const VOID_BLOCK = { x: 5, y: 105, w: 563, h: 283 };
 
 function mapHtml({ rel = '', hrefFor = null, mini = false, highlight = [] } = {}) {
   const hi = new Set(highlight);

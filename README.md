@@ -108,8 +108,10 @@ GoatCounter or Cloudflare Web Analytics) means an account, one script tag in
 
 Traced from the market's own floorplan drawing, not generated from a formula.
 Every room is a literal entry in the `ROOMS` table at the top of the map
-section in `tools/build.mjs`, with `x`, `y`, `w` and `h` in a 1000 by 570
-coordinate space that scales to whatever width the map is shown at.
+section in `tools/build.mjs`, with `x`, `y`, `w` and `h` measured off the
+drawing in a 730 by 545 space. That is the market's own width-to-height ratio,
+so every room keeps its real proportions and the map scales to whatever width
+it is shown at.
 
 The real shape is not the horseshoe an earlier version of this site drew. The
 Market Side units run along the back wall (2 to 12), then down the right-hand
@@ -142,9 +144,10 @@ client. Until they are settled the map shows what is certain and nothing more.
 - **`A17/18`** is on the drawing but absent from the spreadsheet. It is shown
   as "not yet listed" rather than guessed at.
 - **`A12` and `A13`** are two rooms on the drawing and one tenancy in the
-  spreadsheet, named "Claudia Rose Lashes/Mimi Rose". The map draws them as one
-  wide room, which matches the spreadsheet. If they are two businesses they
-  need splitting.
+  spreadsheet, named "Claudia Rose Lashes/Mimi Rose". The map draws them as a
+  single room covering both footprints, which matches the spreadsheet and keeps
+  the row the right length. If they are two businesses they need splitting, and
+  the row already has the dividing position measured.
 
 Everything else cross-checks: all nine units the drawing shades yellow as empty
 are exactly the nine the spreadsheet marks vacant.
