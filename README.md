@@ -127,6 +127,22 @@ with an `A`, so each room carries a `label` for what the drawing shows and a
 Storage, Showcase and the toilets are marked `facility`: drawn, but not
 lettable and not linked.
 
+Two deliberate departures from the drawing, both so the map reads well on a
+screen rather than as a survey:
+
+- **`VSQUASH`** compresses everything below the back wall vertically by the
+  same factor. The building is long and shallow, so drawn true to scale the
+  middle is mostly the part the market does not trade in. Every room keeps its
+  size relative to every other room; only the aspect changes. Set it to 1 to
+  see the map exactly as drawn.
+- **`VOID_BLOCK`** is drawn well inside the space it really fills, for the same
+  reason. At full size it swamps the units.
+
+Room labels are sized in `cqw`, a share of the map's own width, so the names
+scale with the rooms and nothing clips at any screen size. The two full-size
+maps sit in `.wrap-w`, a wider container than the rest of the page, so the
+rooms are drawn as large as the layout allows.
+
 To move or resize a unit, edit its row in `ROOMS`. The build warns if a shop in
 the data has no room on the plan, and fails if a room points at a unit that is
 not in the data.
