@@ -23,11 +23,15 @@ Options -Indexes
   RewriteRule ^(WhatsOn|Event)\.dc\.html$ /whats-on.html [R=301,L]
   RewriteRule ^Visit\.dc\.html$ /visit.html [R=301,L]
   RewriteRule ^Story\.dc\.html$ /story.html [R=301,L]
-  RewriteRule ^(Journal|Article)\.dc\.html$ /journal.html [R=301,L]
+  RewriteRule ^(Journal|Article)\.dc\.html$ /story.html [R=301,L]
   RewriteRule ^(Join|Unit|Apply)\.dc\.html$ /join.html [R=301,L]
   RewriteRule ^Contact\.dc\.html$ /contact.html [R=301,L]
   RewriteRule ^Legal\.dc\.html$ /legal.html [R=301,L]
   RewriteRule ^(.+)\.dc\.html$ / [R=301,L]
+
+  # The Journal never had anything in it. Memories and history live on the
+  # story page, which carries the same "share a memory" invitation.
+  RewriteRule ^journal\.html$ /story.html [R=301,L]
 
   # Two units were renumbered to match the market's floorplan.
   RewriteRule ^shop/a2-3\.html$ /shop/14-15.html [R=301,L]

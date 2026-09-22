@@ -82,6 +82,9 @@ function hoursText(raw) {
   t = t.replace(/(\d\s*(?:am|pm)?)\s*-\s*(\d)/gi, '$1 to $2')
     .replace(/(\d):(\d\d)/g, '$1.$2')
     .replace(/\b(1[3-9]|2[0-3])\.(\d\d)\b/g, (m, h, mm) => (h - 12) + '.' + mm)
+    // "11.00am" is nobody's way of writing eleven o'clock. On the hour and
+    // with am or pm after it, the minutes go: "11am to 4pm".
+    .replace(/\b(\d{1,2})\.00\s*(am|pm)\b/gi, (m, h, ap) => h + ap.toLowerCase())
     .replace(/\b([a-z]{3,5})\b/gi, (m) => DAYS[m.toLowerCase()] || m)
     .replace(/([A-Za-z])\s+-\s+([A-Za-z])/g, '$1 to $2')
     .replace(/([A-Za-z0-9])\(/g, '$1 (')
@@ -178,6 +181,8 @@ const bySide = (s) => units.filter((u) => u.side === s).sort((a, b) => sortKey(a
 const shops = [...bySide('Antique City'), ...bySide('Market Side')].filter((u) => !u.vacant);
 const vacant = [...bySide('Antique City'), ...bySide('Market Side')].filter((u) => u.vacant);
 const withPhotoFirst = [...shops.filter((s) => s.image), ...shops.filter((s) => !s.image)];
+// Six on the home page, the photographed ones first so the row has faces in it.
+const featured = withPhotoFirst.slice(0, 6);
 const famCount = (f) => shops.filter((s) => s.fam.key === f.key).length;
 const usedFamilies = FAMILIES.filter((f) => famCount(f) > 0);
 
@@ -275,7 +280,6 @@ function footer(rel) {
       <h2>Explore</h2>
       <nav class="fnav" aria-label="Footer">
         ${navLinks(rel, '')}
-        <a href="${rel}journal.html">Journal</a>
         <a href="${rel}join.html">Join the Market</a>
         <a href="${rel}contact.html">Contact</a>
       </nav>
@@ -332,6 +336,26 @@ ${footer(rel)}
 </html>
 `;
 }
+
+// The market news sign-up. It posts through FormSubmit to the same mailbox
+// as the contact form, with the same captcha and the same honeypot, because
+// a static site has nowhere else to send it. Nothing is stored here.
+const signupForm = (rel = '') => `        <form class="card signup" method="POST" action="${FORM_ACTION}">
+          <input type="hidden" name="_subject" value="Wood Street Indoor Market: market news sign-up">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="true">
+          <input type="hidden" name="_next" value="${SITE.url}thanks.html">
+          <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px">
+            <label><span class="label">First name</span><input class="field" type="text" name="name" autocomplete="given-name"></label>
+            <label><span class="label">Email address</span><input class="field" type="email" name="email" required autocomplete="email"></label>
+          </div>
+          <label class="consent">
+            <input type="checkbox" name="consent" value="yes" required>
+            <span>Send me market news by email. Unsubscribe any time; what happens to your address is set out in the <a href="${rel}legal.html#privacy">privacy policy</a>.</span>
+          </label>
+          <button type="submit" class="btn btn-gold">Sign me up &rarr;</button>
+        </form>`;
 
 const eyebrow = (t, light = false) => `<div class="eyebrow${light ? ' eyebrow-light' : ''}"><span></span><span>${t}</span></div>`;
 const unitBadge = (u) => `<span class="unit">UNIT ${esc(u)}</span>`;
@@ -411,6 +435,16 @@ const ROOMS = [
 // the units and the map is for finding shops, not for measuring the void.
 const VOID_BLOCK = { x: 115, y: 168, w: 355, h: 160 };
 
+// The walking route, measured off the same drawing in the same space: the
+// aisle in front of the back wall, the aisle between the right-hand run and
+// the street frontage, and the Antique City aisle between its two rows. Three
+// sides of a horseshoe. Only the illustrated guide map draws them.
+const CORRIDOR = [
+  { x: 57, y: 70, w: 568, h: 33 },
+  { x: 624, y: 80, w: 42, h: 438 },
+  { x: 8, y: 434, w: 612, h: 31 },
+];
+
 // The table above is the drawing as measured. Three things happen to it
 // before it reaches the page, all of them to make the plan readable on a
 // screen rather than to survey the building. Every room is treated the same
@@ -443,6 +477,42 @@ const EXTENT = [...ROOMS, VOID_BLOCK].map(place);
 const PLAN_W = Math.round(Math.max(...EXTENT.map((r) => r.x + r.w)) + 10);
 const PLAN_H = Math.round(Math.max(...EXTENT.map((r) => r.y + r.h)) + 10);
 
+// The illustrated guide version of the map, as the first design drew it: the
+// corridor marked out with marching dashes, every unit a block of its trade
+// colour, no names to read. It is one link through to the real map rather
+// than thirty, so it works at any size and on any screen. The geometry is the
+// market's own, not a sketch, so nothing on it is invented.
+
+function mapGuide(rel = '') {
+  const px = (v) => (v / PLAN_W * 100).toFixed(2) + '%';
+  const py = (v) => (v / PLAN_H * 100).toFixed(2) + '%';
+  const pos = (r0) => { const r = place(r0); return `left:${px(r.x)};top:${py(r.y)};width:${px(r.w)};height:${py(r.h)}`; };
+  const byUnit = Object.fromEntries(units.map((u) => [u.unit, u]));
+  const blocks = ROOMS.map((room) => {
+    if (room.facility) return `        <span class="gu gu-fac" style="${pos(room)}"></span>`;
+    const r = byUnit[room.unit];
+    if (!r) return '';
+    if (r.vacant) return `        <span class="gu gu-vacant" style="${pos(room)}"></span>`;
+    return `        <span class="gu" style="${pos(room)};--c:${r.fam.color};--t:${r.fam.tint}"></span>`;
+  }).filter(Boolean).join('\n');
+  // Each aisle is drawn as a band with a dashed line marching along its
+  // middle, the way the first design drew the route.
+  const aisles = CORRIDOR.map((c) => {
+    const r = place(c);
+    const lengthways = r.w >= r.h;
+    const ant = lengthways
+      ? `left:${px(r.x + 4)};top:${py(r.y + r.h / 2 - 1)};width:${px(r.w - 8)}`
+      : `left:${px(r.x + r.w / 2 - 1)};top:${py(r.y + 4)};height:${py(r.h - 8)}`;
+    return `        <span class="cor" style="${pos(c)}"></span>\n        <span class="ant ant-${lengthways ? 'h' : 'v'}" style="${ant}"></span>`;
+  }).join('\n');
+  return `<a class="guide-link" href="${rel}map.html" aria-label="Open the market map: ${shops.length} shops and ${vacant.length} empty units around one horseshoe corridor">
+      <span class="map-guide" style="aspect-ratio:${PLAN_W}/${PLAN_H}">
+        <span class="map-void" style="${pos(VOID_BLOCK)}"></span>
+${aisles}
+${blocks}
+      </span>
+    </a>`;
+}
 function mapHtml({ rel = '', hrefFor = null, mini = false, highlight = [] } = {}) {
   const hi = new Set(highlight);
   const byUnit = Object.fromEntries(units.map((u) => [u.unit, u]));
@@ -478,55 +548,6 @@ ${shell}
 ${boxes}
     </div>
   </div>`;
-}
-
-// ---------- the easel -------------------------------------------------------
-function easelPage(r, rel) {
-  const photo = r.image
-    ? `<figure class="easel-photo"><img src="${rel}${esc(r.image.src)}" alt="${esc(r.image.alt)}" width="1000" height="750" loading="lazy"></figure>`
-    : `<!-- photo: add uploads/shops/shop-${r.slug}.jpg, set "image" for unit ${r.unit} in data/shops.json, rebuild -->
-            <figure class="easel-photo easel-photo-empty" aria-hidden="true"><span>Photo on its way</span></figure>`;
-  const meta = contactLinks(r, 'easel-meta-link');
-  meta.push(`<a href="${rel}${r.href}" class="easel-meta-link">Full listing</a>`);
-  return `          <li class="easel-page" id="shop-${r.slug}" data-unit="${esc(r.label)}" data-building="${esc(r.side)}">
-            ${photo}
-            <div class="easel-text">
-            <span class="easel-tags">
-              ${unitBadge(r.label)}
-              <span class="easel-building">${buildingLine(r)}</span>
-              ${catPill(r)}
-            </span>
-            <h3 class="easel-name"><span class="easel-swatch" style="background:${r.fam.color}" aria-hidden="true"></span><a href="${rel}${r.href}">${esc(r.name)}</a></h3>
-            ${r.about ? `<p class="easel-about">${esc(r.about)}</p>` : `<p class="easel-about easel-about-pending">A fuller listing for this shop is on its way.</p>`}
-            ${r.hoursNice ? `<p class="easel-hours">${esc(r.hoursNice)}</p>` : ''}
-            <p class="easel-meta">${meta.join('')}</p>
-            </div>
-          </li>`;
-}
-function easelHtml(rel) {
-  return `<div class="easel" data-easel tabindex="-1">
-        <div class="easel-board">
-          <span class="easel-clip" aria-hidden="true"></span>
-          <div class="easel-sheet" data-easel-sheet>
-          <ol class="easel-pad" data-easel-pad>
-${withPhotoFirst.map((r) => easelPage(r, rel)).join('\n')}
-          </ol>
-          </div>
-        </div>
-        <div class="easel-stand" aria-hidden="true">
-          <span class="easel-ledge"></span>
-          <span class="easel-leg easel-leg-l"></span>
-          <span class="easel-leg easel-leg-r"></span>
-          <span class="easel-bar"></span>
-        </div>
-        <div class="easel-controls" data-easel-controls hidden>
-          <button type="button" class="easel-btn" data-easel-prev aria-label="Previous shop">&larr; Previous</button>
-          <span class="easel-count" data-easel-count aria-hidden="true"></span>
-          <button type="button" class="easel-btn easel-btn-red" data-easel-next aria-label="Next shop">Next shop &rarr;</button>
-        </div>
-        <p class="easel-hint" data-easel-hint hidden>Use the arrow keys, or pick a shop from the list below.</p>
-        <p class="sr-only" aria-live="polite" data-easel-live></p>
-      </div>`;
 }
 
 // ---------- shop cards ------------------------------------------------------
@@ -627,7 +648,7 @@ const out = {};
       <div style="position:relative;max-width:430px;justify-self:center;width:100%">
         <div aria-hidden="true" style="position:absolute;left:18px;top:18px;right:-14px;bottom:-14px;background:#DCA528;border:2px solid #29231C;border-radius:14px"></div>
         <div class="photo-frame" style="position:relative">
-          <img src="uploads/market-frontage.jpg" alt="The Wood Street Indoor Market frontage, dark green boarding with cream and terracotta trim, gold lettering across the fascia and the lit corridor of shops through the open doorway" width="1400" height="1291" fetchpriority="high" style="width:100%;height:auto">
+          <img src="uploads/market-frontage.jpg" alt="The painted frontage of 98 Wood Street Indoor Market, red with blue and green window frames and the market name above the door" width="800" height="1067" fetchpriority="high" style="width:100%;height:auto">
         </div>
         <span style="position:absolute;top:-16px;right:14px;background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:999px;padding:7px 14px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.08em;transform:rotate(3deg);box-shadow:2px 2px 0 #29231C">FIND US ON WOOD STREET</span>
       </div>
@@ -652,13 +673,15 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
     <div class="wrap">
       <div class="sec-head" style="margin-bottom:6px">
         <div>
-          ${eyebrow('Who is in the market')}
-          <h2 class="h2">The shops</h2>
+          ${eyebrow('Meet the traders')}
+          <h2 class="h2">The people behind the counters</h2>
         </div>
-        <a href="shops.html" class="more">Search all ${shops.length} shops &rarr;</a>
+        <a href="shops.html" class="more">Explore all ${shops.length} shops &rarr;</a>
       </div>
-      <p class="lede" style="font-size:16.5px;line-height:1.65">Small units packed around one indoor block: a run along the back wall, a row down the side, and two rows facing each other across the front aisle. Every shop is independent and run by the person behind the counter, so most keep their own days and hours inside the market&rsquo;s opening times. Ring ahead if you are making the trip for one in particular. Flip through them one at a time below, or pick a unit on the map to jump straight to it.</p>
-      ${easelHtml('')}
+      <p class="lede" style="font-size:16.5px;line-height:1.65">Small units packed around one indoor block: a run along the back wall, a row down the side, and two rows facing each other across the front aisle. Every shop is independent and run by the person behind the counter, so most keep their own days and hours inside the market&rsquo;s opening times. Ring ahead if you are making the trip for one in particular.</p>
+      <div class="grid grid-cards" style="margin-top:30px">
+${featured.map((r) => '        ' + shopCard(r, '')).join('\n')}
+      </div>
       <p style="font-size:14.5px;line-height:1.6;color:#5C5142;max-width:62ch;margin:30px auto 0;text-align:center">${vacancyLine('')}</p>
     </div>
   </section>
@@ -672,15 +695,17 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
         </div>
         <a href="map.html" class="more">Open the full map page &rarr;</a>
       </div>
-      <p class="lede" style="font-size:16.5px;line-height:1.65;max-width:64ch;margin-bottom:30px">Drawn from the market&rsquo;s own floorplan. The Market Side units run along the back wall and down the right-hand side, numbered 2 to 38. The Antique City units face each other across the aisle at the front, numbered A1 to A16. Tap any unit to bring that shop up on the easel.</p>
-      <div class="map-card">
-        <div class="head">
-          <h3>The floorplan</h3>
-          <span>Market Side, units 2 to 38 &middot; Antique City, units A1 to A16</span>
+      <div class="two two-top" style="gap:48px">
+        <div>
+          <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:52ch;margin:0 0 22px">The market bends round a single horseshoe corridor: in one door, round the loop, out wherever you end up. The Market Side units run along the back wall and down one side, numbered 2 to 38. The Antique City units face each other across the aisle at the front, A1 to A16.</p>
+          ${legend()}
+          <a href="map.html" class="btn btn-cream" style="margin-top:26px">Open the market map &rarr;</a>
         </div>
-        ${mapHtml({ hrefFor: (r) => '#shop-' + r.slug })}
+        <div>
+          ${mapGuide('')}
+          <p class="note">Every unit, drawn from the market&rsquo;s own floorplan. The dashes are the walking route.</p>
+        </div>
       </div>
-      ${legend()}
     </div>
   </section>
 
@@ -702,7 +727,7 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
     <div class="wrap two" style="gap:48px">
       <div style="position:relative;max-width:380px;width:100%;justify-self:center">
         <div class="photo-arch">
-          <img src="uploads/market-entrance.jpg" alt="The Wood Street Market entrance, a dark green shopfront with gold lettering and bunting over the doorway, a shopper walking in past the chalkboards" width="900" height="1136" loading="lazy" style="width:100%;height:auto">
+          <img src="uploads/market-entrance.jpg" alt="The Wood Street Market entrance, a red shopfront with a clock above the hand-painted market sign and bunting across the doorway" width="452" height="679" loading="lazy" style="width:100%;height:auto">
         </div>
         <span class="stamp" style="position:absolute;bottom:18px;right:-12px;transform:rotate(-4deg);font-size:12px;padding:6px 13px">SINCE 1955</span>
       </div>
@@ -771,8 +796,21 @@ ${vacant.map((v) => `          ${unitBadge(v.label)}`).join('\n')}
         <div><img src="uploads/market-corridor.jpg" alt="Inside the market corridor, lined with leather bags, rugs and homeware" width="646" height="430" loading="lazy"></div>
         <div><img src="uploads/coven-of-wiches.jpg" alt="The Coven of Wiches at unit 38, a plant-based deli and pickle house with a bright yellow shopfront and bunting overhead" width="785" height="1000" loading="lazy" style="object-position:center top"></div>
         <div><img src="uploads/belas-brocante.jpg" alt="Bela's Brocante at unit 31, pictures and collectables around the doorway, looking on down the market corridor" width="730" height="1000" loading="lazy" style="object-position:center 15%"></div>
-        <div><img src="uploads/market-entrance.jpg" alt="The market entrance on Wood Street, dark green and gold with bunting across the doorway" width="900" height="1136" loading="lazy" style="object-position:center 30%"></div>
+        <div><img src="uploads/market-entrance.jpg" alt="The market entrance on Wood Street with its clock and bunting" width="452" height="679" loading="lazy" style="object-position:center 30%"></div>
         <div><img src="uploads/market-left-side.jpg" alt="The Antique City aisle, a shopper flicking through record racks under bunting, with unit signs hanging down the corridor" width="1000" height="829" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="news-signup" class="sec" style="background:#7C2A1D;color:#F3E7CE">
+    <div class="wrap two" style="gap:44px">
+      <div>
+        ${eyebrow('Straight to your inbox', true)}
+        <h2 class="h2" style="color:#F8F1E1">News from inside the market</h2>
+        <p style="font-size:16.5px;line-height:1.65;color:#E3CDB4;max-width:50ch;margin:0">New traders, fair dates, late openings. Walthams send it out from the market, and unsubscribing takes one click.</p>
+      </div>
+      <div>
+${signupForm('')}
       </div>
     </div>
   </section>
@@ -785,7 +823,7 @@ ${vacant.map((v) => `          ${unitBadge(v.label)}`).join('\n')}
   out['shops.html'] = page({
     file: 'shops.html', active: 'shops',
     title: 'The Shops | Wood Street Indoor Market',
-    desc: `${shops.length} independent shops across two sides of one corridor in Walthamstow E17. Flip through them on the easel, or search by what you are after.`,
+    desc: `${shops.length} independent shops across two sides of one corridor in Walthamstow E17. Search by name, trade or unit number, or browse the lot.`,
     body: `
   <section class="page-head">
     <div class="wrap">
@@ -795,11 +833,9 @@ ${vacant.map((v) => `          ${unitBadge(v.label)}`).join('\n')}
     </div>
   </section>
 
-  <section id="easel" style="padding:12px 24px 64px">
+  <section style="padding:12px 24px 40px">
     <div class="wrap">
-      <h2 class="sr-only">One shop at a time</h2>
-      ${easelHtml('')}
-      <p style="font-size:14.5px;line-height:1.6;color:#5C5142;max-width:62ch;margin:30px auto 0;text-align:center">${vacancyLine('')}</p>
+      <p style="font-size:14.5px;line-height:1.6;color:#5C5142;max-width:62ch;margin:0 auto;text-align:center">${vacancyLine('')}</p>
     </div>
   </section>
 
@@ -890,7 +926,6 @@ for (const r of shops) {
         <p style="font-size:16.5px;line-height:1.7;margin:0 0 18px">${esc(r.name)} is unit ${esc(r.label)} in ${esc(r.side)}, ${esc(SIDES[r.side].addr)}, on ${SIDES[r.side].where}. Follow the loop round from the Wood Street entrance and you will pass it.</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <a href="${rel}map.html#unit-${r.slug}" class="btn btn-cream btn-sm">See it on the map</a>
-          <a href="${rel}shops.html#shop-${r.slug}" class="btn btn-cream btn-sm">Flip to it on the easel</a>
         </div>
       </div>
       <aside style="display:grid;gap:18px;align-content:start">
@@ -945,12 +980,13 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
           <h2>The floorplan</h2>
           <span>Market Side, units 2 to 38 &middot; Antique City, units A1 to A16</span>
         </div>
+        <p class="map-swipe">Swipe the plan sideways, or jump to the <a href="#list">list of every unit</a>.</p>
         ${mapHtml({ hrefFor: (r) => r.href })}
       </div>
       ${legend()}
     </div>
   </section>
-  <section class="sec sec-alt">
+  <section id="list" class="sec sec-alt">
     <div class="wrap">
       ${eyebrow('The same thing as a list')}
       <h2 class="h2">Every unit, as a list</h2>
@@ -1115,37 +1151,6 @@ ${faqs.map(([q, a]) => `        <details>
   });
 }
 
-// Journal
-{
-  out['journal.html'] = page({
-    file: 'journal.html', active: 'journal',
-    title: 'The Journal | Wood Street Indoor Market',
-    desc: 'Trader interviews, collecting guides and market news from Wood Street Indoor Market, Walthamstow E17.',
-    body: `
-  <section class="page-head">
-    <div class="wrap-n">
-      ${eyebrow('Stories from inside')}
-      <h1 class="h1">The Journal</h1>
-      <p class="lede">Trader interviews, collecting guides, market news and the odd wander up Wood Street. The first stories are being written.</p>
-    </div>
-  </section>
-  <section style="padding:12px 24px 80px">
-    <div class="wrap-n">
-      <div class="empty" style="padding:56px 28px">
-        <p class="big">No stories published yet.</p>
-        <p>In the meantime, the shops are the best story in the building. Every one of them has a page, and ${shops.filter((s) => s.image).length} already have photographs.</p>
-        <a href="shops.html" class="btn btn-red btn-sm">Meet the shops</a>
-      </div>
-      <div style="margin-top:44px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px;background:#DCA528" class="card">
-        <p style="font-size:16px;font-weight:600;max-width:52ch;color:#29231C">Traded here? Shopped here since the sixties? We are collecting the market&rsquo;s history: photographs, receipts, memories, tall tales.</p>
-        <a href="${enquire('history')}" class="btn btn-ink btn-sm">Share a memory &rarr;</a>
-      </div>
-    </div>
-  </section>
-`,
-  });
-}
-
 // Our Story
 {
   // Sources: Cinema Treasures (Crown Cinema, Wood Street); Waltham Forest
@@ -1177,7 +1182,7 @@ ${faqs.map(([q, a]) => `        <details>
       </div>
       <div style="position:relative;max-width:380px;width:100%;justify-self:center">
         <div class="photo-arch" style="border-radius:190px 190px 12px 12px">
-          <img src="uploads/market-entrance.jpg" alt="The Wood Street Market entrance, a dark green shopfront with gold lettering and bunting over the doorway, a shopper walking in past the chalkboards" width="900" height="1136" style="width:100%;height:auto">
+          <img src="uploads/market-entrance.jpg" alt="The Wood Street Market entrance, a red shopfront with a clock above the hand-painted market sign and bunting across the doorway" width="452" height="679" style="width:100%;height:auto">
         </div>
         <span class="stamp" style="position:absolute;bottom:22px;right:-12px;transform:rotate(-4deg);font-size:12px;padding:6px 13px">EST. 1955</span>
       </div>
@@ -1234,7 +1239,7 @@ ${tl.map(([era, title, text]) => `        <li>
       <h1 class="h1" style="margin-bottom:12px">Got a shop in you?</h1>
       <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:62ch;margin:0 0 22px">${shops.length} independents already trade here. ${vacant.length} doors are waiting for their next keeper: small spaces with straightforward terms, inside a market people cross London to wander. The market is managed by Walthams, who handle every enquiry.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-        <a href="${enquire('unit')}" class="btn btn-red">Ask about a unit &rarr;</a>
+        <a href="#apply" class="btn btn-red">Tell us about your shop &rarr;</a>
         <a href="${SITE.tel}" class="btn btn-cream">Ring ${SITE.phone}</a>
       </div>
     </div>
@@ -1278,13 +1283,37 @@ ${faqs.map(([q, a]) => `        <details>
       </div>
     </div>
   </section>
-  <section class="sec" style="background:#DCA528;padding:56px 24px">
-    <div class="wrap-n" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px">
-      <div>
-        <h2 style="font-size:clamp(26px,3.4vw,38px);margin:0 0 8px">Fancy the corridor life?</h2>
-        <p style="font-size:16px;color:#4A3C14;margin:0">Send Walthams a line about what you sell and which unit caught your eye. Every enquiry gets a reply.</p>
-      </div>
-      <a href="${enquire('unit')}" class="btn btn-ink">Ask about a unit &rarr;</a>
+  <section id="apply" class="sec" style="background:#17605B;color:#F3ECD9">
+    <div class="wrap-r">
+      ${eyebrow('Fancy the corridor life?', true)}
+      <h2 class="h2" style="color:#F8F1E1">Tell us about your shop</h2>
+      <p style="font-size:16.5px;line-height:1.65;color:#C8DCD4;margin:0 0 26px;max-width:60ch">The more you can say about what you sell, the quicker Walthams can tell you which unit would suit. Nothing here is binding, and every enquiry gets a reply.</p>
+      <form class="card apply" method="POST" action="${FORM_ACTION}">
+        <input type="hidden" name="_subject" value="Wood Street Indoor Market: unit application">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="true">
+        <input type="hidden" name="_next" value="${SITE.url}thanks.html">
+        <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="pair">
+          <label><span class="label">Your name</span><input class="field" type="text" name="name" required autocomplete="name"></label>
+          <label><span class="label">Business name <span class="opt">(if you have one)</span></span><input class="field" type="text" name="business" autocomplete="organization"></label>
+        </div>
+        <div class="pair">
+          <label><span class="label">Email</span><input class="field" type="email" name="email" required autocomplete="email"></label>
+          <label><span class="label">Phone</span><input class="field" type="tel" name="phone" required autocomplete="tel"></label>
+        </div>
+        <div class="pair">
+          <label><span class="label">Website or social account <span class="opt">(optional)</span></span><input class="field" type="text" name="website" placeholder="woodstreet.example or @yourshop"></label>
+          <label><span class="label">Which unit? <span class="opt">(if one caught your eye)</span></span><select class="field" name="unit">
+            <option value="">No preference yet</option>
+${vacant.map((v) => `            <option value="${esc(v.label)}">Unit ${esc(v.label)}, ${esc(v.side)}</option>`).join('\n')}
+          </select></label>
+        </div>
+        <label style="display:block;margin-top:14px"><span class="label">What would you sell?</span><input class="field" type="text" name="trade" required placeholder="Records, vintage clothing, jewellery repairs..."></label>
+        <label style="display:block;margin-top:14px"><span class="label">Tell us about the business</span><textarea class="field" name="message" rows="6" required placeholder="How long you have been trading, where you sell now, what you would bring to the corridor."></textarea></label>
+        <button type="submit" class="btn btn-gold" style="margin-top:20px">Send it to Walthams &rarr;</button>
+        <p class="note">Goes straight to Walthams, who manage the market. It is not an application form in the legal sense and nothing is decided by sending it.</p>
+      </form>
     </div>
   </section>
 `,
@@ -1409,10 +1438,10 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
           <h2>Privacy Policy</h2>
           <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
           <p><strong>Who we are.</strong> Wood Street Indoor Market, ${SITE.address}, ${SITE.town}. The market is managed by Walthams. Questions about this policy: <a href="mailto:${SITE.email}">${SITE.email}</a>.</p>
-          <p><strong>What we collect.</strong> Only what you give us: your name, email address, phone number if you add one, and whatever you write, when you send the contact form or email us. This website has no accounts and no newsletter, and it does not buy or sell data. This is a market, not that kind of market.</p>
+          <p><strong>What we collect.</strong> Only what you give us: your name, email address, phone number if you add one, and whatever you write, when you send the contact form, ask about a unit, sign up for market news or email us. This website has no accounts and does not buy or sell data. This is a market, not that kind of market.</p>
           <p><strong>Why we use it.</strong> To reply to you and to progress unit enquiries. Legal bases: legitimate interest and steps taken before a contract.</p>
-          <p><strong>Where it lives.</strong> The contact form is delivered by FormSubmit (formsubmit.co), which passes your message to Walthams&rsquo; mailbox and does not keep it. From there it is handled under Walthams&rsquo; own privacy policy.</p>
-          <p><strong>How long.</strong> Enquiries: up to 12 months. Unit applications: for the length of the process plus 6 months.</p>
+          <p><strong>Where it lives.</strong> Every form on this site, including the market news sign-up, is delivered by FormSubmit (formsubmit.co), which passes your message to Walthams&rsquo; mailbox and does not keep it. From there it is handled under Walthams&rsquo; own privacy policy. There is no mailing list software behind the sign-up: it reaches the same inbox as everything else.</p>
+          <p><strong>How long.</strong> Enquiries: up to 12 months. Unit applications: for the length of the process plus 6 months. Market news: until you unsubscribe, which every email has a link for.</p>
           <p><strong>Your rights.</strong> Ask us what we hold, ask us to correct it, ask us to delete it. Email or write to the office and we will sort it. You can also complain to the ICO (ico.org.uk).</p>
         </div>
         <div class="legal-doc" id="cookies" data-doc>
@@ -1467,7 +1496,7 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
 `,
   });
   // The 404 page can be served from any path, so its assets must be root-relative.
-  out['404.html'] = out['404.html'].replace(/(href|src)="(assets|brand|index\.html|shops\.html|map\.html|whats-on\.html|visit\.html|story\.html|journal\.html|join\.html|contact\.html|legal\.html)/g, '$1="/$2');
+  out['404.html'] = out['404.html'].replace(/(href|src)="(assets|brand|index\.html|shops\.html|map\.html|whats-on\.html|visit\.html|story\.html|join\.html|contact\.html|legal\.html)/g, '$1="/$2');
 }
 
 // Sitemap

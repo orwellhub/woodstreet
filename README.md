@@ -7,7 +7,7 @@ nothing to install beyond Node.
 
 | Path | Purpose |
 |---|---|
-| `index.html`, `shops.html`, `map.html`, `visit.html`, `whats-on.html`, `journal.html`, `story.html`, `join.html`, `contact.html`, `legal.html`, `404.html` | The pages. **Generated: do not edit by hand.** |
+| `index.html`, `shops.html`, `map.html`, `visit.html`, `whats-on.html`, `story.html`, `join.html`, `contact.html`, `legal.html`, `404.html` | The pages. **Generated: do not edit by hand.** |
 | `shop/*.html` | One page per shop, 24 of them. Generated. |
 | `sitemap.xml` | Generated. |
 | `tools/build.mjs` | The generator. All page copy and layout lives here. |
@@ -39,8 +39,8 @@ or the words deposit or owner in the output.
   top of that file). Then set the
   unit's `image` in `data/shops.json` to `{"src": "uploads/shops/shop-m28.jpg",
   "alt": "what the picture shows"}` and rebuild. The photo appears on the shop's
-  page, its easel sheet, its directory card, and on the home page if it is among
-  the featured shops. Shops with photos come first on the easel and in the grid.
+  page, its directory card, and on the home page if it is among the featured
+  shops. Shops with photos come first in the grid and on the home page.
 - **A unit changing hands**: change `"vacant": true` to a full entry, or the other
   way round, and rebuild. The map, the vacancy counts, the Join page and the home
   page all follow.
@@ -48,9 +48,9 @@ or the words deposit or owner in the output.
   hours live once, in `SITE.hours` at the top: the top strip, footer, Visit
   table, JSON-LD block and the live open/closed status (which reads them from
   `<body data-open data-close data-days>`) all follow from it.
-- **Events and Journal articles**: both pages currently show an honest empty
-  state. When there is real content, add a section to the relevant page template
-  in the generator. Nothing is invented in the meantime.
+- **Events**: the What's On page shows the press release and an honest empty
+  diary. When there are dates, add a section to that page template in the
+  generator. Nothing is invented in the meantime.
 
 Plain HTML output means anything can be edited directly in an emergency, but the
 next build will overwrite it, so put the change in the generator or the data.
@@ -73,9 +73,11 @@ Two consequences to keep in mind:
   the policy in `.htaccess` or it will be blocked.
 
 The generator, its data, the archive and this README return 404 on the live
-site; `.git` and dotfiles are blocked. The contact form goes through FormSubmit
-with its "I am not a robot" check switched on (`_captcha` in the form) and a
-honeypot field.
+site; `.git` and dotfiles are blocked. All three forms (contact, the unit application on the Join page and the market
+news sign-up on the home page) go through FormSubmit with its "I am not a
+robot" check switched on (`_captcha`) and a honeypot field. They all land in
+the same Walthams mailbox; there is no mailing list software behind the
+sign-up, and the privacy policy says so.
 
 Every page passes an automated axe-core accessibility check and loads with zero
 CSP violations. `tools/audit.mjs` runs that check: it loads each page in
@@ -90,19 +92,24 @@ GoatCounter or Cloudflare Web Analytics) means an account, one script tag in
 
 ## The pages
 
-- **Home**: hero, browse by trade (real counts), featured shops, map teaser,
-  what's on (empty until there is something), our story, plan your visit, the
-  open units, and a photo gallery linking to Instagram.
-- **The Shops**: the easel (one shop at a time, peeled off a stack; arrow keys,
-  Previous and Next; `shops.html#shop-a16` jumps to a shop) followed by a
-  searchable grid with trade filters. Without JavaScript the easel lists every
-  shop and the grid shows everything.
+- **Home**: hero, browse by trade (real counts), six featured traders, the
+  illustrated map, what's on, our story, plan your visit, the open units, a
+  photo gallery linking to Instagram, and the market news sign-up.
+- **The Shops**: a searchable grid with trade filters. Every card is a link to
+  that shop's own page. Without JavaScript the grid shows everything.
 - **A shop page** (`shop/a16.html`): photo or a marked slot, description, hours,
   contact links, where it sits on a small map, neighbouring units.
 - **Market Map**: the whole market on one plan, every unit a link, plus the same
   thing as a plain list.
-- **Visit, Our Story, Join the Market, Contact, Policies, 404**: as designed in
-  the first draft, with real details throughout.
+- **Join the Market**: why the corridor is worth a punt, the units that are
+  free, the trading questions, and a form that sends the details straight to
+  Walthams.
+- **Visit, Our Story, Contact, Policies, 404**: as designed in the first
+  draft, with real details throughout.
+
+There is no Journal page. It never had an article in it, so it was dropped and
+`/journal.html` redirects to the story page, which carries the same invitation
+to share a memory.
 
 ## The map
 
@@ -154,6 +161,15 @@ Room labels are sized in `cqw`, a share of the map's own width, so the names
 scale with the rooms and nothing clips at any screen size. The two full-size
 maps sit in `.wrap-w`, a wider container than the rest of the page, so the
 rooms are drawn as large as the layout allows.
+
+The home page shows the same plan drawn as an illustrated guide instead: no
+names to read, every unit a block of its trade colour, and the walking route
+marked out with dashes that march along it. The route is `CORRIDOR`, three
+bands measured off the drawing in the same space as the rooms, and the whole
+picture is one link through to the map page. On a phone the map page keeps
+the real plan, which cannot shrink below about 600px and stay readable, so it
+scrolls sideways inside its card with a shadow at the edge to say so and a
+line above pointing at the list.
 
 To move or resize a unit, edit its row in `ROOMS`. The build warns if a shop in
 the data has no room on the plan, and fails if a room points at a unit that is

@@ -10,13 +10,13 @@
 <meta property="og:title" content="Join the Market | Wood Street Indoor Market">
 <meta property="og:description" content="10 units are available to let at Wood Street Indoor Market, Walthamstow E17. Small spaces, straightforward terms, managed by Walthams.">
 <meta property="og:url" content="https://woodstreetindoormarket.co.uk/join.html">
-<meta property="og:image" content="https://woodstreetindoormarket.co.uk/uploads/market-frontage.jpg?v=6c4080e2">
+<meta property="og:image" content="https://woodstreetindoormarket.co.uk/uploads/market-frontage.jpg?v=96ef5296">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#7C2A1D">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%226%22%20fill%3D%22%23BF3B26%22%2F%3E%3Ctext%20x%3D%2216%22%20y%3D%2222%22%20text-anchor%3D%22middle%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2218%22%20fill%3D%22%23FBF3E2%22%3EW%3C%2Ftext%3E%3C%2Fsvg%3E">
 <link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/young-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=ab492075">
+<link rel="stylesheet" href="assets/site.css?v=d4c34a7a">
 </head>
 <body data-open="10:00" data-close="17:30" data-days="2,3,4,5,6">
 <a href="#main" class="skip">Skip to content</a>
@@ -78,7 +78,7 @@
       <h1 class="h1" style="margin-bottom:12px">Got a shop in you?</h1>
       <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:62ch;margin:0 0 22px">24 independents already trade here. 10 doors are waiting for their next keeper: small spaces with straightforward terms, inside a market people cross London to wander. The market is managed by Walthams, who handle every enquiry.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-        <a href="contact.html?topic=unit" class="btn btn-red">Ask about a unit &rarr;</a>
+        <a href="#apply" class="btn btn-red">Tell us about your shop &rarr;</a>
         <a href="tel:+442085090444" class="btn btn-cream">Ring 020 8509 0444</a>
       </div>
     </div>
@@ -233,13 +233,46 @@
       </div>
     </div>
   </section>
-  <section class="sec" style="background:#DCA528;padding:56px 24px">
-    <div class="wrap-n" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px">
-      <div>
-        <h2 style="font-size:clamp(26px,3.4vw,38px);margin:0 0 8px">Fancy the corridor life?</h2>
-        <p style="font-size:16px;color:#4A3C14;margin:0">Send Walthams a line about what you sell and which unit caught your eye. Every enquiry gets a reply.</p>
-      </div>
-      <a href="contact.html?topic=unit" class="btn btn-ink">Ask about a unit &rarr;</a>
+  <section id="apply" class="sec" style="background:#17605B;color:#F3ECD9">
+    <div class="wrap-r">
+      <div class="eyebrow eyebrow-light"><span></span><span>Fancy the corridor life?</span></div>
+      <h2 class="h2" style="color:#F8F1E1">Tell us about your shop</h2>
+      <p style="font-size:16.5px;line-height:1.65;color:#C8DCD4;margin:0 0 26px;max-width:60ch">The more you can say about what you sell, the quicker Walthams can tell you which unit would suit. Nothing here is binding, and every enquiry gets a reply.</p>
+      <form class="card apply" method="POST" action="https://formsubmit.co/info@walthamestates.co.uk">
+        <input type="hidden" name="_subject" value="Wood Street Indoor Market: unit application">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="true">
+        <input type="hidden" name="_next" value="https://woodstreetindoormarket.co.uk/thanks.html">
+        <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="pair">
+          <label><span class="label">Your name</span><input class="field" type="text" name="name" required autocomplete="name"></label>
+          <label><span class="label">Business name <span class="opt">(if you have one)</span></span><input class="field" type="text" name="business" autocomplete="organization"></label>
+        </div>
+        <div class="pair">
+          <label><span class="label">Email</span><input class="field" type="email" name="email" required autocomplete="email"></label>
+          <label><span class="label">Phone</span><input class="field" type="tel" name="phone" required autocomplete="tel"></label>
+        </div>
+        <div class="pair">
+          <label><span class="label">Website or social account <span class="opt">(optional)</span></span><input class="field" type="text" name="website" placeholder="woodstreet.example or @yourshop"></label>
+          <label><span class="label">Which unit? <span class="opt">(if one caught your eye)</span></span><select class="field" name="unit">
+            <option value="">No preference yet</option>
+            <option value="A4">Unit A4, Antique City</option>
+            <option value="A7">Unit A7, Antique City</option>
+            <option value="A11">Unit A11, Antique City</option>
+            <option value="A17/18">Unit A17/18, Antique City</option>
+            <option value="4">Unit 4, Market Side</option>
+            <option value="5">Unit 5, Market Side</option>
+            <option value="31">Unit 31, Market Side</option>
+            <option value="32">Unit 32, Market Side</option>
+            <option value="33">Unit 33, Market Side</option>
+            <option value="38">Unit 38, Market Side</option>
+          </select></label>
+        </div>
+        <label style="display:block;margin-top:14px"><span class="label">What would you sell?</span><input class="field" type="text" name="trade" required placeholder="Records, vintage clothing, jewellery repairs..."></label>
+        <label style="display:block;margin-top:14px"><span class="label">Tell us about the business</span><textarea class="field" name="message" rows="6" required placeholder="How long you have been trading, where you sell now, what you would bring to the corridor."></textarea></label>
+        <button type="submit" class="btn btn-gold" style="margin-top:20px">Send it to Walthams &rarr;</button>
+        <p class="note">Goes straight to Walthams, who manage the market. It is not an application form in the legal sense and nothing is decided by sending it.</p>
+      </form>
     </div>
   </section>
 
@@ -278,7 +311,6 @@
         <a href="whats-on.html">What’s On</a>
         <a href="visit.html">Visit</a>
         <a href="story.html">Our Story</a>
-        <a href="journal.html">Journal</a>
         <a href="join.html">Join the Market</a>
         <a href="contact.html">Contact</a>
       </nav>
@@ -300,6 +332,6 @@
   </div>
 </footer>
 
-<script src="assets/site.js?v=80d36808" defer></script>
+<script src="assets/site.js?v=9d9e1ee9" defer></script>
 </body>
 </html>
