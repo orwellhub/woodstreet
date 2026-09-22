@@ -106,17 +106,48 @@ GoatCounter or Cloudflare Web Analytics) means an account, one script tag in
 
 ## The map
 
-One U-shaped corridor open at the bottom onto Wood Street. Market Side units
-(M, 102 Wood Street) line the outer wall and Antique City units (A, 98 Wood
-Street) sit on the inner block. Both rings run the same way round: in on the
-left arm, across the top, out on the right. The sequence is the real unit
-numbering; the shape is that walk drawn as a loop, not a measured plan, and the
-map page says so. Two assumptions are baked into `mapHtml()` in the generator:
-that Market Side is the outer ring, and that both rings are numbered in the same
-direction. If actual floor plans turn up, that one function is all that changes.
+Traced from the market's own floorplan drawing, not generated from a formula.
+Every room is a literal entry in the `ROOMS` table at the top of the map
+section in `tools/build.mjs`, with `x`, `y`, `w` and `h` in a 1000 by 570
+coordinate space that scales to whatever width the map is shown at.
 
-Units are coloured by trade family and every unit also carries its name as text.
-Merged units (A2/3, M25/26/27) take two cells.
+The real shape is not the horseshoe an earlier version of this site drew. The
+Market Side units run along the back wall (2 to 12), then down the right-hand
+side (38, 37, 36, 33, 32, 34/35, with 23/24 to 29/30 beyond them). The Antique
+City units sit at the front, in two rows facing each other across an aisle:
+A1 to A10 on the back side of it and A16 down to A11 on the front side. Unit 31
+sits at the end of the front row despite its Market Side number.
+
+The drawing prints Market Side units as bare numbers and Antique City units
+with an `A`, so each room carries a `label` for what the drawing shows and a
+`unit` matching `data/shops.json`.
+
+Storage, Showcase and the toilets are marked `facility`: drawn, but not
+lettable and not linked.
+
+To move or resize a unit, edit its row in `ROOMS`. The build warns if a shop in
+the data has no room on the plan, and fails if a room points at a unit that is
+not in the data.
+
+### Open questions on the plan
+
+Three things the drawing and the spreadsheet disagree about, all waiting on the
+client. Until they are settled the map shows what is certain and nothing more.
+
+- **`14/15`** on the drawing sits exactly where the spreadsheet's **A2/3
+  (Lilac Domino)** would be, at the same position and the same double width.
+  They are very probably the same room under two labels, but that has not been
+  confirmed, so Lilac Domino currently has no place on the map and the build
+  says so on every run.
+- **`A17/18`** is on the drawing but absent from the spreadsheet. It is shown
+  as "not yet listed" rather than guessed at.
+- **`A12` and `A13`** are two rooms on the drawing and one tenancy in the
+  spreadsheet, named "Claudia Rose Lashes/Mimi Rose". The map draws them as one
+  wide room, which matches the spreadsheet. If they are two businesses they
+  need splitting.
+
+Everything else cross-checks: all nine units the drawing shades yellow as empty
+are exactly the nine the spreadsheet marks vacant.
 
 ## Photography
 

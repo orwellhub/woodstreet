@@ -347,77 +347,97 @@ ${usedFamilies.map((f) => `        <span class="chip chip-static"><span class="d
         <span class="chip chip-tolet">To let</span>
       </div>`;
 
-// ---------- the map ---------------------------------------------------------
-// One U-shaped corridor, open at the bottom onto Wood Street. Market Side units
-// line the outer wall, Antique City units the inner block. Both rings run the
-// same way round: in from Wood Street, up the left arm, across the top, back
-// down the right. The sequence is the real unit numbering; the shape is that
-// walk drawn as a loop, not a measured plan.
+// ---------- the market map --------------------------------------------------
+// Traced from the market's own floorplan drawing. x, y, w and h are in the
+// coordinate space below; the map scales to whatever width it is given.
+// `unit` matches data/shops.json. `label` is what the drawing prints where
+// that differs from the spreadsheet's code. `facility` is not a lettable shop.
+// `unconfirmed` is a room on the drawing that the spreadsheet does not list.
+const PLAN = { w: 1000, h: 570 };
+const ROOMS = [
+  // The top run, left to right along the back wall.
+  { unit: 'M2',        label: '2',        x: 150, y: 30,  w: 46, h: 62 },
+  { unit: 'M3',        label: '3',        x: 198, y: 30,  w: 46, h: 62 },
+  { unit: 'M4',        label: '4',        x: 246, y: 30,  w: 46, h: 62 },
+  { unit: 'M5',        label: '5',        x: 294, y: 30,  w: 46, h: 62 },
+  { unit: 'M6/M7',     label: '6/7',      x: 342, y: 30,  w: 94, h: 62 },
+  { unit: 'M8',        label: '8',        x: 438, y: 30,  w: 46, h: 62 },
+  { unit: 'M9',        label: '9',        x: 486, y: 30,  w: 46, h: 62 },
+  { unit: 'M10',       label: '10',       x: 534, y: 30,  w: 46, h: 62 },
+  { facility: 'Storage',                  x: 582, y: 30,  w: 44, h: 62 },
+  { unit: 'M11/12',    label: '11/12',    x: 628, y: 30,  w: 92, h: 62 },
+  // The block between the back wall and the right-hand run.
+  { unit: 'M38',       label: '38',       x: 594, y: 126, w: 96, h: 80 },
+  { unit: 'M37',       label: '37',       x: 694, y: 126, w: 58, h: 80 },
+  { unit: 'M36',       label: '36',       x: 694, y: 210, w: 58, h: 50 },
+  { unit: 'M33',       label: '33',       x: 694, y: 264, w: 58, h: 50 },
+  { unit: 'M32',       label: '32',       x: 694, y: 318, w: 58, h: 50 },
+  { unit: 'M34/35',    label: '34/35',    x: 694, y: 372, w: 58, h: 62 },
+  // The right-hand run, facing the street.
+  { unit: 'M23/24',    label: '23/24',    x: 800, y: 112, w: 78, h: 64 },
+  { unit: 'M25/26/27', label: '25/26/27', x: 800, y: 180, w: 78, h: 118 },
+  { unit: 'M28',       label: '28',       x: 800, y: 330, w: 78, h: 62 },
+  { unit: 'M29/30',    label: '29/30',    x: 800, y: 396, w: 78, h: 78 },
+  // The Antique City aisle: two rows facing each other. Upper row first.
+  { unit: 'A1',        label: 'A1',       x: 96,  y: 400, w: 58, h: 58 },
+  { unconfirmed: '14/15',                 x: 172, y: 398, w: 130, h: 56 },
+  { unit: 'A4',        label: 'A4',       x: 306, y: 398, w: 52, h: 56 },
+  { unit: 'A5/6',      label: 'A5/6',     x: 362, y: 398, w: 98, h: 56 },
+  { unit: 'A7',        label: 'A7',       x: 464, y: 398, w: 52, h: 56 },
+  { unit: 'A8',        label: 'A8',       x: 520, y: 398, w: 52, h: 56 },
+  { unit: 'A9',        label: 'A9',       x: 576, y: 398, w: 52, h: 56 },
+  { unit: 'A10',       label: 'A10',      x: 632, y: 398, w: 52, h: 56 },
+  // Lower row of the aisle.
+  { facility: 'Showcase',                 x: 92,  y: 482, w: 70, h: 72 },
+  { unconfirmed: 'A17/18',                x: 168, y: 482, w: 82, h: 72 },
+  { facility: 'WC',                       x: 256, y: 482, w: 76, h: 72 },
+  { unit: 'A16',       label: 'A16',      x: 350, y: 482, w: 54, h: 72 },
+  { unit: 'A15',       label: 'A15',      x: 410, y: 482, w: 54, h: 72 },
+  { unit: 'A14',       label: 'A14',      x: 470, y: 482, w: 54, h: 72 },
+  // The spreadsheet lists A12 and A13 as one tenancy; the drawing shows the
+  // two rooms it occupies.
+  { unit: 'A12/A13',   label: 'A12/A13',  x: 530, y: 482, w: 112, h: 72 },
+  { unit: 'A11',       label: 'A11',      x: 648, y: 482, w: 52, h: 72 },
+  { unit: 'M31',       label: '31',       x: 706, y: 482, w: 62, h: 72 },
+];
+// The part of the building the market does not trade in.
+const VOID_BLOCK = { x: 90, y: 126, w: 500, h: 250 };
+
 function mapHtml({ rel = '', hrefFor = null, mini = false, highlight = [] } = {}) {
-  const OUTER = bySide('Market Side'), INNER = bySide('Antique City');
   const hi = new Set(highlight);
-  function splitRuns(list) {
-    const boxes = list.map((r) => ({ r, span: unitSpan(r.unit) >= 2 ? 2 : 1 }));
-    const total = boxes.reduce((a, b) => a + b.span, 0);
-    const tLeft = Math.round(total * 0.3), tTop = Math.max(4, total - 2 * tLeft);
-    const runs = { left: [], top: [], right: [] }; let acc = 0;
-    for (const bx of boxes) {
-      if (acc < tLeft) { runs.left.push(bx); acc += bx.span; }
-      else if (acc < tLeft + tTop) { runs.top.push(bx); acc += bx.span; }
-      else runs.right.push(bx);
+  const byUnit = Object.fromEntries(units.map((u) => [u.unit, u]));
+  const px = (v) => (v / PLAN.w * 100).toFixed(2) + '%';
+  const py = (v) => (v / PLAN.h * 100).toFixed(2) + '%';
+  const pos = (r) => `left:${px(r.x)};top:${py(r.y)};width:${px(r.w)};height:${py(r.h)}`;
+  // The rooms are not all the same size, so the name is sized to its room.
+  const nm = (r) => `;--nm:${r.w < 56 ? 8 : r.w < 90 ? 9 : 10}px`;
+
+  const boxes = ROOMS.map((room) => {
+    if (room.facility) {
+      return `      <div class="mu mu-fac" style="${pos(room)}" aria-hidden="true"><span class="code">${esc(room.facility)}</span></div>`;
     }
-    return runs;
-  }
-  const slotsOf = (run) => run.reduce((a, b) => a + b.span, 0);
-  const oRuns = splitRuns(OUTER), iRuns = splitRuns(INNER);
-  const W = 980, PAD = 30, GAP = 8, OCOL = 138, OTOP = 96, CW = 64, ICOL = 126, ITOP = 90;
-  const armSlots = Math.max(slotsOf(oRuns.left), slotsOf(oRuns.right));
-  const ARM = Math.max(armSlots * 74, Math.max(slotsOf(iRuns.left), slotsOf(iRuns.right)) * 96);
-  const oColY0 = PAD + OTOP, iColY0 = PAD + OTOP + CW + ITOP;
-  const H = iColY0 + (ARM - CW - ITOP) + 46;
-  const px = (v) => (v / W * 100).toFixed(2) + '%', py = (v) => (v / H * 100).toFixed(2) + '%';
-  function layRing(runs, x0, x1, yTop, topH, colW, colY0, colLen) {
-    const out = [];
-    const lc = colLen / Math.max(1, slotsOf(runs.left)), rc = colLen / Math.max(1, slotsOf(runs.right));
-    const tc = (x1 - x0) / Math.max(1, slotsOf(runs.top));
-    let y = colY0 + colLen;
-    for (const bx of runs.left) { y -= bx.span * lc; out.push({ ...bx, x: x0, y: y + GAP / 2, w: colW, h: bx.span * lc - GAP }); }
-    let x = x0;
-    for (const bx of runs.top) { out.push({ ...bx, x: x + GAP / 2, y: yTop, w: bx.span * tc - GAP, h: topH }); x += bx.span * tc; }
-    y = colY0;
-    for (const bx of runs.right) { out.push({ ...bx, x: x1 - colW, y: y + GAP / 2, w: colW, h: bx.span * rc - GAP }); y += bx.span * rc; }
-    return out;
-  }
-  const placed = [
-    ...layRing(oRuns, PAD, W - PAD, PAD, OTOP, OCOL, oColY0, ARM),
-    ...layRing(iRuns, PAD + OCOL + CW, W - PAD - OCOL - CW, PAD + OTOP + CW, ITOP, ICOL, iColY0, ARM - CW - ITOP),
-  ];
-  const boxes = placed.map(({ r, x, y, w, h }) => {
-    const pos = `left:${px(x)};top:${py(y)};width:${px(w)};height:${py(h)}`;
-    const cls = hi.has(r.unit) ? ' mu-hi' : '';
+    if (room.unconfirmed) {
+      return `      <div class="mu mu-unknown" style="${pos(room)}${nm(room)}"><span class="code">${esc(room.unconfirmed)}</span> <span class="nm">Not yet listed</span></div>`;
+    }
+    const r = byUnit[room.unit];
+    if (!r) return '';
+    const cls = hi.has(room.unit) ? ' mu-hi' : '';
     if (r.vacant) {
-      return `      <div class="mu mu-vacant${cls}" style="${pos}"><span class="code">${esc(r.unit)}</span> <span class="nm">To let</span></div>`;
+      return `      <div class="mu mu-vacant${cls}" style="${pos(room)}${nm(room)}"><span class="code">${esc(room.label)}</span> <span class="nm">To let</span></div>`;
     }
-    const style = `${pos};--c:${r.fam.color};--t:${r.fam.tint}`;
-    const inner = `<span class="code">${esc(r.unit)}</span> <span class="nm">${esc(r.name)}</span>`;
-    if (hrefFor) return `      <a class="mu${cls}" href="${hrefFor(r)}" style="${style}" aria-label="${esc(r.name)}, unit ${esc(r.unit)}">${inner}</a>`;
+    const style = `${pos(room)}${nm(room)};--c:${r.fam.color};--t:${r.fam.tint}`;
+    const inner = `<span class="code">${esc(room.label)}</span> <span class="nm">${esc(r.name)}</span>`;
+    if (hrefFor) return `      <a class="mu${cls}" href="${hrefFor(r)}" style="${style}" aria-label="${esc(r.name)}, unit ${esc(room.label)}">${inner}</a>`;
     return `      <div class="mu${cls}" style="${style}">${inner}</div>`;
-  }).join('\n');
-  const cx0 = PAD + OCOL, cx1 = W - PAD - OCOL, cy0 = PAD + OTOP;
-  const corridor = `      <div class="cor" aria-hidden="true" style="left:${px(cx0)};top:${py(cy0)};width:${px(cx1 - cx0)};height:${py(CW)}"></div>
-      <div class="cor" aria-hidden="true" style="left:${px(cx0)};top:${py(cy0)};width:${px(CW)};height:${py(H - cy0 - 40)}"></div>
-      <div class="cor" aria-hidden="true" style="left:${px(cx1 - CW)};top:${py(cy0)};width:${px(CW)};height:${py(H - cy0 - 40)}"></div>
-      <div class="walk" aria-hidden="true" style="left:${px(cx0 + CW / 2)};top:${py(cy0 + CW / 2)};width:${px(cx1 - cx0 - CW)};height:${py(H - cy0 - 40 - CW / 2)}"></div>
-      <span class="lab lab-cor" aria-hidden="true" style="left:50%;transform:translateX(-50%);top:${py(cy0 + 22)}">THE CORRIDOR</span>
-      <span class="lab" aria-hidden="true" style="left:${px(cx0 + CW / 2)};transform:translateX(-50%);bottom:${mini ? 6 : 12}px">IN</span>
-      <span class="lab" aria-hidden="true" style="left:${px(cx1 - CW / 2)};transform:translateX(-50%);bottom:${mini ? 6 : 12}px">OUT</span>
-      <span class="lab" aria-hidden="true" style="left:50%;transform:translateX(-50%);bottom:${mini ? 6 : 12}px;${mini ? '' : 'font-size:12px;letter-spacing:.16em'}">WOOD STREET</span>`;
+  }).filter(Boolean).join('\n');
+
+  const shell = `      <div class="map-void" aria-hidden="true" style="${pos(VOID_BLOCK)}"></div>`;
   const label = mini
-    ? 'The market at a glance: a U-shaped corridor with Market Side units along the outer wall and Antique City units on the inner block'
-    : 'Map of the market: a U-shaped corridor with Market Side units along the outer wall and Antique City units on the inner block, in walking order from the Wood Street entrance';
+    ? 'The market floorplan at a glance'
+    : 'Floorplan of the market. Units 2 to 12 run along the back wall, 23 to 38 down the right-hand side, and the Antique City units face each other across the front aisle.';
   return `<div class="${mini ? 'map-mini' : 'map-scroll'}">
-    <div class="map" role="group" aria-label="${label}" style="aspect-ratio:${W}/${H}">
-${corridor}
+    <div class="map" role="group" aria-label="${label}" style="aspect-ratio:${PLAN.w}/${PLAN.h}">
+${shell}
 ${boxes}
     </div>
   </div>`;
@@ -600,7 +620,7 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
         </div>
         <a href="shops.html" class="more">Search all ${shops.length} shops &rarr;</a>
       </div>
-      <p class="lede" style="font-size:16.5px;line-height:1.65">One corridor bent into a U, with small units down both sides of it. Every shop is independent and run by the person behind the counter, so most keep their own days and hours inside the market&rsquo;s opening times. Ring ahead if you are making the trip for one in particular. Flip through them one at a time below, or pick a unit on the map to jump straight to it.</p>
+      <p class="lede" style="font-size:16.5px;line-height:1.65">Small units packed around one indoor block: a run along the back wall, a row down the side, and two rows facing each other across the front aisle. Every shop is independent and run by the person behind the counter, so most keep their own days and hours inside the market&rsquo;s opening times. Ring ahead if you are making the trip for one in particular. Flip through them one at a time below, or pick a unit on the map to jump straight to it.</p>
       ${easelHtml('')}
       <p style="font-size:14.5px;line-height:1.6;color:#5C5142;max-width:62ch;margin:30px auto 0;text-align:center">${vacancyLine('')}</p>
     </div>
@@ -615,11 +635,11 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
         </div>
         <a href="map.html" class="more">Open the full map page &rarr;</a>
       </div>
-      <p class="lede" style="font-size:16.5px;line-height:1.65;max-width:64ch;margin-bottom:30px">One corridor, bent into a U, with shops down both sides of the walkway. Market Side units line the outer wall and Antique City units the inner block, and both run the same way round: in from Wood Street, up one arm, across the top and back down the other. It shows the order the units come in rather than measured distances, and any unit can be tapped to bring that shop up on the easel.</p>
+      <p class="lede" style="font-size:16.5px;line-height:1.65;max-width:64ch;margin-bottom:30px">Drawn from the market&rsquo;s own floorplan. The Market Side units run along the back wall and down the right-hand side, numbered 2 to 38. The Antique City units face each other across the aisle at the front, numbered A1 to A16. Tap any unit to bring that shop up on the easel.</p>
       <div class="map-card">
         <div class="head">
-          <h3>One corridor, two sides</h3>
-          <span>Outer: Market Side (M) &middot; Inner: Antique City (A)</span>
+          <h3>The floorplan</h3>
+          <span>Market Side, units 2 to 38 &middot; Antique City, units A1 to A16</span>
         </div>
         ${mapHtml({ hrefFor: (r) => '#shop-' + r.slug })}
       </div>
@@ -877,15 +897,15 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
     <div class="wrap">
       ${eyebrow('Find your way round')}
       <h1 class="h1">The Market Map</h1>
-      <p class="lede" style="max-width:70ch">One corridor, bent into a U, with shops down both sides of the walkway. Market Side units line the outer wall and Antique City units the inner block, and both run the same way round: in from Wood Street, up one arm, across the top and back down the other. The map shows the order the units come in rather than measured distances, so it is a visitor guide, not an architectural plan. Tap any unit to open that shop.</p>
+      <p class="lede" style="max-width:70ch">Drawn from the market&rsquo;s own floorplan. The Market Side units run along the back wall and down the right-hand side, numbered 2 to 38. The Antique City units face each other across the aisle at the front, numbered A1 to A16. It is a visitor guide rather than an architectural drawing, so treat the shapes as approximate. Tap any unit to open that shop.</p>
     </div>
   </section>
   <section style="padding:16px 24px 56px">
     <div class="wrap">
       <div class="map-card">
         <div class="head">
-          <h2>One corridor, two sides</h2>
-          <span>Outer: Market Side (M) &middot; Inner: Antique City (A)</span>
+          <h2>The floorplan</h2>
+          <span>Market Side, units 2 to 38 &middot; Antique City, units A1 to A16</span>
         </div>
         ${mapHtml({ hrefFor: (r) => r.href })}
       </div>
@@ -895,8 +915,8 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
   <section class="sec sec-alt">
     <div class="wrap">
       ${eyebrow('The same thing as a list')}
-      <h2 class="h2">Every unit, in walking order</h2>
-      <p class="lede" style="margin-bottom:30px">Each side is listed from the Wood Street entrance round to the exit. ${vacancyLine('')}</p>
+      <h2 class="h2">Every unit, as a list</h2>
+      <p class="lede" style="margin-bottom:30px">Each side is listed in unit-number order. ${vacancyLine('')}</p>
       <div class="two two-top" style="gap:36px">
         <div>
           <h3 style="font-size:24px;margin:0 0 4px">Market Side</h3>
@@ -1447,7 +1467,28 @@ function pictures(html) {
   });
 }
 
+// Every shop in the data must have a room on the floorplan, or it silently
+// disappears from the map. Checked here so it can never happen quietly.
 let problems = 0;
+{
+  const placed = new Set(ROOMS.filter((r) => r.unit).map((r) => r.unit));
+  // A unit with no room does not appear on the map at all. That is a warning
+  // rather than a build failure, because the drawing and the spreadsheet
+  // genuinely disagree about one unit and only the client can settle it.
+  // See the open question in README, "The map".
+  for (const u of units) {
+    if (!placed.has(u.unit)) {
+      console.warn(`  ? ${u.unit}${u.vacant ? '' : ' (' + u.name + ')'} is in the data but has no room on the floorplan, so it is missing from the map`);
+    }
+  }
+  for (const r of ROOMS) {
+    if (r.unit && !units.some((u) => u.unit === r.unit)) {
+      console.error(`  ! the floorplan has a room for ${r.unit}, which is not in the data`);
+      problems++;
+    }
+  }
+}
+
 for (const [file, raw] of Object.entries(out)) {
   const html = file.endsWith('.html') ? pictures(raw) : raw;
   const bad = html.match(/[‒–—―−]/);
