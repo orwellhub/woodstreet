@@ -355,7 +355,7 @@ ${usedFamilies.map((f) => `        <span class="chip chip-static"><span class="d
 // `unconfirmed` is a room on the drawing that the spreadsheet does not list.
 // Coordinates are taken straight from the drawing, so the proportions match:
 // the space is 730 by 545, which is the market's own width-to-height ratio.
-const PLAN = { w: 730 };
+
 const ROOMS = [
   // The back wall, left to right. Unit 2 is the widest of the run.
   { unit: 'M2',        label: '2',        x: 57,  y: 8,   w: 73, h: 60 },
@@ -408,23 +408,46 @@ const ROOMS = [
 // the units and the map is for finding shops, not for measuring the void.
 const VOID_BLOCK = { x: 115, y: 168, w: 355, h: 160 };
 
-// The building is long and shallow, and drawn true to scale the middle is
-// mostly the part the market does not trade in. Everything below the back
-// wall is squashed vertically by the same factor, so the rooms keep their
-// sizes relative to each other while the dead space in the middle shrinks.
-// The table above stays exactly as measured off the drawing.
-const VSQUASH = 0.72, VTOP = 68;
-const squash = (r) => (r.y <= VTOP ? r : { ...r, y: VTOP + (r.y - VTOP) * VSQUASH, h: r.h * VSQUASH });
-const PLAN_H = Math.round(Math.max(...[...ROOMS, VOID_BLOCK].map((r) => squash(r).y + squash(r).h)) + 12);
+// The table above is the drawing as measured. Three things happen to it
+// before it reaches the page, all of them to make the plan readable on a
+// screen rather than to survey the building. Every room is treated the same
+// way, so they keep their sizes relative to each other.
+//
+//   VSQUASH  compresses the depth of the building, which is mostly the part
+//            the market does not trade in. Set it to 1 for the true depth.
+//   LSQUASH  compresses the length of each run, so the turned plan is not
+//            absurdly tall. Set it to 1 for the true length.
+//   place()  turns the whole plan a quarter turn anticlockwise, so the back
+//            wall runs up the left, the street frontage runs across the top,
+//            and the Antique City aisle comes down the right. That leaves the
+//            open side at the bottom, the way the market's map has always
+//            been drawn.
+const VSQUASH = 0.85, VTOP = 68, LSQUASH = 0.72;
+const SRC_W = 730 * LSQUASH;
+function squash(r) {
+  const deep = r.y > VTOP;
+  return {
+    x: r.x * LSQUASH, w: r.w * LSQUASH,
+    y: deep ? VTOP + (r.y - VTOP) * VSQUASH : r.y,
+    h: deep ? r.h * VSQUASH : r.h,
+  };
+}
+function place(r0) {
+  const r = squash(r0);
+  return { x: r.y, y: SRC_W - r.x - r.w, w: r.h, h: r.w };
+}
+const EXTENT = [...ROOMS, VOID_BLOCK].map(place);
+const PLAN_W = Math.round(Math.max(...EXTENT.map((r) => r.x + r.w)) + 10);
+const PLAN_H = Math.round(Math.max(...EXTENT.map((r) => r.y + r.h)) + 10);
 
 function mapHtml({ rel = '', hrefFor = null, mini = false, highlight = [] } = {}) {
   const hi = new Set(highlight);
   const byUnit = Object.fromEntries(units.map((u) => [u.unit, u]));
-  const px = (v) => (v / PLAN.w * 100).toFixed(2) + '%';
+  const px = (v) => (v / PLAN_W * 100).toFixed(2) + '%';
   const py = (v) => (v / PLAN_H * 100).toFixed(2) + '%';
-  const pos = (r0) => { const r = squash(r0); return `left:${px(r.x)};top:${py(r.y)};width:${px(r.w)};height:${py(r.h)}`; };
+  const pos = (r0) => { const r = place(r0); return `left:${px(r.x)};top:${py(r.y)};width:${px(r.w)};height:${py(r.h)}`; };
   // The rooms are not all the same size, so the name is sized to its room.
-  const nm = (r) => `;--nm:${r.w < 56 ? 0.71 : r.w < 90 ? 0.81 : 0.92}cqw`;
+  const nm = (r0) => { const w = place(r0).w; return `;--nm:${w < 56 ? 1.15 : w < 90 ? 1.3 : 1.45}cqw`; };
 
   const boxes = ROOMS.map((room) => {
     if (room.facility) {
@@ -448,9 +471,9 @@ function mapHtml({ rel = '', hrefFor = null, mini = false, highlight = [] } = {}
   const shell = `      <div class="map-void" aria-hidden="true" style="${pos(VOID_BLOCK)}"></div>`;
   const label = mini
     ? 'The market floorplan at a glance'
-    : 'Floorplan of the market. Units 2 to 12 run along the back wall, 23 to 38 down the right-hand side, and the Antique City units face each other across the front aisle.';
+    : 'Floorplan of the market, turned so the open side is at the bottom. Units 2 to 12 run up the left, the street frontage 23 to 30 runs across the top, and the Antique City units face each other across the aisle down the right.';
   return `<div class="${mini ? 'map-mini' : 'map-scroll'}">
-    <div class="map" role="group" aria-label="${label}" style="aspect-ratio:${PLAN.w}/${PLAN_H}">
+    <div class="map" role="group" aria-label="${label}" style="aspect-ratio:${PLAN_W}/${PLAN_H}">
 ${shell}
 ${boxes}
     </div>
@@ -641,7 +664,7 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
   </section>
 
   <section id="map" class="sec sec-alt">
-    <div class="wrap-w">
+    <div class="wrap">
       <div class="sec-head" style="margin-bottom:6px">
         <div>
           ${eyebrow('Find your way round')}
@@ -915,7 +938,7 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
     </div>
   </section>
   <section style="padding:16px 24px 56px">
-    <div class="wrap-w">
+    <div class="wrap">
       <div class="map-card">
         <div class="head">
           <h2>The floorplan</h2>

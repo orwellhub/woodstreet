@@ -246,8 +246,8 @@ select.field{appearance:none;-webkit-appearance:none;background-image:url("data:
 .map-card .head h2,.map-card .head h3{font-size:23px;margin:0}
 .map-card .head span{font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#7C2A1D}
 .map-scroll{overflow-x:auto;border-radius:10px}
-.map{position:relative;container-type:inline-size;min-width:1160px;background:#FBF5E7;border:1.5px solid rgba(41,35,28,.35);border-radius:10px;overflow:hidden}
-.map-mini .map{min-width:0;border:2px solid #29231C;border-radius:12px;box-shadow:5px 5px 0 rgba(41,35,28,.85)}
+.map{position:relative;container-type:inline-size;min-width:600px;max-width:880px;margin:0 auto;background:#FBF5E7;border:1.5px solid rgba(41,35,28,.35);border-radius:10px;overflow:hidden}
+.map-mini .map{min-width:0;max-width:none;border:2px solid #29231C;border-radius:12px;box-shadow:5px 5px 0 rgba(41,35,28,.85)}
 .map .cor{position:absolute;background:#F2E7D0}
 .map .walk{position:absolute;border:2px dashed #C7B189;border-bottom:none;border-radius:6px 6px 0 0;opacity:.85}
 .map .lab{position:absolute;font-family:'Archivo Narrow',sans-serif;font-weight:700;letter-spacing:.14em;color:#6E6147;white-space:nowrap;font-size:11px}

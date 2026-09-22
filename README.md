@@ -113,12 +113,19 @@ drawing in a 730 by 545 space. That is the market's own width-to-height ratio,
 so every room keeps its real proportions and the map scales to whatever width
 it is shown at.
 
-The real shape is not the horseshoe an earlier version of this site drew. The
-Market Side units run along the back wall (2 to 12), then down the right-hand
-side (38, 37, 36, 33, 32, 34/35, with 23/24 to 29/30 beyond them). The Antique
-City units sit at the front, in two rows facing each other across an aisle:
-A1 to A10 on the back side of it and A16 down to A11 on the front side. Unit 31
-sits at the end of the front row despite its Market Side number.
+On the drawing, the Market Side units run along the back wall (2 to 12), then
+down the right-hand side (38, 37, 36, 33, 32, 34/35, with 23/24 to 29/30 beyond
+them). The Antique City units sit at the front, in two rows facing each other
+across an aisle: A1 to A10 on the back side of it and A16 down to A11 on the
+front side. Unit 31 sits at the end of the front row despite its Market Side
+number.
+
+The map turns that a quarter turn anticlockwise, so the open side is at the
+bottom the way the market's map has always been drawn. On the page the back
+wall runs up the left with unit 2 at the bottom, the street frontage runs
+across the top, and the Antique City aisle comes down the right with A1 at the
+bottom. The room order and every adjacency are the drawing's; only the
+orientation differs.
 
 The drawing prints Market Side units as bare numbers and Antique City units
 with an `A`, so each room carries a `label` for what the drawing shows and a
@@ -127,7 +134,7 @@ with an `A`, so each room carries a `label` for what the drawing shows and a
 Storage, Showcase and the toilets are marked `facility`: drawn, but not
 lettable and not linked.
 
-Two deliberate departures from the drawing, both so the map reads well on a
+Three deliberate departures from the drawing, all so the map reads well on a
 screen rather than as a survey:
 
 - **`VSQUASH`** compresses everything below the back wall vertically by the
@@ -135,8 +142,13 @@ screen rather than as a survey:
   middle is mostly the part the market does not trade in. Every room keeps its
   size relative to every other room; only the aspect changes. Set it to 1 to
   see the map exactly as drawn.
+- **`LSQUASH`** compresses the length of each run, so the turned plan is not
+  absurdly tall. Set it to 1 for the true length.
 - **`VOID_BLOCK`** is drawn well inside the space it really fills, for the same
   reason. At full size it swamps the units.
+
+`place()` applies both squashes and then the quarter turn. Setting both to 1
+and returning the room unturned gives the drawing exactly as measured.
 
 Room labels are sized in `cqw`, a share of the map's own width, so the names
 scale with the rooms and nothing clips at any screen size. The two full-size
