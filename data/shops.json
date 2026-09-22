@@ -245,7 +245,10 @@
    "links": {
     "website": "https://rinkies.com/"
    },
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m6-m7.jpg",
+    "alt": "Rinkies Toys, open double doors under a sign listing toys, gifts, party bags and sweets, the shelves inside stacked with games and soft toys"
+   }
   },
   {
    "unit": "M8",
@@ -277,7 +280,10 @@
     "07703645946"
    ],
    "links": {},
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m9.jpg",
+    "alt": "Vintage Tony, its name in white on a black fascia above a wide window of hanging jackets and shirts, with shoes and belts in the glass case below"
+   }
   },
   {
    "unit": "M10",
@@ -308,7 +314,10 @@
    "hours": "",
    "phones": [],
    "links": {},
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m11-12.jpg",
+    "alt": "Sustainable style by S&K, a sage green shopfront signed Vintage and Preloved Boutique under trailing foliage, rails of clothes inside and shoes in the glass case"
+   }
   },
   {
    "unit": "M23/24",
