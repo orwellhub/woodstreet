@@ -3,7 +3,7 @@
 import pw from '/opt/node22/lib/node_modules/playwright/index.js';
 import { readFileSync, writeFileSync, statSync } from 'fs';
 const { chromium } = pw;
-const files = ['uploads/market-frontage.jpg', 'uploads/market-entrance.jpg', 'uploads/market-corridor.jpg', 'uploads/market-left-side.jpg', 'uploads/coven-of-wiches.jpg', 'uploads/belas-brocante.jpg', 'uploads/shops/shop-a16.jpg', 'uploads/shops/shop-a5-6.jpg', 'uploads/shops/shop-m6-m7.jpg', 'uploads/shops/shop-m9.jpg', 'uploads/shops/shop-m11-12.jpg', 'uploads/shops/shop-m10.jpg', 'uploads/shops/shop-m23-24.jpg', 'uploads/shops/shop-m28.jpg', 'uploads/shops/shop-m34-35.jpg'];
+const files = ['uploads/market-frontage.jpg', 'uploads/market-entrance.jpg', 'uploads/market-corridor.jpg', 'uploads/market-left-side.jpg', 'uploads/coven-of-wiches.jpg', 'uploads/belas-brocante.jpg', 'uploads/shops/shop-a16.jpg', 'uploads/shops/shop-a5-6.jpg', 'uploads/shops/shop-m6-m7.jpg', 'uploads/shops/shop-m9.jpg', 'uploads/shops/shop-m11-12.jpg', 'uploads/shops/shop-m10.jpg', 'uploads/shops/shop-m23-24.jpg', 'uploads/shops/shop-m28.jpg', 'uploads/shops/shop-m34-35.jpg', 'uploads/shops/shop-m36.jpg'];
 import { dirname, join } from 'path'; import { fileURLToPath } from 'url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..') + '/';
 const b = await chromium.launch();

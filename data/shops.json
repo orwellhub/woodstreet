@@ -57,7 +57,7 @@
    },
    "image": {
     "src": "uploads/shops/shop-a5-6.jpg",
-    "alt": "Inside Moroccan Corner: stacked rugs, leather bags, poufs and painted ceramics"
+    "alt": "Inside Moroccan Corner, looking down the shop past walls of painted plates, hanging lanterns and cabinets of tea glasses and tagines"
    }
   },
   {
@@ -448,7 +448,10 @@
     "instagram": "https://www.instagram.com/flowerie88/",
     "email": "info@flowerie88.com"
    },
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m36.jpg",
+    "alt": "Flowerie88, a pale blue and white jewellery unit with its name in wire script above the door, display cases of handmade pieces inside and a chalkboard at the front"
+   }
   },
   {
    "unit": "M37",

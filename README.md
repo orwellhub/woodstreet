@@ -185,10 +185,15 @@ are exactly the nine the spreadsheet marks vacant.
 | File | Where it appears |
 |---|---|
 | `market-frontage.jpg` | Home hero. Also the social sharing preview. |
-| `market-entrance.jpg` | Our story, home and story page, in the arched frame. Also the home gallery. |
+| `market-entrance.jpg` | Home and story page, in the arched frame. Also the home gallery. |
 | `market-corridor.jpg`, `coven-of-wiches.jpg`, `belas-brocante.jpg`, `market-left-side.jpg` | Home gallery |
 | `shops/shop-a5-6.jpg`, `shops/shop-a16.jpg` | Moroccan Corner and Mrs Tinsley's |
-| `shops/shop-m6-m7.jpg`, `shops/shop-m9.jpg`, `shops/shop-m10.jpg`, `shops/shop-m11-12.jpg`, `shops/shop-m23-24.jpg`, `shops/shop-m28.jpg`, `shops/shop-m34-35.jpg` | Rinkies Toys, Vintage Tony, Pritzy, Sustainable style by S&K, Music Family Records, Mykeyartzone and 1 Vintage Place |
+| `shops/shop-m6-m7.jpg`, `shops/shop-m9.jpg`, `shops/shop-m10.jpg`, `shops/shop-m11-12.jpg`, `shops/shop-m23-24.jpg`, `shops/shop-m28.jpg`, `shops/shop-m34-35.jpg`, `shops/shop-m36.jpg` | Rinkies Toys, Vintage Tony, Pritzy, Sustainable style by S&K, Music Family Records, Mykeyartzone, 1 Vintage Place and Flowerie88 |
+
+Both frontage images are the market's **new shopfront design**, supplied in
+September 2026: dark green boarding, cream and terracotta trim, gold
+lettering. They replaced photographs of the previous red frontage. If the
+street still looks like the old pictures, that is why.
 
 Keep images to roughly 1000px on the long edge.
 
@@ -197,17 +202,26 @@ carries some of the viewer around it and none of that belongs on the site.
 Two layouts turn up, and the crop for each is measured rather than
 eyeballed:
 
-- The photo fills the frame, the unit number sits in a flat black band along
-  the foot, and the back chevron sits over the left edge. The band is far
-  darker than any row of photograph above it, so walk up from the bottom
-  while the row averages under 60 in brightness; the chevron always falls
-  inside the first 8% of the width, so take 9% off that side.
-- A portrait photo is letterboxed on black, with the toolbar drawn over the
-  top of the picture and the caption over its foot. The letterbox is found by
-  column: a black margin is near-black down almost its whole height, where a
-  column of photograph is not. The overlays sit on the picture rather than
-  beside it, so the only way to lose them is to cut the top 6% and the bottom
-  9% of what is left.
+- **Band.** The photo fills the frame, the unit number sits in a flat black
+  band along the foot, and the back chevron sits over the left edge. The band
+  is far darker than any row of photograph above it, so walk up from the
+  bottom while the row averages under 60 in brightness; the chevron always
+  falls inside the first 8% of the width, so take 9% off that side.
+- **Letterbox, overlaid.** A portrait photo on black, with the toolbar drawn
+  over the top of the picture and the caption over its foot. The black
+  margins are found by column: a margin is near-black down almost its whole
+  height, where a column of photograph is not. The overlays sit on the
+  picture rather than beside it, so the only way to lose them is to cut the
+  top 6% and the bottom 9% of what is left.
+- **Letterbox, clear.** The same, but the caption and buttons sit on the
+  black beside the picture, so trimming to the picture is enough. Find the
+  longest unbroken run of picture rather than the first one: a single bright
+  pixel in the outermost column otherwise stops the scan dead and leaves the
+  whole margin in place.
+- **Neither.** The odd shot has no band and no letterbox, just a button
+  somewhere over the picture. Trim the named edge by hand, and take enough
+  that nothing is left half cut: better to lose a whole sandwich board than
+  to show a sliced one.
 
 Every unit takes one photograph. Where the album has several of the same
 shop, the shopfront is the one to use.
@@ -238,7 +252,7 @@ the top of `tools/build.mjs`.
 
 Shop data, as of the September 2026 spreadsheet:
 
-- **Photographs.** 15 of the 24 shops still have no photograph. They are
+- **Photographs.** 14 of the 24 shops still have no photograph. They are
   arriving in batches from the market's own album; each one goes into
   `uploads/shops/` named per unit, as described above.
 - **Units 13 and 16 to 22 do not exist** on the drawing or in the spreadsheet.

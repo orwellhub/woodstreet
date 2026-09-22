@@ -627,7 +627,7 @@ const out = {};
       <div style="position:relative;max-width:430px;justify-self:center;width:100%">
         <div aria-hidden="true" style="position:absolute;left:18px;top:18px;right:-14px;bottom:-14px;background:#DCA528;border:2px solid #29231C;border-radius:14px"></div>
         <div class="photo-frame" style="position:relative">
-          <img src="uploads/market-frontage.jpg" alt="The painted frontage of 98 Wood Street Indoor Market, red with blue and green window frames and the market name above the door" width="800" height="1067" fetchpriority="high" style="width:100%;height:auto">
+          <img src="uploads/market-frontage.jpg" alt="The Wood Street Indoor Market frontage, dark green boarding with cream and terracotta trim, gold lettering across the fascia and the lit corridor of shops through the open doorway" width="1400" height="1291" fetchpriority="high" style="width:100%;height:auto">
         </div>
         <span style="position:absolute;top:-16px;right:14px;background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:999px;padding:7px 14px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.08em;transform:rotate(3deg);box-shadow:2px 2px 0 #29231C">FIND US ON WOOD STREET</span>
       </div>
@@ -702,7 +702,7 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
     <div class="wrap two" style="gap:48px">
       <div style="position:relative;max-width:380px;width:100%;justify-self:center">
         <div class="photo-arch">
-          <img src="uploads/market-entrance.jpg" alt="The Wood Street Market entrance, a red shopfront with a clock above the hand-painted market sign and bunting across the doorway" width="452" height="679" loading="lazy" style="width:100%;height:auto">
+          <img src="uploads/market-entrance.jpg" alt="The Wood Street Market entrance, a dark green shopfront with gold lettering and bunting over the doorway, a shopper walking in past the chalkboards" width="900" height="1136" loading="lazy" style="width:100%;height:auto">
         </div>
         <span class="stamp" style="position:absolute;bottom:18px;right:-12px;transform:rotate(-4deg);font-size:12px;padding:6px 13px">SINCE 1955</span>
       </div>
@@ -771,7 +771,7 @@ ${vacant.map((v) => `          ${unitBadge(v.label)}`).join('\n')}
         <div><img src="uploads/market-corridor.jpg" alt="Inside the market corridor, lined with leather bags, rugs and homeware" width="646" height="430" loading="lazy"></div>
         <div><img src="uploads/coven-of-wiches.jpg" alt="The Coven of Wiches at unit 38, a plant-based deli and pickle house with a bright yellow shopfront and bunting overhead" width="785" height="1000" loading="lazy" style="object-position:center top"></div>
         <div><img src="uploads/belas-brocante.jpg" alt="Bela's Brocante at unit 31, pictures and collectables around the doorway, looking on down the market corridor" width="730" height="1000" loading="lazy" style="object-position:center 15%"></div>
-        <div><img src="uploads/market-entrance.jpg" alt="The market entrance on Wood Street with its clock and bunting" width="452" height="679" loading="lazy" style="object-position:center 30%"></div>
+        <div><img src="uploads/market-entrance.jpg" alt="The market entrance on Wood Street, dark green and gold with bunting across the doorway" width="900" height="1136" loading="lazy" style="object-position:center 30%"></div>
         <div><img src="uploads/market-left-side.jpg" alt="The Antique City aisle, a shopper flicking through record racks under bunting, with unit signs hanging down the corridor" width="1000" height="829" loading="lazy"></div>
       </div>
     </div>
@@ -1177,7 +1177,7 @@ ${faqs.map(([q, a]) => `        <details>
       </div>
       <div style="position:relative;max-width:380px;width:100%;justify-self:center">
         <div class="photo-arch" style="border-radius:190px 190px 12px 12px">
-          <img src="uploads/market-entrance.jpg" alt="The Wood Street Market entrance, a red shopfront with a clock above the hand-painted market sign and bunting across the doorway" width="452" height="679" style="width:100%;height:auto">
+          <img src="uploads/market-entrance.jpg" alt="The Wood Street Market entrance, a dark green shopfront with gold lettering and bunting over the doorway, a shopper walking in past the chalkboards" width="900" height="1136" style="width:100%;height:auto">
         </div>
         <span class="stamp" style="position:absolute;bottom:22px;right:-12px;transform:rotate(-4deg);font-size:12px;padding:6px 13px">EST. 1955</span>
       </div>
