@@ -8,7 +8,7 @@ nothing to install beyond Node.
 | Path | Purpose |
 |---|---|
 | `index.html`, `shops.html`, `map.html`, `visit.html`, `whats-on.html`, `story.html`, `join.html`, `contact.html`, `legal.html`, `404.html` | The pages. **Generated: do not edit by hand.** |
-| `shop/*.html` | One page per shop, 24 of them. Generated. |
+| `shop/*.html` | One page per shop, 25 of them. Generated. |
 | `sitemap.xml` | Generated. |
 | `tools/build.mjs` | The generator. All page copy and layout lives here. |
 | `tools/webp.mjs` | Makes a WebP copy of every photo and trims heavy JPEGs. Run after adding a photo. |
@@ -205,6 +205,7 @@ are exactly the nine the spreadsheet marks vacant.
 | `market-corridor.jpg`, `coven-of-wiches.jpg`, `belas-brocante.jpg`, `market-left-side.jpg` | Home gallery |
 | `shops/shop-a5-6.jpg`, `shops/shop-a16.jpg` | Moroccan Corner and Mrs Tinsley's |
 | `shops/shop-m6-m7.jpg`, `shops/shop-m9.jpg`, `shops/shop-m10.jpg`, `shops/shop-m11-12.jpg`, `shops/shop-m23-24.jpg`, `shops/shop-m28.jpg`, `shops/shop-m34-35.jpg`, `shops/shop-m36.jpg` | Rinkies Toys, Vintage Tony, Pritzy, Sustainable style by S&K, Music Family Records, Mykeyartzone, 1 Vintage Place and Flowerie88 |
+| `shops/shop-a9.jpg`, `shops/shop-a10.jpg`, `shops/shop-m3.jpg`, `shops/shop-m25-26-27.jpg`, `shops/shop-m32.jpg` | Ray's Records, Malaya Therapies, RoseCraft Jewellers, Timmy Tapers and London East Locksmith |
 
 Both frontage images are the market's **new shopfront design**, supplied in
 September 2026: dark green boarding, cream and terracotta trim, gold
@@ -235,6 +236,12 @@ eyeballed:
   height, where a column of photograph is not. The overlays sit on the
   picture rather than beside it, so the only way to lose them is to cut the
   top 6% and the bottom 9% of what is left.
+- **Letterbox, with things on the edge.** The September batch: every picture
+  1446 wide, the Save button and the heart sitting over its right-hand 5%, so
+  that 5% goes after the letterbox is trimmed. Where a Windows Snipping Tool
+  notification has landed in the corner as well, it spills onto the black
+  margin and the scan reads the picture as too wide, so the width is pinned
+  to 1446 and the right-hand 11.5% goes instead.
 - **Letterbox, clear.** The same, but the caption and buttons sit on the
   black beside the picture, so trimming to the picture is enough. Find the
   longest unbroken run of picture rather than the first one: a single bright
@@ -274,7 +281,7 @@ the top of `tools/build.mjs`.
 
 Shop data, as of the September 2026 spreadsheet:
 
-- **Photographs.** 14 of the 24 shops still have no photograph. They are
+- **Photographs.** 10 of the 25 shops still have no photograph. They are
   arriving in batches from the market's own album; each one goes into
   `uploads/shops/` named per unit, as described above.
 - **Units 13 and 16 to 22 do not exist** on the drawing or in the spreadsheet.

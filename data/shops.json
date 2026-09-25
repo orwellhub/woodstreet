@@ -91,7 +91,10 @@
    "hours": "",
    "phones": [],
    "links": {},
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-a9.jpg",
+    "alt": "Ray’s Records at unit A9, a wall of album covers under the hand-painted shop sign, with crates of LPs sorted by genre in front"
+   }
   },
   {
    "unit": "A10",
@@ -106,7 +109,10 @@
    "links": {
     "website": "https://www.malayatherapies.co.uk/"
    },
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-a10.jpg",
+    "alt": "Malaya Therapies at unit A10, the treatment room through the open door with a skeleton chart on the wall, and osteopathy notices in the window beside it"
+   }
   },
   {
    "unit": "A11",
@@ -214,7 +220,10 @@
     "instagram": "https://www.instagram.com/winston.rosecraft/",
     "email": "winston.rosecraft@gmail.com"
    },
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m3.jpg",
+    "alt": "RoseCraft Jewellers, open double doors under the shop sign onto a jeweller’s bench, with cases of rings and necklaces either side"
+   }
   },
   {
    "unit": "M4",
@@ -353,7 +362,10 @@
     "instagram": "https://www.instagram.com/timmytapersbarbershop/",
     "email": "timmytapersltd@gmail.com"
    },
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m25-26-27.jpg",
+    "alt": "Timmy Tapers, pink walls and a barber’s chair behind a run of open glazed doors, with a yellow armchair in the waiting area"
+   }
   },
   {
    "unit": "M28",
@@ -400,7 +412,16 @@
    "label": "32",
    "side": "Market Side",
    "address": "102 Wood Street",
-   "vacant": true
+   "name": "London East Locksmith Ltd",
+   "category": "Locksmith",
+   "about": "London East Locksmith Ltd works from unit 32 on the Market Side. Look through the window and you will see the walls of key blanks and the bench where the work gets done.",
+   "hours": "",
+   "phones": [],
+   "links": {},
+   "image": {
+    "src": "uploads/shops/shop-m32.jpg",
+    "alt": "London East Locksmith Ltd at unit 32, a green shopfront with the door open onto a workshop lined with key blanks"
+   }
   },
   {
    "unit": "M33",
