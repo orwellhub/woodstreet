@@ -205,7 +205,7 @@ are exactly the nine the spreadsheet marks vacant.
 | `market-corridor.jpg`, `coven-of-wiches.jpg`, `belas-brocante.jpg`, `market-left-side.jpg` | Home gallery |
 | `shops/shop-a5-6.jpg`, `shops/shop-a16.jpg` | Moroccan Corner and Mrs Tinsley's |
 | `shops/shop-m6-m7.jpg`, `shops/shop-m9.jpg`, `shops/shop-m10.jpg`, `shops/shop-m11-12.jpg`, `shops/shop-m23-24.jpg`, `shops/shop-m28.jpg`, `shops/shop-m34-35.jpg`, `shops/shop-m36.jpg` | Rinkies Toys, Vintage Tony, Pritzy, Sustainable style by S&K, Music Family Records, Mykeyartzone, 1 Vintage Place and Flowerie88 |
-| `shops/shop-a9.jpg`, `shops/shop-a10.jpg`, `shops/shop-m3.jpg`, `shops/shop-m25-26-27.jpg`, `shops/shop-m32.jpg` | Ray's Records, Malaya Therapies, RoseCraft Jewellers, Timmy Tapers and London East Locksmith |
+| `shops/shop-a9.jpg`, `shops/shop-a10.jpg`, `shops/shop-m3.jpg`, `shops/shop-m8.jpg`, `shops/shop-m25-26-27.jpg`, `shops/shop-m32.jpg` | Ray's Records, Malaya Therapies, RoseCraft Jewellers, Books From Boxes, Timmy Tapers and London East Locksmith |
 
 Both frontage images are the market's **new shopfront design**, supplied in
 September 2026: dark green boarding, cream and terracotta trim, gold
@@ -281,7 +281,7 @@ the top of `tools/build.mjs`.
 
 Shop data, as of the September 2026 spreadsheet:
 
-- **Photographs.** 10 of the 25 shops still have no photograph. They are
+- **Photographs.** 9 of the 25 shops still have no photograph. They are
   arriving in batches from the market's own album; each one goes into
   `uploads/shops/` named per unit, as described above.
 - **Units 13 and 16 to 22 do not exist** on the drawing or in the spreadsheet.

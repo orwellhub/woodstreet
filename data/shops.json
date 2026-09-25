@@ -89,7 +89,9 @@
    "category": "Records & music",
    "about": "Make time for a musical browse at Ray’s Records, one of Wood Street Indoor Market’s independent record shops. Explore the selection and see what catches your ear.",
    "hours": "",
-   "phones": [],
+   "phones": [
+    "07432277146"
+   ],
    "links": {},
    "image": {
     "src": "uploads/shops/shop-a9.jpg",
@@ -274,7 +276,10 @@
    "links": {
     "website": "https://www.booksfromboxes.co.uk/"
    },
-   "image": null
+   "image": {
+    "src": "uploads/shops/shop-m8.jpg",
+    "alt": "Books From Boxes at unit 8, a white glazed shopfront with the door open onto shelves of books and a customer reading inside"
+   }
   },
   {
    "unit": "M9",
