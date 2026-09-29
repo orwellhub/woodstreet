@@ -179,6 +179,19 @@ const units = DATA.units.map((r) => ({
 }));
 const bySide = (s) => units.filter((u) => u.side === s).sort((a, b) => sortKey(a.unit) - sortKey(b.unit));
 const shops = [...bySide('Antique City'), ...bySide('Market Side')].filter((u) => !u.vacant);
+
+// The shop count in words, for the start of a sentence ("Twenty-five little
+// shops"). Every count on the site comes from the data, so a shop moving in
+// or out changes the headline too.
+function countInWords(n) {
+  const ones = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+    'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+  const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+  if (n < 20) return ones[n];
+  if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? '-' + ones[n % 10] : '');
+  return String(n);
+}
+const shopCountWords = countInWords(shops.length).replace(/^./, (c) => c.toUpperCase());
 const vacant = [...bySide('Antique City'), ...bySide('Market Side')].filter((u) => u.vacant);
 const withPhotoFirst = [...shops.filter((s) => s.image), ...shops.filter((s) => !s.image)];
 // Six on the home page, the photographed ones first so the row has faces in it.
@@ -260,7 +273,7 @@ function footer(rel) {
         Managed by
         <img src="${rel}brand/walthams-logo-inverse.svg" alt="Walthams" width="104" height="17">
       </a>
-      <p style="margin-top:16px;color:#BEB197">Thirty little shops under one roof in Walthamstow, a couple of minutes from Wood Street station.</p>
+      <p style="margin-top:16px;color:#BEB197">${shopCountWords} little shops under one roof in Walthamstow, a couple of minutes from Wood Street station.</p>
     </div>
     <div>
       <h2>Find us</h2>
@@ -616,11 +629,11 @@ const out = {};
 {
   out['index.html'] = page({
     file: 'index.html', active: '',
-    title: 'Wood Street Indoor Market | 30 little shops in Walthamstow, E17',
-    desc: 'An independent indoor market of around thirty small shops around one horseshoe corridor in Walthamstow E17, two minutes from Wood Street station. Open Tuesday to Saturday.',
+    title: `Wood Street Indoor Market | ${shops.length} little shops in Walthamstow, E17`,
+    desc: `An independent indoor market of ${shops.length} small shops around one horseshoe corridor in Walthamstow E17, two minutes from Wood Street station. Open Tuesday to Saturday.`,
     extraHead: `<script type="application/ld+json">${jsonld({
       '@context': 'https://schema.org', '@type': 'ShoppingCenter', name: SITE.name,
-      description: 'Independent indoor market of around thirty small shops arranged around one horseshoe corridor in Walthamstow, east London. Trading since 1955.',
+      description: `Independent indoor market of ${shops.length} small shops arranged around one horseshoe corridor in Walthamstow, east London. Trading since 1955.`,
       address: { '@type': 'PostalAddress', streetAddress: '98 & 102 Wood Street', addressLocality: 'Walthamstow, London', postalCode: 'E17 3HX', addressCountry: 'GB' },
       telephone: '+44 20 8509 0444', email: SITE.email, url: SITE.url, sameAs: [SITE.fb, SITE.ig, SITE.x],
       openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: SITE.hours.days.map((d) => DAY_NAMES[d]), opens: SITE.hours.open, closes: SITE.hours.close }],
@@ -635,7 +648,7 @@ const out = {};
           <span class="tag" style="transform:rotate(1.5deg)">WALTHAMSTOW &middot; E17</span>
           <span class="tag tag-teal" style="transform:rotate(-1deg)">TUESDAY TO SATURDAY</span>
         </div>
-        <h1 style="font-size:clamp(38px,5.2vw,62px);line-height:1.04;margin:20px 0 16px">Thirty little shops. Hundreds of things you weren&rsquo;t looking for.</h1>
+        <h1 style="font-size:clamp(38px,5.2vw,62px);line-height:1.04;margin:20px 0 16px">${shopCountWords} little shops. Hundreds of things you weren&rsquo;t looking for.</h1>
         <p style="font-size:17.5px;line-height:1.6;color:#5C5142;max-width:56ch;margin:0 0 26px">An indoor market bent round one horseshoe corridor just off Wood Street. ${shops.length} small independent shops, side by side under one roof, and a different set of finds every time you walk it.</p>
         <div style="display:flex;gap:14px;flex-wrap:wrap">
           <a href="shops.html" class="btn btn-red">Explore the Shops</a>
@@ -735,7 +748,7 @@ ${featured.map((r) => '        ' + shopCard(r, '')).join('\n')}
         ${eyebrow('Our story')}
         <h2 class="h2" style="margin-bottom:14px">From picture palace to market hall</h2>
         <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 14px">Before the stalls came the screen. This was the Crown Cinema from 1912 to 1955, reached down a long passage from Wood Street, and that passage is the corridor you walk today.</p>
-        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 26px">The market moved in the year the projector stopped. Seventy years on, thirty-odd small shops still trade side by side while Wood Street changes around them. The faces turn over; the horseshoe holds.</p>
+        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 26px">The market moved in the year the projector stopped. Seventy years on, ${shops.length} small shops still trade side by side while Wood Street changes around them. The faces turn over; the horseshoe holds.</p>
         <a href="story.html" class="btn btn-cream">Read our story &rarr;</a>
       </div>
     </div>
