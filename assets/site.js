@@ -83,7 +83,7 @@ document.documentElement.classList.add('is-js');
     });
     chips.forEach(function (ch) { ch.setAttribute('aria-pressed', ch.getAttribute('data-cat') === state.cat ? 'true' : 'false'); });
     if (search && search.value !== state.q) search.value = state.q;
-    if (count) count.textContent = shown === cards.length ? 'Showing all ' + cards.length + ' shops, the ones with photos first' : 'Showing ' + shown + ' of ' + cards.length + ' shops';
+    if (count) count.textContent = shown === cards.length ? 'Showing ' + cards.length + ' shops, the ones with photos first' : 'Showing ' + shown + ' of ' + cards.length + ' shops';
     if (empty) empty.hidden = shown !== 0;
     if (push) {
       var parts = [];

@@ -110,20 +110,21 @@ test('the shipped pages carry the security-relevant markup', () => {
   }
 });
 
-test('the shop count in the headline and footer comes from the data', () => {
-  const words = (n) => ({ 24: 'Twenty-four', 25: 'Twenty-five' })[n];
-  const data = JSON.parse(readFileSync(join(ROOT, 'data/shops.json'), 'utf8'));
-  const trading = data.units.filter((u) => !u.vacant && u.name).length;
+test('every headline count says the market has 36 shops', () => {
   const asIs = buildWith(() => {});
-  assert.ok(!/Thirty little shops|30 little shops|around thirty/.test(everyPage(asIs)));
-  if (words(trading)) {
-    assert.match(asIs['index.html'], new RegExp(`<h1[^>]*>${words(trading)} little shops\\.`));
-    assert.match(asIs['index.html'], new RegExp(`<title>Wood Street Indoor Market \\| ${trading} little shops`));
-    assert.match(asIs['shops.html'], new RegExp(`${words(trading)} little shops under one roof`));
-  }
-  // One shop moves out: every count follows.
+  const all = everyPage(asIs);
+  assert.ok(!/Thirty little shops|30 little shops|around thirty|thirty doors|thirty small doors/.test(all));
+  assert.ok(!/\b25 (little|small|independent) shops|Twenty-five little shops|all 25 shops/.test(all));
+  assert.match(asIs['index.html'], /<h1[^>]*>Thirty-six little shops\./);
+  assert.match(asIs['index.html'], /<title>Wood Street Indoor Market \| 36 little shops/);
+  assert.match(asIs['shops.html'], /Thirty-six little shops under one roof/);
+  // The directory's own tally counts the shops it lists and never says "all".
+  const listed = JSON.parse(readFileSync(join(ROOT, 'data/shops.json'), 'utf8')).units.filter((u) => !u.vacant && u.name).length;
+  assert.match(asIs['shops.html'], new RegExp(`data-count>Showing ${listed} shops,`));
+  // A shop moving out changes the directory tally but not the market's own count.
   const fewer = buildWith((m3) => { m3.vacant = true; });
-  assert.match(fewer['index.html'], new RegExp(`<h1[^>]*>${words(trading - 1) ?? ''}`));
+  assert.match(fewer['index.html'], /<h1[^>]*>Thirty-six little shops\./);
+  assert.match(fewer['shops.html'], new RegExp(`data-count>Showing ${listed - 1} shops,`));
 });
 
 test('no page contains a long dash', () => {

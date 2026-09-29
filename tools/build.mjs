@@ -180,9 +180,13 @@ const units = DATA.units.map((r) => ({
 const bySide = (s) => units.filter((u) => u.side === s).sort((a, b) => sortKey(a.unit) - sortKey(b.unit));
 const shops = [...bySide('Antique City'), ...bySide('Market Side')].filter((u) => !u.vacant);
 
-// The shop count in words, for the start of a sentence ("Twenty-five little
-// shops"). Every count on the site comes from the data, so a shop moving in
-// or out changes the headline too.
+// How many shops the market has, as the market itself counts them. This is
+// the number every headline, title and description uses. The directory lists
+// the shops we hold details for, which can be fewer, so its own tallies (the
+// results line, the map) count the data instead and never claim to be all 36.
+const MARKET_SHOPS = 36;
+
+// A count in words, for the start of a sentence ("Thirty-six little shops").
 function countInWords(n) {
   const ones = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
     'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
@@ -191,7 +195,7 @@ function countInWords(n) {
   if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? '-' + ones[n % 10] : '');
   return String(n);
 }
-const shopCountWords = countInWords(shops.length).replace(/^./, (c) => c.toUpperCase());
+const shopCountWords = countInWords(MARKET_SHOPS).replace(/^./, (c) => c.toUpperCase());
 const vacant = [...bySide('Antique City'), ...bySide('Market Side')].filter((u) => u.vacant);
 const withPhotoFirst = [...shops.filter((s) => s.image), ...shops.filter((s) => !s.image)];
 // Six on the home page, the photographed ones first so the row has faces in it.
@@ -518,7 +522,7 @@ function mapGuide(rel = '') {
       : `left:${px(r.x + r.w / 2 - 1)};top:${py(r.y + 4)};height:${py(r.h - 8)}`;
     return `        <span class="cor" style="${pos(c)}"></span>\n        <span class="ant ant-${lengthways ? 'h' : 'v'}" style="${ant}"></span>`;
   }).join('\n');
-  return `<a class="guide-link" href="${rel}map.html" aria-label="Open the market map: ${shops.length} shops and ${vacant.length} empty units around one horseshoe corridor">
+  return `<a class="guide-link" href="${rel}map.html" aria-label="Open the market map: every door around one horseshoe corridor">
       <span class="map-guide" style="aspect-ratio:${PLAN_W}/${PLAN_H}">
         <span class="map-void" style="${pos(VOID_BLOCK)}"></span>
 ${aisles}
@@ -629,11 +633,11 @@ const out = {};
 {
   out['index.html'] = page({
     file: 'index.html', active: '',
-    title: `Wood Street Indoor Market | ${shops.length} little shops in Walthamstow, E17`,
-    desc: `An independent indoor market of ${shops.length} small shops around one horseshoe corridor in Walthamstow E17, two minutes from Wood Street station. Open Tuesday to Saturday.`,
+    title: `Wood Street Indoor Market | ${MARKET_SHOPS} little shops in Walthamstow, E17`,
+    desc: `An independent indoor market of ${MARKET_SHOPS} small shops around one horseshoe corridor in Walthamstow E17, two minutes from Wood Street station. Open Tuesday to Saturday.`,
     extraHead: `<script type="application/ld+json">${jsonld({
       '@context': 'https://schema.org', '@type': 'ShoppingCenter', name: SITE.name,
-      description: `Independent indoor market of ${shops.length} small shops arranged around one horseshoe corridor in Walthamstow, east London. Trading since 1955.`,
+      description: `Independent indoor market of ${MARKET_SHOPS} small shops arranged around one horseshoe corridor in Walthamstow, east London. Trading since 1955.`,
       address: { '@type': 'PostalAddress', streetAddress: '98 & 102 Wood Street', addressLocality: 'Walthamstow, London', postalCode: 'E17 3HX', addressCountry: 'GB' },
       telephone: '+44 20 8509 0444', email: SITE.email, url: SITE.url, sameAs: [SITE.fb, SITE.ig, SITE.x],
       openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: SITE.hours.days.map((d) => DAY_NAMES[d]), opens: SITE.hours.open, closes: SITE.hours.close }],
@@ -649,7 +653,7 @@ const out = {};
           <span class="tag tag-teal" style="transform:rotate(-1deg)">TUESDAY TO SATURDAY</span>
         </div>
         <h1 style="font-size:clamp(38px,5.2vw,62px);line-height:1.04;margin:20px 0 16px">${shopCountWords} little shops. Hundreds of things you weren&rsquo;t looking for.</h1>
-        <p style="font-size:17.5px;line-height:1.6;color:#5C5142;max-width:56ch;margin:0 0 26px">An indoor market bent round one horseshoe corridor just off Wood Street. ${shops.length} small independent shops, side by side under one roof, and a different set of finds every time you walk it.</p>
+        <p style="font-size:17.5px;line-height:1.6;color:#5C5142;max-width:56ch;margin:0 0 26px">An indoor market bent round one horseshoe corridor just off Wood Street. ${MARKET_SHOPS} small independent shops, side by side under one roof, and a different set of finds every time you walk it.</p>
         <div style="display:flex;gap:14px;flex-wrap:wrap">
           <a href="shops.html" class="btn btn-red">Explore the Shops</a>
           <a href="visit.html" class="btn btn-cream">Plan Your Visit</a>
@@ -672,7 +676,7 @@ const out = {};
     <div class="wrap">
       ${eyebrow('Start somewhere')}
       <h2 class="h2">What are you after?</h2>
-      <p class="lede" style="margin-bottom:30px">${usedFamilies.length} trades, ${shops.length} shops, one corridor. Pick a thread and pull.</p>
+      <p class="lede" style="margin-bottom:30px">${usedFamilies.length} trades, ${MARKET_SHOPS} shops, one corridor. Pick a thread and pull.</p>
       <div class="grid grid-cats" style="--n:${usedFamilies.length}">
 ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-card tilt">
           <span class="nm"><span class="sw" aria-hidden="true" style="background:${f.color}"></span>${esc(f.label).replace(/ (&amp;|and) /, ' <br>$1 ')}</span>
@@ -689,7 +693,7 @@ ${usedFamilies.map((f) => `        <a href="shops.html#cat=${f.key}" class="cat-
           ${eyebrow('Meet the traders')}
           <h2 class="h2">The people behind the counters</h2>
         </div>
-        <a href="shops.html" class="more">Explore all ${shops.length} shops &rarr;</a>
+        <a href="shops.html" class="more">Explore the shops &rarr;</a>
       </div>
       <p class="lede" style="font-size:16.5px;line-height:1.65">Small units packed around one indoor block: a run along the back wall, a row down the side, and two rows facing each other across the front aisle. Every shop is independent and run by the person behind the counter, so most keep their own days and hours inside the market&rsquo;s opening times. Ring ahead if you are making the trip for one in particular.</p>
       <div class="grid grid-cards" style="margin-top:30px">
@@ -748,7 +752,7 @@ ${featured.map((r) => '        ' + shopCard(r, '')).join('\n')}
         ${eyebrow('Our story')}
         <h2 class="h2" style="margin-bottom:14px">From picture palace to market hall</h2>
         <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 14px">Before the stalls came the screen. This was the Crown Cinema from 1912 to 1955, reached down a long passage from Wood Street, and that passage is the corridor you walk today.</p>
-        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 26px">The market moved in the year the projector stopped. Seventy years on, ${shops.length} small shops still trade side by side while Wood Street changes around them. The faces turn over; the horseshoe holds.</p>
+        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 26px">The market moved in the year the projector stopped. Seventy years on, ${MARKET_SHOPS} small shops still trade side by side while Wood Street changes around them. The faces turn over; the horseshoe holds.</p>
         <a href="story.html" class="btn btn-cream">Read our story &rarr;</a>
       </div>
     </div>
@@ -836,13 +840,13 @@ ${signupForm('')}
   out['shops.html'] = page({
     file: 'shops.html', active: 'shops',
     title: 'The Shops | Wood Street Indoor Market',
-    desc: `${shops.length} independent shops across two sides of one corridor in Walthamstow E17. Search by name, trade or unit number, or browse the lot.`,
+    desc: `${MARKET_SHOPS} independent shops across two sides of one corridor in Walthamstow E17. Search by name, trade or unit number, or browse the lot.`,
     body: `
   <section class="page-head">
     <div class="wrap">
       ${eyebrow('The directory')}
       <h1 class="h1">The Shops</h1>
-      <p class="lede" style="max-width:64ch">${shops.length} independents across ${units.length} units, Tuesday to Saturday. Every shop is run by the person behind the counter, so most keep their own days and hours inside the market&rsquo;s opening times. Ring ahead if you are making the trip for one in particular.</p>
+      <p class="lede" style="max-width:64ch">${MARKET_SHOPS} independents under one roof, Tuesday to Saturday. Every shop is run by the person behind the counter, so most keep their own days and hours inside the market&rsquo;s opening times. Ring ahead if you are making the trip for one in particular.</p>
     </div>
   </section>
 
@@ -867,7 +871,7 @@ ${usedFamilies.map((f) => `          <a href="#cat=${f.key}" class="chip" data-c
           <a href="#" class="linkbtn" data-clear>Clear all</a>
         </div>
       </div>
-      <p class="results" aria-live="polite" data-count>Showing all ${shops.length} shops, the ones with photos first</p>
+      <p class="results" aria-live="polite" data-count>Showing ${shops.length} shops, the ones with photos first</p>
       <div class="grid grid-cards">
 ${withPhotoFirst.map((r) => '        ' + shopCard(r, '', { withData: true })).join('\n')}
       </div>
@@ -1093,7 +1097,7 @@ ${hoursRows}
     <div class="wrap-n two" style="gap:36px">
       <div>
         <h2 class="h3" style="margin-bottom:10px">Know before you go</h2>
-        <p style="font-size:15.5px;line-height:1.65;color:#5C5142;margin:0 0 18px">One corridor, thirty doors, no wrong turns. If you are hunting something specific, check the map or the directory before you set out.</p>
+        <p style="font-size:15.5px;line-height:1.65;color:#5C5142;margin:0 0 18px">One corridor, three dozen doors, no wrong turns. If you are hunting something specific, check the map or the directory before you set out.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <a href="map.html" class="btn btn-cream btn-sm">Market map</a>
           <a href="shops.html" class="btn btn-cream btn-sm">The shops</a>
@@ -1177,7 +1181,7 @@ ${faqs.map(([q, a]) => `        <details>
     ['1955', 'The market opens', 'The same year the projector stopped, the traders moved in. The building became an indoor market in 1955 and has been one ever since: small units, low rents, and one long corridor that bends round in a horseshoe so no shop is ever a dead end. Over the decades it built a reputation across London for antiques, collectables and records, the kind of place where you go in for one thing and come out with three.'],
     ['2011 to 2012', 'The big revamp', 'By the end of the 2000s the market had gone shabby and many of its units stood empty. The Mayor of London&rsquo;s Outer London Fund picked Wood Street for regeneration, with the market at the heart of it. A team led by East Architects, with Gort Scott on the building itself, gave it a new front, new signage, a proper entrance on Marlowe Road and a freshened-up interior, and the entrance was painted like a circus big top. More than 160 people applied for the newly empty units and 21 new traders were chosen to join the old hands. The market relaunched in February 2012, and the Mayor came down to meet the tenants.'],
     ['2019', 'The auditorium goes, the market stays', 'The old cinema auditorium at the back, long past use, was demolished and homes built on the site. The front of the old picture house, the passage the audience once queued down, carries on as the market. Which means the corridor you walk today is the same one that led to the pictures a century ago.'],
-    ['2026', 'Walthams take over', `Walthams, the letting agent for this corner of Walthamstow, took over the running of the market in 2026, with plans for the empty units, the frontage and a proper programme of fairs and late openings. ${shops.length} shops trade here today, Tuesday to Saturday: vintage, records, jewellery, toys, books, crafts, beauty and a juice bar, a couple of minutes from the station that started it all.`],
+    ['2026', 'Walthams take over', `Walthams, the letting agent for this corner of Walthamstow, took over the running of the market in 2026, with plans for the empty units, the frontage and a proper programme of fairs and late openings. ${MARKET_SHOPS} shops trade here today, Tuesday to Saturday: vintage, records, jewellery, toys, books, crafts, beauty and a juice bar, a couple of minutes from the station that started it all.`],
   ];
   out['story.html'] = page({
     file: 'story.html', active: 'story',
@@ -1190,7 +1194,7 @@ ${faqs.map(([q, a]) => `        <details>
       <div>
         ${eyebrow('Since 1955')}
         <h1 class="h1" style="margin-bottom:14px">Our Story</h1>
-        <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:56ch;margin:0 0 14px">Most markets sprawl. This one bends: one corridor looped like a horseshoe, thirty small doors, and seventy years of people finding things they weren&rsquo;t looking for.</p>
+        <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:56ch;margin:0 0 14px">Most markets sprawl. This one bends: one corridor looped like a horseshoe, three dozen small doors, and seventy years of people finding things they weren&rsquo;t looking for.</p>
         <p style="font-size:15.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0">Before the market there was a cinema, and before the cinema there was a village. The building has been showing people things they did not expect since 1912. Here is how it got from there to here.</p>
       </div>
       <div style="position:relative;max-width:380px;width:100%;justify-self:center">
@@ -1223,7 +1227,7 @@ ${tl.map(([era, title, text]) => `        <li>
     <div class="wrap-n" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px">
       <div>
         <h2 class="h3" style="margin-bottom:8px">The story continues on the shop floor</h2>
-        <p style="font-size:15.5px;color:#5C5142;margin:0">${shops.length} independents are writing the next chapter, Tuesday to Saturday.</p>
+        <p style="font-size:15.5px;color:#5C5142;margin:0">${MARKET_SHOPS} independents are writing the next chapter, Tuesday to Saturday.</p>
       </div>
       <a href="shops.html" class="btn btn-red">Explore the Shops</a>
     </div>
@@ -1250,7 +1254,7 @@ ${tl.map(([era, title, text]) => `        <li>
     <div class="wrap-n">
       ${eyebrow('Join the market')}
       <h1 class="h1" style="margin-bottom:12px">Got a shop in you?</h1>
-      <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:62ch;margin:0 0 22px">${shops.length} independents already trade here. ${vacant.length} doors are waiting for their next keeper: small spaces with straightforward terms, inside a market people cross London to wander. The market is managed by Walthams, who handle every enquiry.</p>
+      <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:62ch;margin:0 0 22px">${MARKET_SHOPS} independents already trade here. ${vacant.length} doors are waiting for their next keeper: small spaces with straightforward terms, inside a market people cross London to wander. The market is managed by Walthams, who handle every enquiry.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
         <a href="#apply" class="btn btn-red">Tell us about your shop &rarr;</a>
         <a href="${SITE.tel}" class="btn btn-cream">Ring ${SITE.phone}</a>
@@ -1261,7 +1265,7 @@ ${tl.map(([era, title, text]) => `        <li>
     <div class="wrap-n grid grid-4">
       <div class="card"><h2 class="card-title">A ready-made crowd</h2><p>Browsers do the whole loop. Every door on the horseshoe gets walked past, Tuesday to Saturday.</p></div>
       <div class="card"><h2 class="card-title">Low-fuss spaces</h2><p>Small units, simple arrangements, none of the weight of a high street lease. Start small; grow sideways.</p></div>
-      <div class="card"><h2 class="card-title">Good neighbours</h2><p>${shops.length} traders who lend tape, watch counters and send customers next door. The corridor looks after its own.</p></div>
+      <div class="card"><h2 class="card-title">Good neighbours</h2><p>${MARKET_SHOPS} traders who lend tape, watch counters and send customers next door. The corridor looks after its own.</p></div>
       <div class="card"><h2 class="card-title">E17, on the up</h2><p>Walthamstow&rsquo;s independent scene keeps growing, and the market is its longest-running chapter.</p></div>
     </div>
   </section>
