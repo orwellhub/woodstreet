@@ -45,8 +45,9 @@ SITE.hoursShort = `${openDaysText}, ${SITE.hoursRange}`;
 SITE.closedShort = closedDaysText.join(' &amp; ');
 SITE.closedLong = closedDaysText.join(' and ');
 // Every enquiry button on the site lands on the contact form with the topic
-// (and unit, where there is one) filled in. The form posts through FormSubmit
-// to Walthams' mailbox.
+// (and unit, where there is one) filled in. The form posts to the site's own
+// /lead.php, which emails Walthams' mailbox (FormSubmit until 1 Oct 2026, when
+// it had stopped accepting submissions).
 const TOPICS = [
   ['general', 'A general question'],
   ['unit', 'Renting a unit'],
@@ -57,7 +58,7 @@ const TOPICS = [
   ['lost', 'Lost property'],
 ];
 const enquire = (topic = 'general', unit = '', rel = '') => `${rel}contact.html?topic=${topic}${unit ? '&unit=' + encodeURIComponent(unit) : ''}`;
-const FORM_ACTION = `https://formsubmit.co/${SITE.email}`;
+const FORM_ACTION = '/lead.php';
 
 // ---------- helpers ---------------------------------------------------------
 // JSON embedded in HTML must not be able to close its own <script> tag.
@@ -354,14 +355,11 @@ ${footer(rel)}
 `;
 }
 
-// The market news sign-up. It posts through FormSubmit to the same mailbox
-// as the contact form, with the same captcha and the same honeypot, because
-// a static site has nowhere else to send it. Nothing is stored here.
+// The market news sign-up. It posts to /lead.php like the contact form, with
+// the same honeypot, and reaches the same mailbox. There is no mailing list
+// software behind it.
 const signupForm = (rel = '') => `        <form class="card signup" method="POST" action="${FORM_ACTION}">
           <input type="hidden" name="_subject" value="Wood Street Indoor Market: market news sign-up">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_captcha" value="true">
-          <input type="hidden" name="_next" value="${SITE.url}thanks.html">
           <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px">
             <label><span class="label">First name</span><input class="field" type="text" name="name" autocomplete="given-name"></label>
@@ -1311,9 +1309,6 @@ ${faqs.map(([q, a]) => `        <details>
       <p style="font-size:16.5px;line-height:1.65;color:#C8DCD4;margin:0 0 26px;max-width:60ch">The more you can say about what you sell, the quicker Walthams can tell you which unit would suit. Nothing here is binding, and every enquiry gets a reply.</p>
       <form class="card apply" method="POST" action="${FORM_ACTION}">
         <input type="hidden" name="_subject" value="Wood Street Indoor Market: unit application">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_captcha" value="true">
-        <input type="hidden" name="_next" value="${SITE.url}thanks.html">
         <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="pair">
           <label><span class="label">Your name</span><input class="field" type="text" name="name" required autocomplete="name"></label>
@@ -1383,9 +1378,6 @@ ${vacant.map((v) => `            <option value="${esc(v.label)}">Unit ${esc(v.la
           <h2 style="font-size:22px;margin:0 0 8px">Drop us a line</h2>
           <p style="margin:0 0 20px">Tell us what it is about and Walthams will come back to you. Unit enquiries, event ideas, press, lost property, memories of the market: it all goes to the same place.</p>
           <input type="hidden" name="_subject" value="Wood Street Indoor Market: website enquiry">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_captcha" value="true">
-          <input type="hidden" name="_next" value="${SITE.url}thanks.html">
           <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
             <label><span class="label">Name</span><input class="field" type="text" name="name" required autocomplete="name"></label>
@@ -1461,7 +1453,7 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
           <p><strong>Who we are.</strong> Wood Street Indoor Market, ${SITE.address}, ${SITE.town}. The market is managed by Walthams. Questions about this policy: <a href="mailto:${SITE.email}">${SITE.email}</a>.</p>
           <p><strong>What we collect.</strong> Only what you give us: your name, email address, phone number if you add one, and whatever you write, when you send the contact form, ask about a unit, sign up for market news or email us. This website has no accounts and does not buy or sell data. This is a market, not that kind of market.</p>
           <p><strong>Why we use it.</strong> To reply to you and to progress unit enquiries. Legal bases: legitimate interest and steps taken before a contract.</p>
-          <p><strong>Where it lives.</strong> Every form on this site, including the market news sign-up, is delivered by FormSubmit (formsubmit.co), which passes your message to Walthams&rsquo; mailbox and does not keep it. From there it is handled under Walthams&rsquo; own privacy policy. There is no mailing list software behind the sign-up: it reaches the same inbox as everything else.</p>
+          <p><strong>Where it lives.</strong> Every form on this site, including the market news sign-up, is sent by this website&rsquo;s own server, through the mail service of our web host (Hostinger), to Walthams&rsquo; mailbox and to the team that runs the website. The server also keeps a private record of each message, outside the public website, so an enquiry is not lost if an email fails. From there it is handled under Walthams&rsquo; own privacy policy. There is no mailing list software behind the sign-up: it reaches the same inbox as everything else.</p>
           <p><strong>How long.</strong> Enquiries: up to 12 months. Unit applications: for the length of the process plus 6 months. Market news: until you unsubscribe, which every email has a link for.</p>
           <p><strong>Your rights.</strong> Ask us what we hold, ask us to correct it, ask us to delete it. Email or write to the office and we will sort it. You can also complain to the ICO (ico.org.uk).</p>
         </div>
@@ -1470,7 +1462,7 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
           <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
           <p><strong>The short version.</strong> This site sets no cookies and runs no analytics or tracking. None.</p>
           <p><strong>If that changes.</strong> If the market adds analytics to count visits, it will only switch on after you say yes to a consent banner. Decline and the site works exactly the same.</p>
-          <p><strong>Third parties.</strong> Fonts are served from this site, not from Google. The contact form sends through FormSubmit, which shows a short &ldquo;I am not a robot&rdquo; check on its own page before passing the message on. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
+          <p><strong>Third parties.</strong> Fonts are served from this site, not from Google. The forms are sent by this site&rsquo;s own server; no form service or robot check from another company is involved. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
           <p><strong>Managing cookies.</strong> Your browser settings can block or clear cookies at any time. The site will carry on politely without them.</p>
         </div>
         <div class="legal-doc" id="accessibility" data-doc>

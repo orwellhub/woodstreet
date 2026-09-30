@@ -62,7 +62,7 @@ www), `X-Frame-Options: DENY`, `X-Content-Type-Options`, a `Referrer-Policy`, a
 `Permissions-Policy`, cross-origin opener and resource policies, and a Content
 Security Policy that allows scripts only from this site, styles from this site
 plus inline style attributes, images from this site, and form posts only to this
-site and FormSubmit. Nothing else loads from anywhere else.
+site. Nothing else loads from anywhere else.
 
 Two consequences to keep in mind:
 
@@ -74,10 +74,14 @@ Two consequences to keep in mind:
 
 The generator, its data, the archive and this README return 404 on the live
 site; `.git` and dotfiles are blocked. All three forms (contact, the unit application on the Join page and the market
-news sign-up on the home page) go through FormSubmit with its "I am not a
-robot" check switched on (`_captcha`) and a honeypot field. They all land in
-the same Walthams mailbox; there is no mailing list software behind the
-sign-up, and the privacy policy says so.
+news sign-up on the home page) post to `lead.php`, a small same-origin PHP
+handler (the Orwell standard lead handler), with a honeypot field and a per-IP
+rate limit. It emails each message with Hostinger's PHP `mail()` to the Walthams
+mailbox and to garethsomers@outlook.com, from noreply@woodstreetindoormarket.co.uk
+(that domain's DMARC must stay p=none), and writes it first to a log one level
+above the web root. FormSubmit was used until 1 Oct 2026, when it had stopped
+accepting submissions. There is no mailing list software behind the sign-up,
+and the privacy policy says so.
 
 Every page passes an automated axe-core accessibility check and loads with zero
 CSP violations. `tools/audit.mjs` runs that check: it loads each page in

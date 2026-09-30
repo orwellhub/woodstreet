@@ -94,9 +94,9 @@ AddType font/woff2 .woff2
   # Content Security Policy. Scripts only from this site (there are no inline
   # scripts; the JSON-LD blocks are data, not code). Styles from this site
   # plus inline style attributes, which the pages use throughout. Fonts are
-  # self-hosted. The contact form posts to FormSubmit and nowhere else. Nothing
+  # self-hosted. The forms post to this site's own /lead.php and nowhere else. Nothing
   # may frame the site.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
 
   <FilesMatch "\.html$">
     Header set Cache-Control "no-cache, must-revalidate, max-age=0"

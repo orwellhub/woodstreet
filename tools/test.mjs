@@ -156,3 +156,17 @@ test('every empty unit on the map page opens the contact form for that unit', ()
     assert.match(map, new RegExp(`<a class="mu mu-vacant[^"]*" href="${href.replace(/[?]/g, '\\?')}"`), `unit ${u.label} on the floorplan is not a link to the contact form`);
   }
 });
+
+test('every form posts to the same-origin lead handler, never to FormSubmit', () => {
+  const pages = buildWith(() => {});
+  const all = everyPage(pages);
+  assert.ok(!/formsubmit/i.test(all), 'no FormSubmit anywhere in the built pages');
+  const actions = [...all.matchAll(/<form[^>]*\saction="([^"]*)"/g)].map((m) => m[1]);
+  assert.ok(actions.length >= 3, 'contact, unit application and news sign-up forms are present');
+  for (const a of actions) assert.equal(a, '/lead.php');
+  for (const [name, html] of Object.entries(pages)) {
+    for (const form of html.match(/<form[\s\S]*?<\/form>/g) || []) {
+      assert.ok(/name="_honey"/.test(form), `${name}: every form keeps its honeypot`);
+    }
+  }
+});
