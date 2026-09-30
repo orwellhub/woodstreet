@@ -145,3 +145,14 @@ test('every photo the pages load carries a cache stamp', () => {
     }
   }
 });
+
+test('every empty unit on the map page opens the contact form for that unit', () => {
+  const map = readFileSync(join(ROOT, 'map.html'), 'utf8');
+  const data = JSON.parse(readFileSync(join(ROOT, 'data/shops.json'), 'utf8'));
+  const empty = data.units.filter((u) => u.vacant);
+  assert.ok(empty.length > 0);
+  for (const u of empty) {
+    const href = `contact.html?topic=unit&unit=${encodeURIComponent(u.label)}`;
+    assert.match(map, new RegExp(`<a class="mu mu-vacant[^"]*" href="${href.replace(/[?]/g, '\\?')}"`), `unit ${u.label} on the floorplan is not a link to the contact form`);
+  }
+});

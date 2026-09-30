@@ -547,7 +547,11 @@ function mapHtml({ rel = '', hrefFor = null, mini = false, highlight = [] } = {}
     if (!r) return '';
     const cls = hi.has(room.unit) ? ' mu-hi' : '';
     if (r.vacant) {
-      return `      <div class="mu mu-vacant${cls}" style="${pos(room)}${nm(room)}"><span class="code">${esc(room.label)}</span> <span class="nm">To let</span></div>`;
+      const inner = `<span class="code">${esc(room.label)}</span> <span class="nm">To let</span>`;
+      // Where the map is a set of links, an empty unit is one too: it opens
+      // the contact form with the unit and the topic already filled in.
+      if (hrefFor) return `      <a class="mu mu-vacant${cls}" href="${enquire('unit', room.label, rel)}" style="${pos(room)}${nm(room)}" aria-label="Unit ${esc(room.label)}, to let: ask Walthams about renting it">${inner}</a>`;
+      return `      <div class="mu mu-vacant${cls}" style="${pos(room)}${nm(room)}">${inner}</div>`;
     }
     const style = `${pos(room)}${nm(room)};--c:${r.fam.color};--t:${r.fam.tint}`;
     const inner = `<span class="code">${esc(room.label)}</span> <span class="nm">${esc(r.name)}</span>`;
@@ -976,7 +980,7 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
 // Map
 {
   const list = (s) => bySide(s).map((u) => u.vacant
-    ? `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:#F6EDDA;border-style:dashed;border-color:#C4684E"></span> ${unitBadge(u.label)} <span style="color:#A94A32;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase">To let</span> <a href="join.html" style="margin-left:auto;font-size:13px;font-weight:600">Enquire</a></li>`
+    ? `        <li id="unit-${u.slug}" class="is-vacant"><span class="sw" aria-hidden="true"></span> ${unitBadge(u.label)} <span class="tolet">To let</span> <a href="${enquire('unit', u.label)}" class="ask" aria-label="Ask about renting unit ${esc(u.label)}">Enquire</a></li>`
     : `        <li id="unit-${u.slug}"><span class="sw" aria-hidden="true" style="background:${u.fam.color}"></span> ${unitBadge(u.label)} <a href="${u.href}">${esc(u.name)}</a></li>`).join('\n');
   out['map.html'] = page({
     file: 'map.html', active: 'map',
@@ -987,7 +991,7 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
     <div class="wrap">
       ${eyebrow('Find your way round')}
       <h1 class="h1">The Market Map</h1>
-      <p class="lede" style="max-width:70ch">Drawn from the market&rsquo;s own floorplan. The Market Side units run along the back wall and down the right-hand side, numbered 2 to 38. The Antique City units face each other across the aisle at the front, numbered A1 to A16. It is a visitor guide rather than an architectural drawing, so treat the shapes as approximate. Tap any unit to open that shop.</p>
+      <p class="lede" style="max-width:70ch">Drawn from the market&rsquo;s own floorplan. The Market Side units run along the back wall and down the right-hand side, numbered 2 to 38. The Antique City units face each other across the aisle at the front, numbered A1 to A16. It is a visitor guide rather than an architectural drawing, so treat the shapes as approximate. Tap a shop to open its page, or an empty unit to ask about renting it.</p>
     </div>
   </section>
   <section style="padding:16px 24px 56px">
@@ -1012,14 +1016,14 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
         <div>
           <h3 style="font-size:24px;margin:0 0 4px">Market Side</h3>
           <p style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C2A1D;margin:0 0 16px">Outer wall &middot; 102 Wood Street</p>
-          <ul class="unit-list" style="grid-template-columns:1fr">
+          <ul class="unit-list unit-rows">
 ${list('Market Side')}
           </ul>
         </div>
         <div>
           <h3 style="font-size:24px;margin:0 0 4px">Antique City</h3>
           <p style="font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#7C2A1D;margin:0 0 16px">Inner block &middot; 98 Wood Street</p>
-          <ul class="unit-list" style="grid-template-columns:1fr">
+          <ul class="unit-list unit-rows">
 ${list('Antique City')}
           </ul>
         </div>
