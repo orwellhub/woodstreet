@@ -5,6 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync, mkdtempSync, mkdirSync, readdirSync } from 'fs';
 import { execFileSync } from 'child_process';
+import { createHash } from 'crypto';
 import { join, dirname } from 'path';
 import { tmpdir } from 'os';
 import { fileURLToPath } from 'url';
@@ -13,7 +14,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Build the site from a poisoned copy of the shop data, into a scratch
 // directory, and hand back the pages as text.
-function buildWith(poison) {
+function buildWith(poison, env = {}) {
   const data = JSON.parse(readFileSync(join(ROOT, 'data/shops.json'), 'utf8'));
   poison(data.units.find((u) => u.unit === 'M3'));
   const dir = mkdtempSync(join(tmpdir(), 'wsm-test-'));
@@ -21,7 +22,7 @@ function buildWith(poison) {
   const dataFile = join(dir, 'data', 'shops.json');
   writeFileSync(dataFile, JSON.stringify(data, null, 1));
   execFileSync('node', [join(ROOT, 'tools/build.mjs')], {
-    env: { ...process.env, WSM_DATA: dataFile, WSM_OUT: dir },
+    env: { ...process.env, WSM_DATA: dataFile, WSM_OUT: dir, ...env },
     stdio: ['ignore', 'ignore', 'ignore'],
   });
   const pages = {};
@@ -169,4 +170,37 @@ test('every form posts to the same-origin lead handler, never to FormSubmit', ()
       assert.ok(/name="_honey"/.test(form), `${name}: every form keeps its honeypot`);
     }
   }
+});
+
+// A number a trader has asked us not to publish must stay off the site even
+// when a fresh spreadsheet carries it again. 07700 900123 is from Ofcom's
+// range reserved for drama, so it can never be anyone's real number.
+const DRAMA = '07700900123';
+const DRAMA_HASH = createHash('sha256').update(DRAMA).digest('hex');
+
+test('unit 36 publishes no phone number, at the trader\'s request', () => {
+  const data = JSON.parse(readFileSync(join(ROOT, 'data/shops.json'), 'utf8'));
+  assert.deepEqual(data.units.find((u) => u.unit === 'M36').phones, [], 'unit 36 has a phone number in the data again');
+  const page = readFileSync(join(ROOT, 'shop/m36.html'), 'utf8');
+  // The market's own number, Walthams', is in the header and footer of every
+  // page. Any other phone link on this page would be the trader's.
+  const tel = [...page.matchAll(/href="tel:([^"]+)"/g)].map((m) => m[1]).filter((t) => t !== '+442085090444');
+  assert.deepEqual(tel, [], 'the Flowerie88 page has a phone link that is not the market\'s');
+  assert.doesNotMatch(page, /"telephone"/, 'the Flowerie88 page gives search engines a phone number');
+});
+
+test('a withheld number in the shop data is dropped wherever it would appear', () => {
+  const all = everyPage(buildWith((m3) => { m3.phones = [DRAMA]; }, { WSM_WITHHOLD: DRAMA_HASH }));
+  assert.doesNotMatch(all.replace(/\D/g, ''), /7700900123/, 'the withheld number reached a page');
+});
+
+test('the build refuses to finish if a withheld number reaches a page some other way', () => {
+  assert.throws(
+    () => buildWith((m3) => { m3.about = 'Ring us on 07700 900-123 for repairs.'; }, { WSM_WITHHOLD: DRAMA_HASH }),
+    'a withheld number written into a description went out without complaint',
+  );
+  assert.throws(
+    () => buildWith((m3) => { m3.about = 'Or call +44 (0)7700 900123.'; }, { WSM_WITHHOLD: DRAMA_HASH }),
+    'a withheld number in international format went out without complaint',
+  );
 });

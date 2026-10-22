@@ -165,6 +165,21 @@ function safeLinks(r) {
   return out;
 }
 
+// Phone numbers a trader has asked not to have published. A spreadsheet
+// that still carries one cannot put it back: it is dropped here as the data
+// loads, and the output check further down refuses to finish if it turns up
+// on any page in any format. They are held as hashes so this file does not
+// print the very number it promises to keep off the site. That keeps it out
+// of plain sight, not secret: an 11-digit number is easy to guess from its
+// hash. To withhold another, add the sha256 of its 11 digits, leading 0
+// included. Tests add their own through WSM_WITHHOLD.
+const WITHHELD_PHONES = new Set([
+  '9a275e5ca6805b8a724a855e89d37e5b69a04bd0a0ed21c6e2c18e0f85125c41', // unit 36, Flowerie88, at the trader's request, October 2026
+  ...(process.env.WSM_WITHHOLD || '').split(',').map((h) => h.trim()).filter(Boolean),
+]);
+const phoneHash = (d) => createHash('sha256').update(d).digest('hex');
+const withheld = (d) => WITHHELD_PHONES.has(phoneHash(d));
+
 const units = DATA.units.map((r) => ({
   ...r,
   unit: unitLabel(r.unit),
@@ -173,7 +188,7 @@ const units = DATA.units.map((r) => ({
   fam: r.vacant ? null : famOf(r),
   hoursNice: r.vacant ? '' : hoursText(r.hours),
   about: r.vacant ? '' : nodash(r.about),
-  phones: r.vacant ? [] : (r.phones || []).filter((p) => /^0\d{10}$/.test(p)),
+  phones: r.vacant ? [] : (r.phones || []).filter((p) => /^0\d{10}$/.test(p) && !withheld(p)),
   links: safeLinks(r),
   image: r.vacant ? null : safeImage(r.image, unitLabel(r.unit)),
   href: `shop/${slug(r.unit)}.html`,
@@ -1589,6 +1604,14 @@ for (const [file, raw] of Object.entries(out)) {
   const bad = html.match(/[‒–—―−]/);
   if (bad) { console.error(`  ! long dash in ${file}`); problems++; }
   if (/£\s?\d|\bdeposit\b(?! are set out| and)|\bowner\b/i.test(html)) { console.error(`  ! possible rent/deposit/owner leak in ${file}`); problems++; }
+  // A withheld number, however it is written: 07961 989635, +44 7961989635,
+  // tel:+447961989635, with dots or dashes. Every run of digits, spaces, dots,
+  // dashes and brackets is reduced to its digits and read as a UK number.
+  for (const m of html.matchAll(/\+?[\d][\d ().\-]{8,18}\d/g)) {
+    const digits = m[0].replace(/\D/g, '');
+    const uk = digits.startsWith('44') ? '0' + digits.slice(2).replace(/^0/, '') : digits;
+    if (uk.length === 11 && withheld(uk)) { console.error(`  ! a withheld phone number is on ${file}`); problems++; break; }
+  }
   mkdirSync(join(OUT_DIR, dirname(file)), { recursive: true });
   writeFileSync(join(OUT_DIR, file), html);
 }
