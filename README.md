@@ -33,6 +33,13 @@ or the words deposit or owner in the output.
 - **A shop's details** (name, description, hours, phone, links): edit its entry in
   `data/shops.json` and rebuild. Hours can be typed loosely ("wed 11:00-17:00");
   the build normalises them to "Wednesday 11.00 to 5.00".
+- **A trader who does not want their number published**: take it out of their
+  entry in `data/shops.json`, then add the sha256 of its 11 digits (leading 0
+  included) to `WITHHELD_PHONES` near the top of `tools/build.mjs`, with a
+  comment saying whose and when. After that a new spreadsheet cannot put it
+  back: the build drops it as the data loads and refuses to finish if it
+  turns up on any page in any format. Flowerie88 (unit 36) asked for this in
+  October 2026.
 - **A shop photo**: put the file in `uploads/shops/`, named after the unit
   (`shop-a16.jpg`, `shop-m25-26-27.jpg`), about 1000px wide and 4:3. Run
   `node tools/webp.mjs` so it gets a WebP copy (add the path to the list at the
