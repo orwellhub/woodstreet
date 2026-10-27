@@ -33,6 +33,11 @@ Options -Indexes
   # story page, which carries the same "share a memory" invitation.
   RewriteRule ^journal\.html$ /story.html [R=301,L]
 
+  # The home page has one address. A request for /index.html itself (not the
+  # server's own lookup of it for /) goes to the bare domain.
+  RewriteCond %{THE_REQUEST} \s/index\.html[\s?]
+  RewriteRule ^index\.html$ / [R=301,L]
+
   # Two units were renumbered to match the market's floorplan.
   RewriteRule ^shop/a2-3\.html$ /shop/14-15.html [R=301,L]
   RewriteRule ^shop/a12-a13\.html$ /shop/a12-13.html [R=301,L]

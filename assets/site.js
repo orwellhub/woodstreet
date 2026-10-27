@@ -16,25 +16,42 @@ document.documentElement.classList.add('is-js');
   var OPEN = mins(body.getAttribute('data-open') || '10:00'), CLOSE = mins(body.getAttribute('data-close') || '17:30');
   var openDays = (body.getAttribute('data-days') || '2,3,4,5,6').split(',').map(function (d) { return parseInt(d, 10); });
   function clock(m) { var h = Math.floor(m / 60), mm = m % 60, ap = h >= 12 ? 'pm' : 'am'; h = h % 12 || 12; return h + (mm ? '.' + (mm < 10 ? '0' : '') + mm : '') + ap; }
-  var OPEN_T = clock(OPEN), CLOSE_T = clock(CLOSE);
+  /* Dated exceptions (Christmas, a late opening, an unexpected closure) come
+     from <body data-exceptions>, which the build fills from SITE.exceptions:
+     [{"d":"2026-12-25","closed":true,"n":"Christmas Day"}, {"d":"…","o":"10:00","c":"20:00","n":"Late opening"}]. */
+  var EXC = {};
+  try { JSON.parse(body.getAttribute('data-exceptions') || '[]').forEach(function (e) { EXC[e.d] = e; }); } catch (e) { EXC = {}; }
   function londonNow() {
     var parts = new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Europe/London', weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false
+      timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric', hour12: false
     }).formatToParts(new Date());
     function get(t) { for (var i = 0; i < parts.length; i++) if (parts[i].type === t) return parts[i].value; return ''; }
-    var wd = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(get('weekday'));
-    return { wd: wd, mins: (parseInt(get('hour'), 10) % 24) * 60 + parseInt(get('minute'), 10) };
+    var y = parseInt(get('year'), 10), m = parseInt(get('month'), 10), d = parseInt(get('day'), 10);
+    return { y: y, m: m, d: d, mins: (parseInt(get('hour'), 10) % 24) * 60 + parseInt(get('minute'), 10) };
+  }
+  /* The day `ahead` days from London's today: its ISO date, weekday, and hours
+     (null when closed), with any exception applied. */
+  function day(n, ahead) {
+    var t = new Date(Date.UTC(n.y, n.m - 1, n.d + ahead));
+    var iso = t.toISOString().slice(0, 10), wd = t.getUTCDay(), e = EXC[iso];
+    var hrs = openDays.indexOf(wd) !== -1 ? { o: OPEN, c: CLOSE } : null;
+    if (e) hrs = e.closed ? null : { o: mins(e.o), c: mins(e.c) };
+    return { wd: wd, hrs: hrs, note: e && e.n };
   }
   function status() {
-    var n = londonNow();
+    var n = londonNow(), today = day(n, 0);
     var names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    var isOpenDay = openDays.indexOf(n.wd) !== -1;
-    if (isOpenDay && n.mins >= OPEN && n.mins < CLOSE) return { open: true, label: 'Open now', detail: 'Open now, closes ' + CLOSE_T, wd: n.wd };
-    if (isOpenDay && n.mins < OPEN) return { open: false, label: 'Opens ' + OPEN_T, detail: 'Closed, opens today at ' + OPEN_T, wd: n.wd };
-    var next = n.wd;
-    for (var i = 1; i <= 7; i++) { var d = (n.wd + i) % 7; if (openDays.indexOf(d) !== -1) { next = d; break; } }
-    var tomorrow = (n.wd + 1) % 7 === next;
-    return { open: false, label: 'Closed now', detail: 'Closed, opens ' + (tomorrow ? 'tomorrow' : names[next]) + ' at ' + OPEN_T, wd: n.wd };
+    var why = today.note ? ' (' + today.note + ')' : '';
+    if (today.hrs && n.mins >= today.hrs.o && n.mins < today.hrs.c) return { open: true, label: 'Open now', detail: 'Open now, closes ' + clock(today.hrs.c) + why, wd: today.wd };
+    if (today.hrs && n.mins < today.hrs.o) return { open: false, label: 'Opens ' + clock(today.hrs.o), detail: 'Closed, opens today at ' + clock(today.hrs.o) + why, wd: today.wd };
+    for (var i = 1; i <= 21; i++) {
+      var d = day(n, i);
+      if (d.hrs) {
+        var when = i === 1 ? 'tomorrow' : (i < 7 ? names[d.wd] : names[d.wd] + ' ' + new Date(Date.UTC(n.y, n.m - 1, n.d + i)).getUTCDate());
+        return { open: false, label: today.note && !today.hrs ? 'Closed today' : 'Closed now', detail: 'Closed' + why + ', opens ' + when + ' at ' + clock(d.hrs.o), wd: today.wd };
+      }
+    }
+    return { open: false, label: 'Closed now', detail: 'Closed' + why, wd: today.wd };
   }
   function setAll(sel, fn) { var els = document.querySelectorAll(sel); for (var i = 0; i < els.length; i++) fn(els[i]); }
   function paint() {
@@ -66,7 +83,23 @@ document.documentElement.classList.add('is-js');
   var search = box.querySelector('[data-search]');
   var count = box.querySelector('[data-count]'), empty = box.querySelector('[data-empty]');
   var clears = [].slice.call(box.querySelectorAll('[data-clear]'));
+  var grid = box.querySelector('[data-grid]'), sorter = box.querySelector('[data-sort]');
   var state = { q: '', cat: '' };
+  /* Sorting reorders the cards in the page, so keyboard and screen reader
+     order follow what is seen. The page arrives in unit-number order. */
+  var SORTS = {
+    unit: function (a, b) { return +a.getAttribute('data-unit-order') - +b.getAttribute('data-unit-order'); },
+    name: function (a, b) { return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name')); },
+    photo: function (a, b) { return (+b.getAttribute('data-photo') - +a.getAttribute('data-photo')) || SORTS.unit(a, b); }
+  };
+  function sortCards() {
+    if (!grid || !sorter) return;
+    var by = SORTS[sorter.value] || SORTS.unit;
+    cards.slice().sort(by).forEach(function (c) { grid.appendChild(c); });
+  }
+  /* Nothing is remembered between visits: the site stores nothing in the
+     browser, as the cookie policy says. */
+  if (sorter) { sorter.addEventListener('change', sortCards); sortCards(); }
 
   function parse() {
     var out = { q: '', cat: '' };
@@ -76,14 +109,15 @@ document.documentElement.classList.add('is-js');
     return out;
   }
   function apply(push) {
-    var ql = state.q.trim().toLowerCase(), shown = 0;
+    // Shop names use a curly apostrophe; a typed straight one should still match.
+    var ql = state.q.trim().toLowerCase().replace(/'/g, '\u2019'), shown = 0;
     cards.forEach(function (c) {
       var ok = (!state.cat || c.getAttribute('data-fam') === state.cat) && (!ql || c.getAttribute('data-text').indexOf(ql) !== -1);
       c.hidden = !ok; if (ok) shown++;
     });
     chips.forEach(function (ch) { ch.setAttribute('aria-pressed', ch.getAttribute('data-cat') === state.cat ? 'true' : 'false'); });
     if (search && search.value !== state.q) search.value = state.q;
-    if (count) count.textContent = shown === cards.length ? 'Showing ' + cards.length + ' shops, the ones with photos first' : 'Showing ' + shown + ' of ' + cards.length + ' shops';
+    if (count) count.textContent = shown === cards.length ? 'Showing ' + cards.length + ' shops' : 'Showing ' + shown + ' of ' + cards.length + ' shops';
     if (empty) empty.hidden = shown !== 0;
     if (push) {
       var parts = [];
@@ -120,7 +154,7 @@ document.documentElement.classList.add('is-js');
   function sync() {
     var t = topic.options[topic.selectedIndex].text, u = unit && unit.value.trim();
     subject.value = 'Wood Street Indoor Market: ' + t + (u ? ' (unit ' + u + ')' : '');
-    if (unitRow) unitRow.hidden = !(topic.value === 'unit' || topic.value === 'trader' || u);
+    if (unitRow) unitRow.hidden = !(topic.value === 'unit' || topic.value === 'trader' || topic.value === 'message' || u);
   }
   topic.addEventListener('change', sync);
   if (unit) unit.addEventListener('input', sync);

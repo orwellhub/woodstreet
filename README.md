@@ -11,7 +11,7 @@ nothing to install beyond Node.
 | `shop/*.html` | One page per shop, 25 of them. Generated. |
 | `sitemap.xml` | Generated. |
 | `tools/build.mjs` | The generator. All page copy and layout lives here. |
-| `tools/webp.mjs` | Makes a WebP copy of every photo and trims heavy JPEGs. Run after adding a photo. |
+| `tools/webp.mjs` | Makes a WebP copy of every photo, 480px and 800px WebP copies for smaller slots, and trims heavy JPEGs. Run after adding a photo. |
 | `data/shops.json` | The shop data, one entry per unit. Public, so it holds no rent, deposit or owner names. |
 | `assets/site.css`, `assets/site.js` | Shared styles and scripts, hand written. |
 | `assets/fonts/` | Archivo, Archivo Narrow and Young Serif (latin subset, SIL Open Font License), served from here rather than from Google. |
@@ -42,12 +42,18 @@ or the words deposit or owner in the output.
   October 2026.
 - **A shop photo**: put the file in `uploads/shops/`, named after the unit
   (`shop-a16.jpg`, `shop-m25-26-27.jpg`), about 1000px wide and 4:3. Run
-  `node tools/webp.mjs` so it gets a WebP copy (add the path to the list at the
-  top of that file). Then set the
+  `node tools/webp.mjs` so it gets a WebP copy and the narrower 480px and 800px
+  copies the directory cards use (add the path to the list at the top of that
+  file). The build reads the photo's real width and height from the file. Then
+  set the
   unit's `image` in `data/shops.json` to `{"src": "uploads/shops/shop-m28.jpg",
   "alt": "what the picture shows"}` and rebuild. The photo appears on the shop's
   page, its directory card, and on the home page if it is among the featured
-  shops. Shops with photos come first in the grid and on the home page.
+  shops. Photographed shops come first on the home page. The directory opens
+  in unit-number order, and visitors can re-sort it by name or photos first.
+- **A new category**: add it to `CAT_TO_FAMILY` in `tools/build.mjs`, mapped to
+  one of the trade families. The build refuses to finish if a shop's category
+  is missing there, because that shop would appear under no filter.
 - **A unit changing hands**: change `"vacant": true` to a full entry, or the other
   way round, and rebuild. The map, the vacancy counts, the Join page and the home
   page all follow.
@@ -55,6 +61,10 @@ or the words deposit or owner in the output.
   hours live once, in `SITE.hours` at the top: the top strip, footer, Visit
   table, JSON-LD block and the live open/closed status (which reads them from
   `<body data-open data-close data-days>`) all follow from it.
+- **Holidays, late openings, closures**: add a dated entry to `SITE.exceptions`
+  next to `SITE.hours`, rebuild and deploy. The live status, a "Holiday and
+  special hours" list on the Visit page and the JSON-LD all pick it up. Take
+  entries out once they have passed.
 - **Events**: the What's On page shows the press release and an honest empty
   diary. When there are dates, add a section to that page template in the
   generator. Nothing is invented in the meantime.

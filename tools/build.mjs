@@ -34,7 +34,21 @@ const SITE = {
   // the footer, the Visit table, the JSON-LD block and the live open/closed
   // status in site.js) is derived from here.
   hours: { open: '10:00', close: '17:30', days: [2, 3, 4, 5, 6] },
+  // Dated exceptions to the hours above: holidays, late openings, closures.
+  // The live open/closed status, the Visit page and the JSON-LD all follow.
+  // Rebuild and deploy after adding one, and remove entries once they have
+  // passed (the Visit page lists every entry). Each entry is either
+  //   { date: '2026-12-25', closed: true, note: 'Christmas Day' }
+  //   { date: '2026-12-19', open: '10:00', close: '20:00', note: 'Late opening' }
+  exceptions: [],
 };
+// Tests add their own exceptions through WSM_EXCEPTIONS (a JSON array).
+if (process.env.WSM_EXCEPTIONS) SITE.exceptions = [...SITE.exceptions, ...JSON.parse(process.env.WSM_EXCEPTIONS)];
+const EXCEPTIONS = (SITE.exceptions || []).filter((e) => /^\d{4}-\d{2}-\d{2}$/.test(e.date) && (e.closed || (/^\d\d:\d\d$/.test(e.open) && /^\d\d:\d\d$/.test(e.close))))
+  .sort((a, b) => a.date.localeCompare(b.date));
+const EXCEPTIONS_ATTR = EXCEPTIONS.length
+  ? ` data-exceptions="${String(JSON.stringify(EXCEPTIONS.map((e) => (e.closed ? { d: e.date, closed: true, n: e.note || '' } : { d: e.date, o: e.open, c: e.close, n: e.note || '' })))).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')}"`
+  : '';
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 // "17:30" -> "5.30", the house style for times on the page.
 const clock = (t) => { const [h, m] = t.split(':').map(Number); return (h % 12 || 12) + '.' + String(m).padStart(2, '0'); };
@@ -52,6 +66,7 @@ const TOPICS = [
   ['general', 'A general question'],
   ['unit', 'Renting a unit'],
   ['trader', 'I already trade here'],
+  ['message', 'A message for one of the shops'],
   ['events', 'An event, fair or late opening'],
   ['press', 'Press and media'],
   ['history', 'A memory or a bit of history'],
@@ -103,6 +118,7 @@ const FAMILIES = [
   { key: 'records', label: 'Records & music',     color: '#3E3A32', tint: '#DED8C8' },
   { key: 'beauty',  label: 'Health & beauty',     color: '#A5647E', tint: '#EBD2DB' },
   { key: 'crafts',  label: 'Crafts & homeware',   color: '#17605B', tint: '#C8DCD4' },
+  { key: 'services', label: 'Repairs & services', color: '#55598A', tint: '#D8D9EA' },
 ];
 const CAT_TO_FAMILY = {
   'Records & music': 'records', 'Vintage & antiques': 'vintage', 'Vintage clothing': 'vintage',
@@ -111,6 +127,7 @@ const CAT_TO_FAMILY = {
   'Massage & osteopathy': 'beauty', 'Eyelash treatments': 'beauty', 'Beauty services': 'beauty',
   'Barbering': 'beauty', 'Wool & haberdashery': 'crafts', 'Moroccan crafts': 'crafts',
   'Books & stationery': 'books', 'Art': 'books', 'Toys & gifts': 'books', 'Juice bar & snacks': 'food',
+  'Vintage & Retro': 'vintage', 'Locksmith': 'services',
 };
 const NEUTRAL = { key: '', label: 'Other', color: '#7A7264', tint: '#DDD8CB' };
 const famOf = (r) => FAMILIES.find((f) => f.key === CAT_TO_FAMILY[r.category]) || NEUTRAL;
@@ -180,17 +197,46 @@ const WITHHELD_PHONES = new Set([
 const phoneHash = (d) => createHash('sha256').update(d).digest('hex');
 const withheld = (d) => WITHHELD_PHONES.has(phoneHash(d));
 
+// The spreadsheet mixes straight and curly apostrophes ("Mike's" in the name,
+// "Mike’s" in the description). The site uses the curly one everywhere.
+const curly = (s) => (s == null ? s : String(s).replace(/'/g, '’'));
+
+// A photo's real pixel size, read from the JPEG itself, so the width and
+// height on the page are the file's own rather than a guess. The stylesheet
+// still crops every photo to its slot; this only keeps the markup truthful.
+function jpegSize(rel) {
+  const f = join(ROOT, rel);
+  if (!existsSync(f)) return null;
+  const b = readFileSync(f);
+  let i = 2;
+  while (i + 9 < b.length) {
+    if (b[i] !== 0xFF) { i++; continue; }
+    const m = b[i + 1], len = b.readUInt16BE(i + 2);
+    if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) {
+      return { w: b.readUInt16BE(i + 7), h: b.readUInt16BE(i + 5) };
+    }
+    i += 2 + len;
+  }
+  return null;
+}
+const sized = (img) => {
+  if (!img) return img;
+  const s = jpegSize(img.src) || { w: 1000, h: 750 };
+  return { ...img, alt: curly(img.alt), w: s.w, h: s.h };
+};
+
 const units = DATA.units.map((r) => ({
   ...r,
+  name: curly(r.name),
   unit: unitLabel(r.unit),
   label: unitLabel(r.label || r.unit),
   slug: slug(r.unit),
   fam: r.vacant ? null : famOf(r),
   hoursNice: r.vacant ? '' : hoursText(r.hours),
-  about: r.vacant ? '' : nodash(r.about),
+  about: r.vacant ? '' : nodash(curly(r.about)),
   phones: r.vacant ? [] : (r.phones || []).filter((p) => /^0\d{10}$/.test(p) && !withheld(p)),
   links: safeLinks(r),
-  image: r.vacant ? null : safeImage(r.image, unitLabel(r.unit)),
+  image: r.vacant ? null : sized(safeImage(r.image, unitLabel(r.unit))),
   href: `shop/${slug(r.unit)}.html`,
 }));
 const bySide = (s) => units.filter((u) => u.side === s).sort((a, b) => sortKey(a.unit) - sortKey(b.unit));
@@ -213,6 +259,15 @@ function countInWords(n) {
 }
 const shopCountWords = countInWords(MARKET_SHOPS).replace(/^./, (c) => c.toUpperCase());
 const vacant = [...bySide('Antique City'), ...bySide('Market Side')].filter((u) => u.vacant);
+// The number range each side runs to, worked out from the data so that a unit
+// added at either end (as A17/18 was) appears in the copy without a hand edit.
+// Antique City labels carry an A; Market Side labels are bare numbers.
+const unitRange = (side) => {
+  const nums = bySide(side).flatMap((u) => (u.label.match(/\d+/g) || []).map(Number));
+  const p = side === 'Antique City' ? 'A' : '';
+  return `${p}${Math.min(...nums)} to ${p}${Math.max(...nums)}`;
+};
+const RANGE_A = unitRange('Antique City'), RANGE_M = unitRange('Market Side');
 const withPhotoFirst = [...shops.filter((s) => s.image), ...shops.filter((s) => !s.image)];
 // Six on the home page, the photographed ones first so the row has faces in it.
 const featured = withPhotoFirst.slice(0, 6);
@@ -250,7 +305,7 @@ function header(rel, active) {
 <header class="site-header">
   <div class="bar">
     <div class="brand">
-      <a href="${rel}index.html" class="brand-link" aria-label="Wood Street Indoor Market, home">
+      <a href="${rel || './'}" class="brand-link" aria-label="Wood Street Indoor Market, home">
         <span class="brand-name">WOOD STREET</span>
         <span class="brand-sub">INDOOR MARKET &middot; EST. 1955</span>
       </a>
@@ -357,7 +412,7 @@ function page({ file, title, desc, active = '', rel = '', body, extraHead = '', 
 <link rel="preload" href="${rel}assets/fonts/young-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${rel}assets/site.css?v=${CSS_V}">
 ${extraHead}</head>
-<body data-open="${SITE.hours.open}" data-close="${SITE.hours.close}" data-days="${SITE.hours.days.join(',')}">
+<body data-open="${SITE.hours.open}" data-close="${SITE.hours.close}" data-days="${SITE.hours.days.join(',')}"${EXCEPTIONS_ATTR}>
 ${header(rel, active)}
 <main id="main">
 ${body}
@@ -586,8 +641,8 @@ ${boxes}
 
 // ---------- shop cards ------------------------------------------------------
 function shopCard(r, rel, { withData = false } = {}) {
-  const text = withData ? ` data-card data-fam="${r.fam.key}" data-text="${esc((r.name + ' ' + r.category + ' ' + r.about + ' ' + r.label + ' ' + r.unit).toLowerCase())}"` : '';
-  const photo = r.image ? `<span class="photo"><img src="${rel}${esc(r.image.src)}" alt="${esc(r.image.alt)}" width="1000" height="750" loading="lazy"></span>` : `<span class="stripe" aria-hidden="true"></span>`;
+  const text = withData ? ` data-card data-fam="${r.fam.key}" data-unit-order="${shops.indexOf(r)}" data-name="${esc(r.name.toLowerCase())}" data-photo="${r.image ? 1 : 0}" data-text="${esc((r.name + ' ' + r.category + ' ' + r.about + ' ' + r.label + ' ' + r.unit).toLowerCase())}"` : '';
+  const photo = r.image ? `<span class="photo"><img src="${rel}${esc(r.image.src)}" alt="${esc(r.image.alt)}" width="${r.image.w}" height="${r.image.h}" loading="lazy" data-sizes="(max-width: 600px) 92vw, (max-width: 900px) 46vw, 340px"></span>` : `<span class="stripe" aria-hidden="true"></span>`;
   return `<a href="${rel}${r.href}" class="shop-card tilt" style="--c:${r.fam.color}"${text}>
             ${photo}
             <span class="body">
@@ -658,11 +713,12 @@ const out = {};
       address: { '@type': 'PostalAddress', streetAddress: '98 & 102 Wood Street', addressLocality: 'Walthamstow, London', postalCode: 'E17 3HX', addressCountry: 'GB' },
       telephone: '+44 20 8509 0444', email: SITE.email, url: SITE.url, sameAs: [SITE.fb, SITE.ig, SITE.x],
       openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: SITE.hours.days.map((d) => DAY_NAMES[d]), opens: SITE.hours.open, closes: SITE.hours.close }],
+      ...(EXCEPTIONS.length ? { specialOpeningHoursSpecification: EXCEPTIONS.map((e) => ({ '@type': 'OpeningHoursSpecification', validFrom: e.date, validThrough: e.date, opens: e.closed ? '00:00' : e.open, closes: e.closed ? '00:00' : e.close })) } : {}),
     })}</script>
 `,
     body: `
   <section style="padding:52px 24px 64px">
-    <div class="wrap two" style="gap:48px">
+    <div class="wrap two two-top hero" style="gap:48px">
       <div>
         <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
           <span class="stamp" style="transform:rotate(-3deg)">EST. 1955</span>
@@ -682,7 +738,7 @@ const out = {};
       <div style="position:relative;max-width:430px;justify-self:center;width:100%">
         <div aria-hidden="true" style="position:absolute;left:18px;top:18px;right:-14px;bottom:-14px;background:#DCA528;border:2px solid #29231C;border-radius:14px"></div>
         <div class="photo-frame" style="position:relative">
-          <img src="uploads/market-frontage.jpg" alt="The painted frontage of 98 Wood Street Indoor Market, red with blue and green window frames and the market name above the door" width="800" height="1067" fetchpriority="high" style="width:100%;height:auto">
+          <img src="uploads/market-frontage.jpg" alt="The painted frontage of 98 Wood Street Indoor Market, red with blue and green window frames and the market name above the door" width="800" height="1067" fetchpriority="high" style="width:100%;height:auto" data-sizes="(max-width: 520px) 92vw, 430px">
         </div>
         <span style="position:absolute;top:-16px;right:14px;background:#BF3B26;color:#FBF3E2;border:2px solid #29231C;border-radius:999px;padding:7px 14px;font-family:'Archivo Narrow',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.08em;transform:rotate(3deg);box-shadow:2px 2px 0 #29231C">FIND US ON WOOD STREET</span>
       </div>
@@ -731,7 +787,7 @@ ${featured.map((r) => '        ' + shopCard(r, '')).join('\n')}
       </div>
       <div class="two two-top" style="gap:48px">
         <div>
-          <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:52ch;margin:0 0 22px">The market bends round a single horseshoe corridor: in one door, round the loop, out wherever you end up. The Market Side units run along the back wall and down one side, numbered 2 to 38. The Antique City units face each other across the aisle at the front, A1 to A16.</p>
+          <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:52ch;margin:0 0 22px">The market bends round a single horseshoe corridor: in one door, round the loop, out wherever you end up. The Market Side units run along the back wall and down one side, numbered ${RANGE_M}. The Antique City units face each other across the aisle at the front, ${RANGE_A}.</p>
           ${legend()}
           <a href="map.html" class="btn btn-cream" style="margin-top:26px">Open the market map &rarr;</a>
         </div>
@@ -768,8 +824,8 @@ ${featured.map((r) => '        ' + shopCard(r, '')).join('\n')}
       <div>
         ${eyebrow('Our story')}
         <h2 class="h2" style="margin-bottom:14px">From picture palace to market hall</h2>
-        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 14px">Before the stalls came the screen. This was the Crown Cinema from 1912 to 1955, reached down a long passage from Wood Street, and that passage is the corridor you walk today.</p>
-        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 26px">The market moved in the year the projector stopped. Seventy years on, ${MARKET_SHOPS} small shops still trade side by side while Wood Street changes around them. The faces turn over; the horseshoe holds.</p>
+        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 14px">Before the stalls came the screen. The building was a cinema from 1912 to 1955, known at different times as the Picture Palace, the Crown and the Rio. It was reached down a long passage from Wood Street, and that passage is the corridor you walk today.</p>
+        <p style="font-size:16.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0 0 26px">The market moved in the year the projector stopped. Since then, ${MARKET_SHOPS} small shops still trade side by side while Wood Street changes around them. The faces turn over; the horseshoe holds.</p>
         <a href="story.html" class="btn btn-cream">Read our story &rarr;</a>
       </div>
     </div>
@@ -884,18 +940,25 @@ ${signupForm('')}
           <input type="search" class="field" data-search placeholder="Try &lsquo;vinyl&rsquo;, &lsquo;jewellery&rsquo;, &lsquo;toys&rsquo;, &lsquo;A16&rsquo;" aria-label="Search shops">
         </label>
         <div class="chips">
-${usedFamilies.map((f) => `          <a href="#cat=${f.key}" class="chip" data-cat="${f.key}" aria-pressed="false" role="button"><span class="dot" aria-hidden="true" style="background:${f.color}"></span>${esc(f.label)} <span style="opacity:.6">${famCount(f)}</span></a>`).join('\n')}
-          <a href="#" class="linkbtn" data-clear>Clear all</a>
+${usedFamilies.map((f) => `          <button type="button" class="chip" data-cat="${f.key}" aria-pressed="false"><span class="dot" aria-hidden="true" style="background:${f.color}"></span>${esc(f.label)} <span style="opacity:.6">${famCount(f)}</span></button>`).join('\n')}
+          <button type="button" class="linkbtn" data-clear>Clear all</button>
         </div>
       </div>
-      <p class="results" aria-live="polite" data-count>Showing ${shops.length} shops, the ones with photos first</p>
-      <div class="grid grid-cards">
-${withPhotoFirst.map((r) => '        ' + shopCard(r, '', { withData: true })).join('\n')}
+      <div class="sortbar">
+        <p class="results" aria-live="polite" data-count>Showing ${shops.length} shops</p>
+        <label>Sort by <select class="field" data-sort>
+          <option value="unit">Unit number</option>
+          <option value="name">Name, A to Z</option>
+          <option value="photo">Shops with photos first</option>
+        </select></label>
+      </div>
+      <div class="grid grid-cards" data-grid>
+${shops.map((r) => '        ' + shopCard(r, '', { withData: true })).join('\n')}
       </div>
       <div class="empty" data-empty hidden>
         <p class="big">Nothing under that name, yet.</p>
         <p>The corridor is full of things that don&rsquo;t match their labels. Clear the search and browse the loop, or ask any trader when you visit.</p>
-        <a href="#" class="btn btn-cream btn-sm" data-clear>Clear everything</a>
+        <button type="button" class="btn btn-cream btn-sm" data-clear>Clear everything</button>
         <p style="font-size:14px;color:#6E6147;margin:20px 0 0">Reckon the market needs it? <a href="join.html" style="font-weight:700">Open the shop yourself &rarr;</a></p>
       </div>
     </div>
@@ -915,10 +978,16 @@ for (const r of shops) {
   if (kin) neighbours.push(kin);
   const rel = '../';
   const contacts = contactLinks(r, '');
+  // With a photo, the column opens with it. Without one, a single line says
+  // so, and the practical details move up rather than sitting under an empty
+  // frame.
   const photo = r.image
-    ? `<div class="photo-real" style="transform:rotate(-.5deg)"><img src="${rel}${esc(r.image.src)}" alt="${esc(r.image.alt)}" width="1000" height="750"></div>`
+    ? `<h2 style="font-size:26px;margin:0 0 16px">A look inside</h2>
+        <div class="photo-real" style="transform:rotate(-.5deg)"><img src="${rel}${esc(r.image.src)}" alt="${esc(r.image.alt)}" width="${r.image.w}" height="${r.image.h}" data-sizes="(max-width: 760px) 92vw, 540px"></div>
+        <h2 style="font-size:26px;margin:36px 0 12px">Finding them</h2>`
     : `<!-- photo: add uploads/shops/shop-${r.slug}.jpg, set "image" for unit ${r.unit} in data/shops.json, rebuild -->
-            <div class="photo-slot" style="transform:rotate(-.5deg)" aria-hidden="true"><span>Photo on its way</span></div>`;
+        <p class="no-photo">No photo of this shop yet.</p>
+        <h2 style="font-size:26px;margin:0 0 12px">Finding them</h2>`;
   const ld = {
     '@context': 'https://schema.org', '@type': 'Store', name: r.name, url: SITE.url + r.href,
     address: { '@type': 'PostalAddress', streetAddress: `${SIDES[r.side].addr}, unit ${r.label}`, addressLocality: 'Walthamstow, London', postalCode: 'E17 3HX', addressCountry: 'GB' },
@@ -940,7 +1009,7 @@ for (const r of shops) {
   <div style="background:${r.fam.tint};border-bottom:2px solid #29231C">
     <div class="wrap" style="padding:36px 24px 40px">
       <nav aria-label="Breadcrumb" class="crumbs">
-        <a href="${rel}index.html">Home</a><span class="sep" aria-hidden="true">/</span><a href="${rel}shops.html">The Shops</a><span class="sep" aria-hidden="true">/</span><span style="font-weight:700">${esc(r.name)}</span>
+        <a href="${rel}">Home</a><span class="sep" aria-hidden="true">/</span><a href="${rel}shops.html">The Shops</a><span class="sep" aria-hidden="true">/</span><span style="font-weight:700">${esc(r.name)}</span>
       </nav>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
         ${unitBadge(r.label)}
@@ -954,9 +1023,7 @@ for (const r of shops) {
   <section style="padding:56px 24px 72px">
     <div class="wrap two two-top">
       <div style="min-width:0">
-        <h2 style="font-size:26px;margin:0 0 16px">A look inside</h2>
         ${photo}
-        <h2 style="font-size:26px;margin:36px 0 12px">Finding them</h2>
         <p style="font-size:16.5px;line-height:1.7;margin:0 0 18px">${esc(r.name)} is unit ${esc(r.label)} in ${esc(r.side)}, ${esc(SIDES[r.side].addr)}, on ${SIDES[r.side].where}. Follow the loop round from the Wood Street entrance and you will pass it.</p>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
           <a href="${rel}map.html#unit-${r.slug}" class="btn btn-cream btn-sm">See it on the map</a>
@@ -966,9 +1033,9 @@ for (const r of shops) {
         <div class="card">
           <h2 class="card-label">The practical bit</h2>
           <div style="display:grid;gap:12px;font-size:14.5px;line-height:1.55">
-            <div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Open</span>${r.hoursNice ? esc(r.hoursNice) : 'Within market hours'} <span class="muted">(the market opens ${SITE.hoursShort}; shop hours can differ)</span></div>
+            <div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Open</span>${r.hoursNice ? `${esc(r.hoursNice)} <span class="muted">(the market opens ${SITE.hoursShort}; shop hours can differ)</span>` : `Not confirmed yet <span class="muted">(the market opens ${SITE.hoursShort}, but this shop may keep its own days. Ring Walthams on <a href="${SITE.tel}">${SITE.phone}</a> before a special trip.)</span>`}</div>
             <div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Find them</span>Unit ${esc(r.label)}, ${esc(r.side)}, ${esc(SIDES[r.side].addr)}</div>
-            ${contacts.length ? `<div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Get in touch</span><span style="display:flex;gap:14px;flex-wrap:wrap;font-weight:700">${contacts.join('')}</span></div>` : `<div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Get in touch</span><span class="muted">No contact details published yet. Drop in during market hours.</span></div>`}
+            ${contacts.length ? `<div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Get in touch</span><span style="display:flex;gap:14px;flex-wrap:wrap;font-weight:700">${contacts.join('')}</span></div>` : `<div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Get in touch</span><span class="muted">No direct contact details published yet.</span> <a href="${enquire('message', r.label, rel)}" style="font-weight:700">Send them a message through Walthams</a></div>`}
           </div>
         </div>
         <div class="card">
@@ -1004,7 +1071,7 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
     <div class="wrap">
       ${eyebrow('Find your way round')}
       <h1 class="h1">The Market Map</h1>
-      <p class="lede" style="max-width:70ch">Drawn from the market&rsquo;s own floorplan. The Market Side units run along the back wall and down the right-hand side, numbered 2 to 38. The Antique City units face each other across the aisle at the front, numbered A1 to A16. It is a visitor guide rather than an architectural drawing, so treat the shapes as approximate. Tap a shop to open its page, or an empty unit to ask about renting it.</p>
+      <p class="lede" style="max-width:70ch">Drawn from the market&rsquo;s own floorplan. The Market Side units run along the back wall and down the right-hand side, numbered ${RANGE_M}. The Antique City units face each other across the aisle at the front, numbered ${RANGE_A}. It is a visitor guide rather than an architectural drawing, so treat the shapes as approximate. Tap a shop to open its page, or an empty unit to ask about renting it.</p>
     </div>
   </section>
   <section style="padding:16px 24px 56px">
@@ -1012,7 +1079,7 @@ ${neighbours.map((n) => `            <a href="${rel}${n.href}" class="row-card">
       <div class="map-card">
         <div class="head">
           <h2>The floorplan</h2>
-          <span>Market Side, units 2 to 38 &middot; Antique City, units A1 to A16</span>
+          <span>Market Side, units ${RANGE_M} &middot; Antique City, units ${RANGE_A}</span>
         </div>
         <p class="map-swipe">Swipe the plan sideways, or jump to the <a href="#list">list of every unit</a>.</p>
         ${mapHtml({ hrefFor: (r) => r.href })}
@@ -1089,7 +1156,11 @@ ${list('Antique City')}
         <div class="hours">
 ${hoursRows}
         </div>
-        <p style="font-size:12.5px;margin-top:12px;color:#6E6147;line-height:1.55">Individual shops set their own days and hours. Check a shop&rsquo;s page before a special trip.</p>
+${EXCEPTIONS.length ? `        <div class="exceptions" style="margin-top:14px">
+          <p style="font-weight:700;font-size:13px;margin:0 0 6px">Holiday and special hours</p>
+${EXCEPTIONS.map((e) => { const d = new Date(e.date + 'T12:00:00Z'); return `          <div style="display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:3px 0"><span>${DAY_NAMES[d.getUTCDay()]} ${d.getUTCDate()} ${d.toLocaleString('en-GB', { month: 'long', timeZone: 'UTC' })}${e.note ? ` <span class="muted">(${esc(e.note)})</span>` : ''}</span><span style="font-weight:700">${e.closed ? 'Closed' : `${clock(e.open)} to ${clock(e.close)}`}</span></div>`; }).join('\n')}
+        </div>
+` : ''}        <p style="font-size:12.5px;margin-top:12px;color:#6E6147;line-height:1.55">Individual shops set their own days and hours. Check a shop&rsquo;s page before a special trip.</p>
       </div>
       <div class="card">
         <h2 class="card-label">Getting here</h2>
@@ -1155,7 +1226,7 @@ ${faqs.map(([q, a]) => `        <details>
     <div class="wrap-n">
       ${eyebrow('Fairs, lates &amp; doings')}
       <h1 class="h1">What&rsquo;s On</h1>
-      <p class="lede">News first, then the diary. Record fairs, late openings, kilo sales and the market&rsquo;s birthday will all be listed here as they are fixed. Most things are free and none of them need a ticket. Just turn up.</p>
+      <p class="lede">News first, then the diary. Record fairs, late openings, kilo sales and the market&rsquo;s birthday will all be listed here as they are fixed. Each listing will say whether it is free, whether it needs booking, and when it runs.</p>
     </div>
   </section>
   <section style="padding:12px 24px 48px">
@@ -1211,7 +1282,7 @@ ${faqs.map(([q, a]) => `        <details>
       <div>
         ${eyebrow('Since 1955')}
         <h1 class="h1" style="margin-bottom:14px">Our Story</h1>
-        <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:56ch;margin:0 0 14px">Most markets sprawl. This one bends: one corridor looped like a horseshoe, three dozen small doors, and seventy years of people finding things they weren&rsquo;t looking for.</p>
+        <p style="font-size:17px;line-height:1.65;color:#3E362B;max-width:56ch;margin:0 0 14px">Most markets sprawl. This one bends: one corridor looped like a horseshoe, three dozen small doors, and more than seventy years of people finding things they weren&rsquo;t looking for.</p>
         <p style="font-size:15.5px;line-height:1.65;color:#5C5142;max-width:56ch;margin:0">Before the market there was a cinema, and before the cinema there was a village. The building has been showing people things they did not expect since 1912. Here is how it got from there to here.</p>
       </div>
       <div style="position:relative;max-width:380px;width:100%;justify-self:center">
@@ -1343,7 +1414,7 @@ ${vacant.map((v) => `            <option value="${esc(v.label)}">Unit ${esc(v.la
         <label style="display:block;margin-top:14px"><span class="label">What would you sell?</span><input class="field" type="text" name="trade" required placeholder="Records, vintage clothing, jewellery repairs..."></label>
         <label style="display:block;margin-top:14px"><span class="label">Tell us about the business</span><textarea class="field" name="message" rows="6" required placeholder="How long you have been trading, where you sell now, what you would bring to the corridor."></textarea></label>
         <button type="submit" class="btn btn-gold" style="margin-top:20px">Send it to Walthams &rarr;</button>
-        <p class="note">Goes straight to Walthams, who manage the market. It is not an application form in the legal sense and nothing is decided by sending it.</p>
+        <p class="note">Goes straight to Walthams, who manage the market. It is not an application form in the legal sense and nothing is decided by sending it. Your details are used only to reply about units; see the <a href="legal.html#privacy">privacy policy</a>.</p>
       </form>
     </div>
   </section>
@@ -1404,10 +1475,10 @@ ${vacant.map((v) => `            <option value="${esc(v.label)}">Unit ${esc(v.la
 ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).join('\n')}
             </select></label>
           </div>
-          <label data-unit-field style="margin-top:14px"><span class="label">Which unit? <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#6E6147">(if you have one in mind)</span></span><input class="field" type="text" name="unit" placeholder="For example A4 or M31"></label>
+          <label data-unit-field style="margin-top:14px"><span class="label">Which unit? <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#6E6147">(if you have one in mind)</span></span><input class="field" type="text" name="unit" placeholder="For example A4 or 31"></label>
           <label style="display:block;margin-top:14px"><span class="label">Message</span><textarea class="field" name="message" rows="6" required></textarea></label>
           <button type="submit" class="btn btn-red" style="margin-top:18px">Send it</button>
-          <p style="margin:14px 0 0;font-size:12.5px;color:#6E6147;line-height:1.55">Goes straight to Walthams at ${SITE.email}. You will be asked to tick a quick &ldquo;I am not a robot&rdquo; box on the way. Your details are used only to reply to you; see the <a href="legal.html#privacy">privacy policy</a>.</p>
+          <p style="margin:14px 0 0;font-size:12.5px;color:#6E6147;line-height:1.55">Goes straight to Walthams at ${SITE.email}. Your details are used only to reply to you; see the <a href="legal.html#privacy">privacy policy</a>.</p>
         </form>
         <p style="margin:18px 0 0;font-size:14.5px">Rather talk? Ring <a href="${SITE.tel}" style="font-weight:700">${SITE.phone}</a>, or find the market on social media:</p>
         <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">${socials('social-ink')}
@@ -1436,7 +1507,7 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
       </div>
       <p style="font-size:17px;line-height:1.65;color:#3E362B;margin:34px auto 8px;max-width:44ch">Someone will come back to you, usually within a few days. If it is urgent, ring <a href="${SITE.tel}" style="font-weight:700">${SITE.phone}</a> on a trading day.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:30px">
-        <a href="index.html" class="btn btn-red btn-sm">Back to the front door</a>
+        <a href="./" class="btn btn-red btn-sm">Back to the front door</a>
         <a href="shops.html" class="btn btn-cream btn-sm">Explore the Shops</a>
       </div>
     </div>
@@ -1524,7 +1595,7 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
 `,
   });
   // The 404 page can be served from any path, so its assets must be root-relative.
-  out['404.html'] = out['404.html'].replace(/(href|src)="(assets|brand|index\.html|shops\.html|map\.html|whats-on\.html|visit\.html|story\.html|join\.html|contact\.html|legal\.html)/g, '$1="/$2');
+  out['404.html'] = out['404.html'].replace(/href="\.\/"/g, 'href="/"').replace(/(href|src)="(assets|brand|index\.html|shops\.html|map\.html|whats-on\.html|visit\.html|story\.html|join\.html|contact\.html|legal\.html)/g, '$1="/$2');
 }
 
 // Sitemap
@@ -1552,13 +1623,33 @@ ${files.map((f) => `  <url><loc>${SITE.url}${f === 'index.html' ? '' : f}</loc><
 // ---------- write and check -------------------------------------------------
 // Every photo is offered as WebP first, with the JPEG as the fallback, and
 // decodes off the main thread. tools/webp.mjs makes the .webp copies.
+// Where a photo is shown smaller than its file (every directory card, the home
+// page hero), the <img> carries data-sizes saying how wide it is drawn, and
+// webp.mjs makes narrower copies beside it (shop-m3-480.webp, shop-m3-800.webp).
+// The browser then picks the smallest copy that is sharp enough.
+const VARIANT_WIDTHS = [480, 800];
 function pictures(html) {
-  return html.replace(/<img src="([^"]+\.jpg)"([^>]*)>/g, (m, src, rest) => {
+  return html.replace(/<img src="([^"]+\.jpg)"([^>]*)>/g, (m, src, rest0) => {
+    const sizesMatch = rest0.match(/ data-sizes="([^"]*)"/);
+    let rest = rest0.replace(/ data-sizes="[^"]*"/, '');
     const attrs = rest.includes('decoding=') ? rest : rest + ' decoding="async"';
     const img = `<img src="${src}"${attrs}>`;
     const webp = src.replace(/\.jpg$/, '.webp');
-    if (!existsSync(join(ROOT, webp.replace(/^(\.\.\/)+/, '')))) return img;
-    return `<picture><source type="image/webp" srcset="${webp}">${img}</picture>`;
+    const onDisk = (p) => existsSync(join(ROOT, p.replace(/^(\.\.\/)+/, '')));
+    if (!onDisk(webp)) return img;
+    let srcset = webp, sizes = '';
+    if (sizesMatch) {
+      const full = jpegSize(src.replace(/^(\.\.\/)+/, ''));
+      const variants = VARIANT_WIDTHS
+        .filter((w) => full && w < full.w)
+        .map((w) => [webp.replace(/\.webp$/, `-${w}.webp`), w])
+        .filter(([p]) => onDisk(p));
+      if (variants.length && full) {
+        srcset = [...variants.map(([p, w]) => `${p} ${w}w`), `${webp} ${full.w}w`].join(', ');
+        sizes = ` sizes="${sizesMatch[1]}"`;
+      }
+    }
+    return `<picture><source type="image/webp" srcset="${srcset}"${sizes}>${img}</picture>`;
   });
 }
 
@@ -1589,6 +1680,14 @@ let problems = 0;
   for (const u of units) {
     if (!placed.has(u.unit)) {
       console.warn(`  ? ${u.unit}${u.vacant ? '' : ' (' + u.name + ')'} is in the data but has no room on the floorplan, so it is missing from the map`);
+    }
+  }
+  // A shop whose category has no trade family would sit in no filter and
+  // vanish from every category view (it happened to two shops in 2026).
+  for (const u of shops) {
+    if (!CAT_TO_FAMILY[u.category]) {
+      console.error(`  ! ${u.unit} (${u.name}) has category "${u.category}", which is not in CAT_TO_FAMILY, so no filter would show it`);
+      problems++;
     }
   }
   for (const r of ROOMS) {

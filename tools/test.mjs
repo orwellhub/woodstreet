@@ -7,6 +7,7 @@ import { readFileSync, writeFileSync, mkdtempSync, mkdirSync, readdirSync } from
 import { execFileSync } from 'child_process';
 import { createHash } from 'crypto';
 import { join, dirname } from 'path';
+import vm from 'vm';
 import { tmpdir } from 'os';
 import { fileURLToPath } from 'url';
 
@@ -121,11 +122,11 @@ test('every headline count says the market has 36 shops', () => {
   assert.match(asIs['shops.html'], /Thirty-six little shops under one roof/);
   // The directory's own tally counts the shops it lists and never says "all".
   const listed = JSON.parse(readFileSync(join(ROOT, 'data/shops.json'), 'utf8')).units.filter((u) => !u.vacant && u.name).length;
-  assert.match(asIs['shops.html'], new RegExp(`data-count>Showing ${listed} shops,`));
+  assert.match(asIs['shops.html'], new RegExp(`data-count>Showing ${listed} shops<`));
   // A shop moving out changes the directory tally but not the market's own count.
   const fewer = buildWith((m3) => { m3.vacant = true; });
   assert.match(fewer['index.html'], /<h1[^>]*>Thirty-six little shops\./);
-  assert.match(fewer['shops.html'], new RegExp(`data-count>Showing ${listed - 1} shops,`));
+  assert.match(fewer['shops.html'], new RegExp(`data-count>Showing ${listed - 1} shops<`));
 });
 
 test('no page contains a long dash', () => {
@@ -203,4 +204,127 @@ test('the build refuses to finish if a withheld number reaches a page some other
     () => buildWith((m3) => { m3.about = 'Or call +44 (0)7700 900123.'; }, { WSM_WITHHOLD: DRAMA_HASH }),
     'a withheld number in international format went out without complaint',
   );
+});
+
+// ---------- fixes from the October 2026 website review ----------------------
+
+test('every trading shop sits in a trade family, so some filter shows it', () => {
+  const data = JSON.parse(readFileSync(join(ROOT, 'data/shops.json'), 'utf8'));
+  const shops = readFileSync(join(ROOT, 'shops.html'), 'utf8');
+  const chips = new Set([...shops.matchAll(/data-cat="([^"]+)"/g)].map((m) => m[1]));
+  const cards = [...shops.matchAll(/data-card data-fam="([^"]*)"/g)].map((m) => m[1]);
+  assert.equal(cards.length, data.units.filter((u) => !u.vacant).length);
+  for (const fam of cards) assert.ok(chips.has(fam), `a card with family "${fam}" has no filter chip`);
+});
+
+test('the build refuses a shop whose category has no trade family', () => {
+  assert.throws(() => buildWith((m3) => { m3.category = 'Something new'; }),
+    'a shop with an unmapped category was published without complaint');
+});
+
+test('the category filters are real buttons, so Enter and Space both work', () => {
+  const shops = readFileSync(join(ROOT, 'shops.html'), 'utf8');
+  assert.doesNotMatch(shops, /<a [^>]*role="button"/, 'a link is pretending to be a button');
+  assert.match(shops, /<button type="button" class="chip" data-cat="/);
+  assert.match(shops, /<button type="button" class="linkbtn" data-clear>/);
+});
+
+test('no page promises a robot check that does not exist', () => {
+  const all = everyPage(buildWith(() => {}));
+  assert.doesNotMatch(all, /not a robot/i);
+});
+
+test('the unit ranges in the copy come from the data', () => {
+  const pages = buildWith(() => {});
+  for (const f of ['index.html', 'map.html']) {
+    assert.doesNotMatch(pages[f], /A1 to A16/, `${f} still says A1 to A16`);
+    assert.match(pages[f], /A1 to A18/, `${f} does not give the Antique City range`);
+  }
+});
+
+test('the homepage and the timeline agree about the cinema', () => {
+  const home = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  assert.doesNotMatch(home, /Crown Cinema from 1912 to 1955/);
+  assert.match(home, /Picture Palace, the Crown and the Rio/);
+});
+
+test('shop photos declare their real size and offer narrower copies', () => {
+  const shops = readFileSync(join(ROOT, 'shops.html'), 'utf8');
+  // shop-a5-6.jpg is 1000 by 831.
+  assert.match(shops, /shop-a5-6\.jpg\?v=[0-9a-f]{8}" alt="[^"]*" width="1000" height="831"/);
+  assert.match(shops, /srcset="uploads\/shops\/shop-a5-6-480\.webp\?v=[0-9a-f]{8} 480w, uploads\/shops\/shop-a5-6-800\.webp\?v=[0-9a-f]{8} 800w, uploads\/shops\/shop-a5-6\.webp\?v=[0-9a-f]{8} 1000w" sizes="/);
+  assert.doesNotMatch(shops, /data-sizes=/, 'the size hint is for the build, not the page');
+});
+
+test('a shop with no photo gets one line, not an empty frame', () => {
+  const page = readFileSync(join(ROOT, 'shop/a1.html'), 'utf8');
+  assert.doesNotMatch(page, /photo-slot|Photo on its way/);
+  assert.match(page, /No photo of this shop yet\./);
+  assert.doesNotMatch(page, /A look inside/);
+});
+
+test('fallback text does not claim hours or a drop-in nobody has confirmed', () => {
+  const page = readFileSync(join(ROOT, 'shop/a1.html'), 'utf8');
+  assert.doesNotMatch(page, /Within market hours|Drop in during market hours/);
+  const silent = readFileSync(join(ROOT, 'shop/a8.html'), 'utf8');
+  assert.match(silent, /href="\.\.\/contact\.html\?topic=message&unit=A8"/, 'a shop with no contact details offers no route to them');
+});
+
+test('a dated exception reaches the page, the Visit table and the structured data', () => {
+  const exc = JSON.stringify([{ date: '2026-12-25', closed: true, note: 'Christmas Day' }]);
+  const pages = buildWith(() => {}, { WSM_EXCEPTIONS: exc });
+  assert.match(pages['index.html'], /<body [^>]*data-exceptions="\[\{&quot;d&quot;:&quot;2026-12-25&quot;,&quot;closed&quot;:true/);
+  assert.match(pages['index.html'], /"specialOpeningHoursSpecification":\[\{"@type":"OpeningHoursSpecification","validFrom":"2026-12-25"/);
+  assert.match(pages['visit.html'], /Friday 25 December <span class="muted">\(Christmas Day\)<\/span><\/span><span style="font-weight:700">Closed/);
+});
+
+// Runs the open/closed script against a fake page at a given London time.
+function statusAt(iso, exceptions) {
+  const els = {};
+  const el = (k) => (els[k] = els[k] || { hidden: true, textContent: '', style: {}, title: '', classList: { toggle() {} }, getAttribute: () => null });
+  const attrs = { 'data-open': '10:00', 'data-close': '17:30', 'data-days': '2,3,4,5,6', 'data-exceptions': JSON.stringify(exceptions) };
+  const RealDate = Date;
+  class FakeDate extends RealDate { constructor(...a) { super(...(a.length ? a : [iso])); } static now() { return new RealDate(iso).getTime(); } }
+  const sandbox = {
+    Date: FakeDate, Intl, JSON, parseInt, Math, setInterval() {}, console,
+    document: {
+      documentElement: { classList: { add() {} } },
+      body: { getAttribute: (k) => attrs[k] ?? null },
+      querySelectorAll: (sel) => [el(sel)],
+      querySelector: () => null,
+      addEventListener() {},
+    },
+    location: { hash: '', search: '' }, window: { addEventListener() {} }, history: {}, URLSearchParams,
+  };
+  vm.runInNewContext(readFileSync(join(ROOT, 'assets/site.js'), 'utf8'), sandbox);
+  return { label: els['[data-open-label]'].textContent, detail: els['[data-open-detail]'].textContent };
+}
+
+test('the live status honours a dated closure and finds the next open day', () => {
+  const exc = [{ d: '2026-12-25', closed: true, n: 'Christmas Day' }, { d: '2026-12-26', closed: true, n: 'Boxing Day' }];
+  // Friday 25 December 2026, 11am in London: normally open.
+  const s = statusAt('2026-12-25T11:00:00Z', exc);
+  assert.equal(s.label, 'Closed today');
+  assert.match(s.detail, /Closed \(Christmas Day\), opens Tuesday at 10am/);
+  // An ordinary Friday at the same time is open.
+  assert.equal(statusAt('2026-12-18T11:00:00Z', exc).label, 'Open now');
+});
+
+test('a late opening extends the hours that day', () => {
+  const s = statusAt('2026-12-19T19:00:00Z', [{ d: '2026-12-19', o: '10:00', c: '20:00', n: 'Late opening' }]);
+  assert.equal(s.label, 'Open now');
+  assert.match(s.detail, /closes 8pm \(Late opening\)/);
+});
+
+test('reduced motion stops every animation, as the accessibility statement says', () => {
+  const css = readFileSync(join(ROOT, 'assets/site.css'), 'utf8');
+  assert.match(css, /@media \(prefers-reduced-motion:reduce\)\{\*,\*::before,\*::after\{animation:none!important;transition:none!important\}\}/);
+  assert.doesNotMatch(css, /@keyframes[^{]*\{[^}]*background-position/, 'an animation repaints instead of using transform');
+});
+
+test('the home page has one address', () => {
+  for (const f of ['index.html', 'shop/m3.html', '404.html']) {
+    assert.doesNotMatch(readFileSync(join(ROOT, f), 'utf8'), /href="(?:\.\.\/|\/)?index\.html"/, `${f} links to index.html`);
+  }
+  assert.match(readFileSync(join(ROOT, '.htaccess'), 'utf8'), /RewriteRule \^index\\\.html\$ \/ \[R=301,L\]/);
 });
