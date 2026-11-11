@@ -76,7 +76,9 @@
    "category": "Shoes and more",
    "about": "Discover rare second-hand shoes at Tony Shoe Sale, specialising in trainers, high-tops and casual footwear. Take a look through shelves packed with distinctive styles. Alongside the footwear, browse a selection of bags and denim clothing.",
    "hours": "",
-   "phones": [],
+   "phones": [
+    "07771817591"
+   ],
    "links": {},
    "image": null
   },
@@ -107,9 +109,12 @@
    "category": "Massage & osteopathy",
    "about": "Take some time for yourself at Malaya Therapies. Run by Kylie Marks, the practice offers osteopathy alongside a range of massage treatments. These include deep tissue and sports massage, as well as pregnancy and lymphatic drainage massage.",
    "hours": "Wednesday to Saturday: 10am to 5pm",
-   "phones": [],
+   "phones": [
+    "07729461315"
+   ],
    "links": {
-    "website": "https://www.malayatherapies.co.uk/"
+    "website": "https://www.malayatherapies.co.uk/",
+    "email": "kylie@malayatherapies.co.uk"
    },
    "image": {
     "src": "uploads/shops/shop-a10.jpg",
@@ -132,8 +137,12 @@
    "category": "Eyelash treatments",
    "about": "Discover your lash style at Claudia Rose Lashes. Explore a choice of classic, hybrid and volume eyelash extensions to find your preferred look. Appointments are also available for infills and eyelash extension removal.",
    "hours": "",
-   "phones": [],
-   "links": {},
+   "phones": [
+    "07957668294"
+   ],
+   "links": {
+    "email": "claudiarose38@hotmail.co.uk"
+   },
    "image": null
   },
   {
@@ -145,8 +154,12 @@
    "category": "Beauty services",
    "about": "Enjoy a little time for yourself at Beauty @ Anu. Explore the beauty salon’s range of treatments, including eyebrow threading and tinting. Waxing, facials and Indian head massage are also available.",
    "hours": "",
-   "phones": [],
-   "links": {},
+   "phones": [
+    "07999925099"
+   ],
+   "links": {
+    "email": "virenthakur@outlook.com"
+   },
    "image": null
   },
   {
@@ -158,7 +171,9 @@
    "category": "Records & music",
    "about": "Take some time to explore the second-hand vinyl at Mike’s Record Shop. Browse a range of music spanning rock, punk, new wave, blues, jazz, folk, reggae and soul. Look through the records for an old favourite or something new to discover.",
    "hours": "",
-   "phones": [],
+   "phones": [
+    "07722796861"
+   ],
    "links": {},
    "image": null
   },
@@ -171,7 +186,9 @@
    "category": "Vintage & antiques",
    "about": "Explore finds from the past at Mrs Tinsley’s Vintage & Retro. This small vintage and antiques shop offers furniture, lighting and decorative pieces to browse. You’ll also find a selection of art, advertising collectibles, clothing and textiles.",
    "hours": "Tuesday to Saturday 10am until 4pm",
-   "phones": [],
+   "phones": [
+    "07739794301"
+   ],
    "links": {
     "website": "https://mrstinsleysvintage.com/"
    },
@@ -197,7 +214,7 @@
    "about": "Enjoy freshly made drinks and a taste of Jamaica at SRK Delight. Semone’s juice bar serves a selection of fruit juices, smoothies and fruit cups. You’ll also find sugarcane juice and coconut water, alongside Jamaican drinks and snacks.",
    "hours": "Wednesday to Saturday, 11:00am to 4:00pm",
    "phones": [
-    "07539218486"
+    "07951079067"
    ],
    "links": {
     "website": "https://srkdelightjuicing.co.uk/",
@@ -273,9 +290,7 @@
    "phones": [
     "07826774913"
    ],
-   "links": {
-    "website": "https://www.booksfromboxes.co.uk/"
-   },
+   "links": {},
    "image": {
     "src": "uploads/shops/shop-m8.jpg",
     "alt": "Books From Boxes at unit 8, a white glazed shopfront with the door open onto shelves of books and a customer reading inside"
@@ -308,9 +323,12 @@
    "category": "Fashion & gifts",
    "about": "Add a little character to your wardrobe or home at Pritzy. Browse vintage-inspired jewellery, bags, hats and fashion accessories. Explore bridal accessories and gifts too, alongside decorative pieces for your home.",
    "hours": "",
-   "phones": [],
+   "phones": [
+    "07887661174"
+   ],
    "links": {
-    "website": "https://pritzy.com/"
+    "website": "https://pritzy.com/",
+    "email": "stacey@pritzy.com"
    },
    "image": {
     "src": "uploads/shops/shop-m10.jpg",
@@ -327,7 +345,9 @@
    "about": "Give pre-loved fashion another outing with Sustainable style by S&K. Take a look through the range of vintage and retro clothing. Find something with a history of its own to add to your wardrobe.",
    "hours": "",
    "phones": [],
-   "links": {},
+   "links": {
+    "email": "kevanrose84@hotmail.co.uk"
+   },
    "image": {
     "src": "uploads/shops/shop-m11-12.jpg",
     "alt": "Sustainable style by S&K, a sage green shopfront signed Vintage and Preloved Boutique under trailing foliage, rails of clothes inside and shoes in the glass case"
@@ -342,8 +362,12 @@
    "category": "Records & music",
    "about": "Browse the records and CDs at Music Family Records. Take your time exploring the music on offer and revisiting a favourite. You might also find something new to add to your collection.",
    "hours": "",
-   "phones": [],
-   "links": {},
+   "phones": [
+    "07958550756"
+   ],
+   "links": {
+    "email": "s.w.d.carter@gmail.com"
+   },
    "image": {
     "src": "uploads/shops/shop-m23-24.jpg",
     "alt": "Music Family Records, cut-paper lettering above open white doors, racks of LPs inside and bunting across the corridor"
@@ -356,7 +380,7 @@
    "address": "102 Wood Street",
    "name": "Timmy Tapers Ltd",
    "category": "Barbering",
-   "about": "Freshen up your look with a haircut from Timmy Tapers. The barbering business currently advertises both mobile and home appointments. To arrange your booking, get in touch with Timmy Tapers directly.",
+   "about": "Freshen up your look with a haircut from Timmy Tapers. The barbershop takes appointments at the market, Tuesday to Saturday, 10am to 5pm. To arrange your booking, use the booking link on the Timmy Tapers website or get in touch directly.",
    "hours": "Tuesday–Saturday: 10am–5pm",
    "phones": [
     "07766319220",
@@ -419,10 +443,14 @@
    "address": "102 Wood Street",
    "name": "London East Locksmith Ltd",
    "category": "Locksmith",
-   "about": "London East Locksmith Ltd works from unit 32 on the Market Side. Look through the window and you will see the walls of key blanks and the bench where the work gets done.",
+   "about": "With over 20 years’ experience in the industry, we pride ourselves on being the most friendly, knowledgeable and efficient locksmith in East London. We are a 24/7 Emergency locksmith servicing all boroughs throughout East London.",
    "hours": "",
-   "phones": [],
-   "links": {},
+   "phones": [
+    "07557513437"
+   ],
+   "links": {
+    "email": "info@londoneastlocksmith.co.uk"
+   },
    "image": {
     "src": "uploads/shops/shop-m32.jpg",
     "alt": "London East Locksmith Ltd at unit 32, a green shopfront with the door open onto a workshop lined with key blanks"

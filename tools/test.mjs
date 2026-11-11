@@ -266,8 +266,8 @@ test('a shop with no photo gets one line, not an empty frame', () => {
 test('fallback text does not claim hours or a drop-in nobody has confirmed', () => {
   const page = readFileSync(join(ROOT, 'shop/a1.html'), 'utf8');
   assert.doesNotMatch(page, /Within market hours|Drop in during market hours/);
-  const silent = readFileSync(join(ROOT, 'shop/a8.html'), 'utf8');
-  assert.match(silent, /href="\.\.\/contact\.html\?topic=message&unit=A8"/, 'a shop with no contact details offers no route to them');
+  const silent = readFileSync(join(ROOT, 'shop/m37.html'), 'utf8');
+  assert.match(silent, /href="\.\.\/contact\.html\?topic=message&unit=37"/, 'a shop with no contact details offers no route to them');
 });
 
 test('a dated exception reaches the page, the Visit table and the structured data', () => {

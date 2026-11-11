@@ -307,8 +307,11 @@ Shop data, as of the September 2026 spreadsheet:
   `uploads/shops/` named per unit, as described above.
 - **Units 13 and 16 to 22 do not exist** on the drawing or in the spreadsheet.
   The numbering simply skips them; nothing is missing.
-- Every shop now has a description. Nine have a website, seven an Instagram
-  account, four an email address and twelve a phone number.
+- Every shop now has a description. As of the client sheet on 11 November
+  2026, eight have a website, seven an Instagram account, eleven an email
+  address and twenty-one a phone number. Two differ from the sheet on purpose:
+  SRK Delight's number is the one on its own website (07951 079067), and Books
+  From Boxes has no website link because booksfromboxes.co.uk no longer loads.
 
 Still to check:
 
