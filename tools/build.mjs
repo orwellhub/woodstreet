@@ -40,7 +40,13 @@ const SITE = {
   // passed (the Visit page lists every entry). Each entry is either
   //   { date: '2026-12-25', closed: true, note: 'Christmas Day' }
   //   { date: '2026-12-19', open: '10:00', close: '20:00', note: 'Late opening' }
-  exceptions: [],
+  exceptions: [
+    { date: '2026-12-24', closed: true, note: 'Christmas Eve' },
+    { date: '2026-12-25', closed: true, note: 'Christmas Day' },
+    { date: '2026-12-26', closed: true, note: 'Boxing Day' },
+    { date: '2026-12-31', closed: true, note: 'New Year\u2019s Eve' },
+    { date: '2027-01-01', closed: true, note: 'New Year\u2019s Day' },
+  ],
 };
 // Tests add their own exceptions through WSM_EXCEPTIONS (a JSON array).
 if (process.env.WSM_EXCEPTIONS) SITE.exceptions = [...SITE.exceptions, ...JSON.parse(process.env.WSM_EXCEPTIONS)];
@@ -242,11 +248,11 @@ const units = DATA.units.map((r) => ({
 const bySide = (s) => units.filter((u) => u.side === s).sort((a, b) => sortKey(a.unit) - sortKey(b.unit));
 const shops = [...bySide('Antique City'), ...bySide('Market Side')].filter((u) => !u.vacant);
 
-// How many shops the market has, as the market itself counts them. This is
-// the number every headline, title and description uses. The directory lists
-// the shops we hold details for, which can be fewer, so its own tallies (the
-// results line, the map) count the data instead and never claim to be all 36.
-const MARKET_SHOPS = 36;
+// How many shops the market has: the occupied units in the data, which is the
+// directory a visitor can count. The headline said 36 until November 2026, a
+// figure that matched neither the directory nor the client's own shop sheet
+// (review finding 1), so every headline, title and description now uses this.
+const MARKET_SHOPS = shops.length;
 
 // A count in words, for the start of a sentence ("Thirty-six little shops").
 function countInWords(n) {
@@ -677,7 +683,7 @@ function pressRelease(rel, h = 'h3') {
         <div class="paper-cols">
           <p>Wood Street Indoor Market has a new team behind it. Walthams, the letting agent for this part of E17, have taken over the running of the market and are now looking after the building, the units and the traders inside them.</p>
           <p>For anyone walking through the door, nothing changes. The corridor is the same corridor, the shops are the same shops, and it all opens Tuesday to Saturday just as it always has.</p>
-          <p>What changes is what comes next. There are empty units to fill, a frontage that deserves some attention, and a market that has been quietly brilliant for seventy years without ever making much noise about it. That last part is about to change.</p>
+          <p>What changes is what comes next. There are empty units to fill, a frontage that deserves some attention, and a market that has been quietly brilliant for more than seventy years without ever making much noise about it. That last part is about to change.</p>
           <p>Stay tuned. Fairs, late openings and new arrivals will be announced here first, and on the market&rsquo;s Instagram and Facebook pages. If you have ever fancied a shop of your own, this is a very good moment to get in touch. And if you already trade here, come and say hello. We are in the building most weeks.</p>
         </div>
         <footer class="paper-foot">
@@ -884,8 +890,6 @@ ${vacant.map((v) => `          ${unitBadge(v.label)}`).join('\n')}
       </div>
       <div class="gallery">
         <div><img src="uploads/market-corridor.jpg" alt="Inside the market corridor, lined with leather bags, rugs and homeware" width="646" height="430" loading="lazy"></div>
-        <div><img src="uploads/coven-of-wiches.jpg" alt="The Coven of Wiches at unit 38, a plant-based deli and pickle house with a bright yellow shopfront and bunting overhead" width="785" height="1000" loading="lazy" style="object-position:center top"></div>
-        <div><img src="uploads/belas-brocante.jpg" alt="Bela's Brocante at unit 31, pictures and collectables around the doorway, looking on down the market corridor" width="730" height="1000" loading="lazy" style="object-position:center 15%"></div>
         <div><img src="uploads/market-entrance.jpg" alt="The market entrance on Wood Street with its clock and bunting" width="452" height="679" loading="lazy" style="object-position:center 30%"></div>
         <div><img src="uploads/market-left-side.jpg" alt="The Antique City aisle, a shopper flicking through record racks under bunting, with unit signs hanging down the corridor" width="1000" height="829" loading="lazy"></div>
       </div>
@@ -1033,7 +1037,7 @@ for (const r of shops) {
         <div class="card">
           <h2 class="card-label">The practical bit</h2>
           <div style="display:grid;gap:12px;font-size:14.5px;line-height:1.55">
-            <div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Open</span>${r.hoursNice ? `${esc(r.hoursNice)} <span class="muted">(the market opens ${SITE.hoursShort}; shop hours can differ)</span>` : `Not confirmed yet <span class="muted">(the market opens ${SITE.hoursShort}, but this shop may keep its own days. Ring Walthams on <a href="${SITE.tel}">${SITE.phone}</a> before a special trip.)</span>`}</div>
+            <div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Open</span>${r.hoursNice ? `${esc(r.hoursNice)} <span class="muted">(the market opens ${SITE.hoursShort}; shop hours can differ)</span>` : `Usually Tuesday to Saturday, 10am to 5pm <span class="muted">(the hours most shops here keep; this shop has not confirmed its own. Ring Walthams on <a href="${SITE.tel}">${SITE.phone}</a> before a special trip.)</span>`}</div>
             <div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Find them</span>Unit ${esc(r.label)}, ${esc(r.side)}, ${esc(SIDES[r.side].addr)}</div>
             ${contacts.length ? `<div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Get in touch</span><span style="display:flex;gap:14px;flex-wrap:wrap;font-weight:700">${contacts.join('')}</span></div>` : `<div><span style="display:block;font-weight:700;font-size:13px;margin-bottom:2px">Get in touch</span><span class="muted">No direct contact details published yet.</span> <a href="${enquire('message', r.label, rel)}" style="font-weight:700">Send them a message through Walthams</a></div>`}
           </div>
@@ -1123,7 +1127,7 @@ ${list('Antique City')}
   const faqs = [
     ['Do all the shops open every day?', `The market opens ${SITE.hoursShort}, but individual traders set their own days and hours, and a few open Wednesday to Saturday or Saturday only. If you are making a special trip for one shop, check its page or ring ahead.`],
     ['Can I pay by card?', 'Most traders take cards. A few of the smaller units prefer cash, so it is worth carrying some.'],
-    ['Is the market step free?', `The market trades on one level inside, around a single looping corridor. For entrance thresholds and facilities, ring ${SITE.phone} and we will talk your visit through.`],
+    ['Is the market step free?', `Yes. The Wood Street entrance is level with the pavement, the Marlowe Road entrance has a ramp, and inside the market trades on one level around a single looping corridor. Some shop doorways are narrow. If you would like to check anything before you come, ring ${SITE.phone}.`],
     ['Are dogs welcome?', 'Well-behaved dogs on leads are welcome in the corridor. Individual shops set their own rules, so ask at the door.'],
     ['Is there parking?', 'Street parking around Wood Street is limited and mostly pay-and-display or permit. Coming by train, bus or bike is easier.'],
     ['I want to open a shop here. Who do I talk to?', `Walthams manage the market and handle every unit enquiry. Email ${SITE.email} or ring ${SITE.phone}, or start on the <a href="join.html">Join the Market</a> page.`],
@@ -1402,7 +1406,7 @@ ${faqs.map(([q, a]) => `        <details>
         </div>
         <div class="pair">
           <label><span class="label">Email</span><input class="field" type="email" name="email" required autocomplete="email"></label>
-          <label><span class="label">Phone</span><input class="field" type="tel" name="phone" required autocomplete="tel"></label>
+          <label><span class="label">Phone <span style="font-weight:500;letter-spacing:0;text-transform:none;color:#6E6147">(optional)</span></span><input class="field" type="tel" name="phone" autocomplete="tel"></label>
         </div>
         <div class="pair">
           <label><span class="label">Website or social account <span class="opt">(optional)</span></span><input class="field" type="text" name="website" placeholder="woodstreet.example or @yourshop"></label>

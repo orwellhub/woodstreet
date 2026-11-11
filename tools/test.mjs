@@ -112,21 +112,35 @@ test('the shipped pages carry the security-relevant markup', () => {
   }
 });
 
-test('every headline count says the market has 36 shops', () => {
+test('every headline count is the number of shops in the directory', () => {
+  // The headline said 36 until November 2026, which matched neither the
+  // directory nor the client's shop sheet. It now counts the data, so a
+  // visitor who counts the directory gets the number the headline promised.
   const asIs = buildWith(() => {});
   const all = everyPage(asIs);
-  assert.ok(!/Thirty little shops|30 little shops|around thirty|thirty doors|thirty small doors/.test(all));
-  assert.ok(!/\b25 (little|small|independent) shops|Twenty-five little shops|all 25 shops/.test(all));
-  assert.match(asIs['index.html'], /<h1[^>]*>Thirty-six little shops\./);
-  assert.match(asIs['index.html'], /<title>Wood Street Indoor Market \| 36 little shops/);
-  assert.match(asIs['shops.html'], /Thirty-six little shops under one roof/);
-  // The directory's own tally counts the shops it lists and never says "all".
   const listed = JSON.parse(readFileSync(join(ROOT, 'data/shops.json'), 'utf8')).units.filter((u) => !u.vacant && u.name).length;
+  assert.equal(listed, 25, 'the data file no longer has 25 shops: update this test with it');
+  assert.ok(!/Thirty-six|\b36 (little|small|independent|shops|independents|traders)/.test(all), 'a page still says 36');
+  assert.match(asIs['index.html'], /<h1[^>]*>Twenty-five little shops\./);
+  assert.match(asIs['index.html'], /<title>Wood Street Indoor Market \| 25 little shops/);
+  assert.match(asIs['shops.html'], /Twenty-five little shops under one roof/);
   assert.match(asIs['shops.html'], new RegExp(`data-count>Showing ${listed} shops<`));
-  // A shop moving out changes the directory tally but not the market's own count.
+  // A shop moving out changes the headline and the directory tally together.
   const fewer = buildWith((m3) => { m3.vacant = true; });
-  assert.match(fewer['index.html'], /<h1[^>]*>Thirty-six little shops\./);
+  assert.match(fewer['index.html'], /<h1[^>]*>Twenty-four little shops\./);
   assert.match(fewer['shops.html'], new RegExp(`data-count>Showing ${listed - 1} shops<`));
+});
+
+test('the market is closed over Christmas and New Year 2026', () => {
+  const visit = readFileSync(join(ROOT, 'visit.html'), 'utf8');
+  for (const day of ['Christmas Eve', 'Christmas Day', 'Boxing Day', 'New Year\u2019s Eve', 'New Year\u2019s Day']) {
+    assert.ok(visit.includes(day), `${day} is missing from the Visit page`);
+  }
+});
+
+test('the Join form does not demand a phone number', () => {
+  const join_ = readFileSync(join(ROOT, 'join.html'), 'utf8');
+  assert.doesNotMatch(join_, /name="phone"[^>]*required/);
 });
 
 test('no page contains a long dash', () => {
@@ -271,11 +285,12 @@ test('fallback text does not claim hours or a drop-in nobody has confirmed', () 
 });
 
 test('a dated exception reaches the page, the Visit table and the structured data', () => {
-  const exc = JSON.stringify([{ date: '2026-12-25', closed: true, note: 'Christmas Day' }]);
+  // A date the site does not already list, so this proves the env route alone.
+  const exc = JSON.stringify([{ date: '2027-03-26', closed: true, note: 'Good Friday' }]);
   const pages = buildWith(() => {}, { WSM_EXCEPTIONS: exc });
-  assert.match(pages['index.html'], /<body [^>]*data-exceptions="\[\{&quot;d&quot;:&quot;2026-12-25&quot;,&quot;closed&quot;:true/);
-  assert.match(pages['index.html'], /"specialOpeningHoursSpecification":\[\{"@type":"OpeningHoursSpecification","validFrom":"2026-12-25"/);
-  assert.match(pages['visit.html'], /Friday 25 December <span class="muted">\(Christmas Day\)<\/span><\/span><span style="font-weight:700">Closed/);
+  assert.match(pages['index.html'], /<body [^>]*data-exceptions="\[[^"]*\{&quot;d&quot;:&quot;2027-03-26&quot;,&quot;closed&quot;:true/);
+  assert.match(pages['index.html'], /"specialOpeningHoursSpecification":\[.*\{"@type":"OpeningHoursSpecification","validFrom":"2027-03-26"/);
+  assert.match(pages['visit.html'], /Friday 26 March <span class="muted">\(Good Friday\)<\/span><\/span><span style="font-weight:700">Closed/);
 });
 
 // Runs the open/closed script against a fake page at a given London time.
