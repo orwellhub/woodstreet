@@ -180,3 +180,68 @@ document.documentElement.classList.add('is-js');
   window.addEventListener('hashchange', pick);
   pick();
 })();
+
+/* Google Analytics, only after the visitor says yes (PECR). Nothing is
+   requested from Google until "Accept analytics" is pressed; declining, or
+   never answering, means gtag.js is never fetched. The property is "Wood
+   Street Indoor Market" in the Global Business HQ Google Analytics account.
+   Only the live domain sends data, so local copies stay out of the figures.
+   "Cookie settings" in the footer reopens the banner so a yes can be
+   withdrawn, which also clears the _ga cookies. */
+(function () {
+  var GA_ID = 'G-99BKBJK8P2', KEY = 'wsm-cookie-choice';
+  var LIVE = ['woodstreetindoormarket.co.uk', 'www.woodstreetindoormarket.co.uk'];
+  var banner = document.querySelector('[data-consent]');
+  var settings = document.querySelector('[data-cookie-settings]');
+  var started = false;
+  function read() {
+    try { var v = localStorage.getItem(KEY); return v === 'analytics' || v === 'declined' ? v : null; } catch (e) { return null; }
+  }
+  function save(v) { try { localStorage.setItem(KEY, v); } catch (e) { /* applies to this page only */ } }
+  function start() {
+    if (started || LIVE.indexOf(location.hostname.toLowerCase()) === -1) return;
+    started = true;
+    delete window['ga-disable-' + GA_ID];
+    window.dataLayer = window.dataLayer || [];
+    /* gtag.js reads each entry as an arguments object, as in Google's own snippet. */
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID);
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+  }
+  function stop() {
+    window['ga-disable-' + GA_ID] = true;
+    if (window.gtag) window.gtag('consent', 'update', { analytics_storage: 'denied' });
+    var host = location.hostname, parent = host.replace(/^www\./, '');
+    document.cookie.split(';').forEach(function (pair) {
+      var name = pair.split('=')[0].trim();
+      if (!/^_ga(_|$)/.test(name)) return;
+      ['', '; domain=' + host, '; domain=.' + parent].forEach(function (d) {
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + d;
+      });
+    });
+  }
+  var choice = read();
+  if (choice === 'analytics') start();
+  if (!banner) return;
+  banner.hidden = choice !== null;
+  [].forEach.call(banner.querySelectorAll('[data-consent-choice]'), function (b) {
+    b.addEventListener('click', function () {
+      var v = b.getAttribute('data-consent-choice');
+      save(v);
+      if (v === 'analytics') start(); else stop();
+      banner.hidden = true;
+    });
+  });
+  if (settings) {
+    settings.hidden = false;
+    settings.addEventListener('click', function () {
+      banner.hidden = false;
+      var first = banner.querySelector('button'); if (first) first.focus();
+    });
+  }
+})();

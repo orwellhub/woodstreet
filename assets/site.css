@@ -351,3 +351,11 @@ a.mu-vacant:hover{color:#A94A32;border-style:solid}
 }
 /* Every animation and transition stops when the device asks for reduced motion, as the accessibility statement promises. */
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* Cookie consent banner (assets/site.js reveals it). */
+.consent{position:fixed;left:16px;right:16px;bottom:16px;z-index:60;max-width:620px;margin:0 auto;background:#FBF3E2;color:#29231C;border:2px solid #29231C;border-radius:14px;box-shadow:5px 5px 0 rgba(41,35,28,.85);padding:18px 20px;display:grid;gap:14px;font-size:14.5px;line-height:1.55}
+.consent[hidden]{display:none}
+.consent p{margin:0}
+.consent a{color:#7C2A1D}
+.consent-actions{display:flex;flex-wrap:wrap;gap:12px}
+.site-footer .legal .cookie-settings{background:none;border:0;padding:0;font:inherit;color:#BEB197;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.site-footer .legal .cookie-settings[hidden]{display:none}

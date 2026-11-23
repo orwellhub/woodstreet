@@ -101,7 +101,11 @@ AddType font/woff2 .woff2
   # plus inline style attributes, which the pages use throughout. Fonts are
   # self-hosted. The forms post to this site's own /lead.php and nowhere else. Nothing
   # may frame the site.
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+  # Google Analytics: www.googletagmanager.com serves gtag.js and the
+  # google-analytics hosts receive the measurements. assets/site.js only loads
+  # it after a visitor accepts analytics cookies; otherwise none of these hosts
+  # is contacted.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; font-src 'self'; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
 
   <FilesMatch "\.html$">
     Header set Cache-Control "no-cache, must-revalidate, max-age=0"

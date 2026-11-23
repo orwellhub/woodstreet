@@ -386,11 +386,27 @@ function footer(rel) {
     <span style="display:flex;gap:18px;flex-wrap:wrap">
       <a href="${rel}legal.html#privacy">Privacy</a>
       <a href="${rel}legal.html#cookies">Cookies</a>
+      <button type="button" class="cookie-settings" data-cookie-settings hidden>Cookie settings</button>
       <a href="${rel}legal.html#accessibility">Accessibility</a>
     </span>
     <span>Made on Wood Street, E17</span>
   </div>
 </footer>
+${consentBanner(rel)}`;
+}
+
+/* Cookie consent for Google Analytics. Hidden in the markup and revealed by
+   assets/site.js, so a visitor without JavaScript never sees a question about
+   a script that could not run anyway. The two buttons are styled alike:
+   declining has to be as easy as accepting. */
+function consentBanner(rel) {
+  return `<aside class="consent" data-consent hidden aria-label="Cookie choices">
+  <p><strong>Can we count visits?</strong> With your permission we use Google Analytics cookies to see how many people visit and which pages help them. No advertising cookies. <a href="${rel}legal.html#cookies">Cookie policy</a></p>
+  <div class="consent-actions">
+    <button type="button" class="btn btn-sm btn-cream" data-consent-choice="declined">Decline</button>
+    <button type="button" class="btn btn-sm btn-cream" data-consent-choice="analytics">Accept analytics</button>
+  </div>
+</aside>
 `;
 }
 
@@ -1539,19 +1555,21 @@ ${TOPICS.map(([v, t]) => `              <option value="${v}">${t}</option>`).joi
       <div class="card" style="padding:32px;border-radius:14px;box-shadow:5px 5px 0 rgba(41,35,28,.85);display:grid;gap:40px">
         <div class="legal-doc" id="privacy" data-doc>
           <h2>Privacy Policy</h2>
-          <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
+          <p style="font-size:13px;color:#6E6147">Last updated November 2026</p>
           <p><strong>Who we are.</strong> Wood Street Indoor Market, ${SITE.address}, ${SITE.town}. The market is managed by Walthams. Questions about this policy: <a href="mailto:${SITE.email}">${SITE.email}</a>.</p>
           <p><strong>What we collect.</strong> Only what you give us: your name, email address, phone number if you add one, and whatever you write, when you send the contact form, ask about a unit, sign up for market news or email us. This website has no accounts and does not buy or sell data. This is a market, not that kind of market.</p>
           <p><strong>Why we use it.</strong> To reply to you and to progress unit enquiries. Legal bases: legitimate interest and steps taken before a contract.</p>
+          <p><strong>Website visits, only if you say yes.</strong> If you accept analytics cookies, Google Analytics records the pages you view, how you found the site, your approximate location and your type of device and browser, so we can see how the site is used. The legal basis is your consent, which you can withdraw at any time with &ldquo;Cookie settings&rdquo; at the foot of every page. Google provides the service and may process this data outside the UK under its own safeguards. Details are in the cookie policy.</p>
           <p><strong>Where it lives.</strong> Every form on this site, including the market news sign-up, is sent by this website&rsquo;s own server, through the mail service of our web host (Hostinger), to Walthams&rsquo; mailbox and to the team that runs the website. The server also keeps a private record of each message, outside the public website, so an enquiry is not lost if an email fails. From there it is handled under Walthams&rsquo; own privacy policy. There is no mailing list software behind the sign-up: it reaches the same inbox as everything else.</p>
           <p><strong>How long.</strong> Enquiries: up to 12 months. Unit applications: for the length of the process plus 6 months. Market news: until you unsubscribe, which every email has a link for.</p>
           <p><strong>Your rights.</strong> Ask us what we hold, ask us to correct it, ask us to delete it. Email or write to the office and we will sort it. You can also complain to the ICO (ico.org.uk).</p>
         </div>
         <div class="legal-doc" id="cookies" data-doc>
           <h2>Cookie Policy</h2>
-          <p style="font-size:13px;color:#6E6147">Last updated September 2026</p>
-          <p><strong>The short version.</strong> This site sets no cookies and runs no analytics or tracking. None.</p>
-          <p><strong>If that changes.</strong> If the market adds analytics to count visits, it will only switch on after you say yes to a consent banner. Decline and the site works exactly the same.</p>
+          <p style="font-size:13px;color:#6E6147">Last updated November 2026</p>
+          <p><strong>The short version.</strong> No advertising cookies. With your permission, Google Analytics cookies to count visits. Nothing from Google loads until you press &ldquo;Accept analytics&rdquo;, and if you decline the site works exactly the same.</p>
+          <p><strong>Analytics, only if you accept.</strong> Google Analytics sets cookies named <code>_ga</code> and <code>_ga_</code> followed by an identifier. They hold a random number that lets Google count you as one visitor across pages and visits, and last up to two years. Google receives the pages you view, how you arrived, your approximate location and your type of device and browser. We use this only to see how the site is used, never for advertising, and advertising features are switched off.</p>
+          <p><strong>Your choice.</strong> Your answer is kept in your browser&rsquo;s local storage so the question is not asked again. Change it any time with &ldquo;Cookie settings&rdquo; at the foot of every page. If you withdraw, measurement stops and the analytics cookies are removed.</p>
           <p><strong>Third parties.</strong> Fonts are served from this site, not from Google. The forms are sent by this site&rsquo;s own server; no form service or robot check from another company is involved. The directions link opens Google Maps, and the social buttons open Facebook, Instagram and X, each of which has its own policies once you are there. Nothing from those services is embedded in this site.</p>
           <p><strong>Managing cookies.</strong> Your browser settings can block or clear cookies at any time. The site will carry on politely without them.</p>
         </div>

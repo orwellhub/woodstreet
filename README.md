@@ -107,9 +107,14 @@ playwright axe-core` first). Run it after any change to the policy or the
 pages. A formal accessibility audit has not been done and the policies page
 says so.
 
-There are no analytics. Adding a privacy-friendly service (Plausible, Fathom,
-GoatCounter or Cloudflare Web Analytics) means an account, one script tag in
-`page()` in the generator, its host in the CSP, and a line in the cookie policy.
+Google Analytics (GA4, property "Wood Street Indoor Market", `G-99BKBJK8P2`,
+in the Global Business HQ account) runs only after a visitor accepts it in the
+cookie banner. The banner markup is `consentBanner()` in the generator; the
+behaviour is the last block of `assets/site.js`, which fetches nothing from
+Google until "Accept analytics" is pressed and only sends data from the live
+domain. Google's hosts are in the CSP in `.htaccess`, and the cookie and
+privacy policies describe what is set. "Cookie settings" in the footer reopens
+the banner.
 
 ## The pages
 

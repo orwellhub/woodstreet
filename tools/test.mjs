@@ -343,3 +343,30 @@ test('the home page has one address', () => {
   }
   assert.match(readFileSync(join(ROOT, '.htaccess'), 'utf8'), /RewriteRule \^index\\\.html\$ \/ \[R=301,L\]/);
 });
+
+test('analytics waits for consent, and declining is as easy as accepting', () => {
+  const home = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  const js = readFileSync(join(ROOT, 'assets/site.js'), 'utf8');
+  // No page loads Google directly: the only route to gtag.js is the consent code.
+  assert.doesNotMatch(home, /googletagmanager|google-analytics/);
+  const banner = home.match(/<aside class="consent"[\s\S]*?<\/aside>/);
+  assert.ok(banner, 'every page carries the consent banner');
+  assert.match(banner[0], /\shidden[\s>]/, 'hidden until the script decides, so no-JS visitors are not asked');
+  const decline = banner[0].match(/<button[^>]*data-consent-choice="declined"[^>]*>/)[0];
+  const accept = banner[0].match(/<button[^>]*data-consent-choice="analytics"[^>]*>/)[0];
+  assert.equal(decline.match(/class="[^"]+"/)[0], accept.match(/class="[^"]+"/)[0], 'both buttons look the same');
+  assert.match(home, /data-cookie-settings/, 'the footer can reopen the banner');
+  assert.match(js, /G-99BKBJK8P2/);
+  // gtag.js is only requested from inside start(), which runs on a yes.
+  const start = js.indexOf('function start()');
+  const load = js.indexOf("googletagmanager.com/gtag/js");
+  assert.ok(start > -1 && load > start && load < js.indexOf('function stop()'));
+});
+
+test('the CSP allows Google Analytics and nothing else new', () => {
+  const policy = readFileSync(join(ROOT, '.htaccess'), 'utf8').match(/Content-Security-Policy "([^"]+)"/)[1];
+  assert.match(policy, /script-src 'self' https:\/\/www\.googletagmanager\.com;/);
+  assert.match(policy, /connect-src 'self' https:\/\/\*\.google-analytics\.com https:\/\/\*\.analytics\.google\.com https:\/\/\*\.googletagmanager\.com;/);
+  assert.match(policy, /img-src 'self' data: https:\/\/\*\.google-analytics\.com https:\/\/\*\.googletagmanager\.com;/);
+  assert.doesNotMatch(policy, /unsafe-inline'[^;]*script|script-src[^;]*unsafe/);
+});
