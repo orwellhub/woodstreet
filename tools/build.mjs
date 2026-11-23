@@ -410,7 +410,16 @@ function consentBanner(rel) {
 `;
 }
 
-const FAVICON = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#BF3B26"/><text x="16" y="22" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#FBF3E2">W</text></svg>');
+// The favicon is a set of real files, not an inline data: URI. Google only
+// shows a site's icon in search results when it can fetch the icon from its
+// own URL, so the inline one left the listing with a blank globe. The paths
+// are absolute so every page, at any depth, names the same file. Regenerate
+// the files from the brand colours if the mark ever changes: favicon.ico
+// (16, 32, 48), assets/favicon-48/96/192.png and apple-touch-icon.png.
+const FAVICON_LINKS = `<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">`;
 
 function page({ file, title, desc, active = '', rel = '', body, extraHead = '', ogImage = 'uploads/market-frontage.jpg' }) {
   const canonical = SITE.url + (file === 'index.html' ? '' : file);
@@ -429,7 +438,7 @@ function page({ file, title, desc, active = '', rel = '', body, extraHead = '', 
 <meta property="og:image" content="${SITE.url}${ogImage}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#7C2A1D">
-<link rel="icon" href="${FAVICON}">
+${FAVICON_LINKS}
 <link rel="preload" href="${rel}assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="${rel}assets/fonts/young-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${rel}assets/site.css?v=${CSS_V}">

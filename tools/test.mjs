@@ -3,7 +3,7 @@
 // build must stay safe no matter what ends up in data/shops.json.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, writeFileSync, mkdtempSync, mkdirSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdtempSync, mkdirSync, readdirSync, existsSync } from 'fs';
 import { execFileSync } from 'child_process';
 import { createHash } from 'crypto';
 import { join, dirname } from 'path';
@@ -369,4 +369,16 @@ test('the CSP allows Google Analytics and nothing else new', () => {
   assert.match(policy, /connect-src 'self' https:\/\/\*\.google-analytics\.com https:\/\/\*\.analytics\.google\.com https:\/\/\*\.googletagmanager\.com;/);
   assert.match(policy, /img-src 'self' data: https:\/\/\*\.google-analytics\.com https:\/\/\*\.googletagmanager\.com;/);
   assert.doesNotMatch(policy, /unsafe-inline'[^;]*script|script-src[^;]*unsafe/);
+});
+
+test('the favicon is a real, fetchable file, so Google can show it in results', () => {
+  for (const f of ['index.html', 'shop/m3.html', '404.html']) {
+    const html = readFileSync(join(ROOT, f), 'utf8');
+    assert.doesNotMatch(html, /rel="icon" href="data:/, `${f} still has an inline favicon`);
+    assert.match(html, /<link rel="icon" href="\/favicon\.ico" sizes="48x48">/, `${f} does not link the favicon`);
+  }
+  for (const f of ['favicon.ico', 'assets/favicon-48.png', 'assets/favicon-96.png', 'assets/favicon-192.png', 'apple-touch-icon.png']) {
+    assert.ok(existsSync(join(ROOT, f)), `${f} is missing`);
+  }
+  assert.doesNotMatch(readFileSync(join(ROOT, 'robots.txt'), 'utf8'), /Disallow: \/(favicon|assets)/);
 });
